@@ -75,7 +75,8 @@ module.exports = env => {
                 "node_modules",
             ],
             alias: {
-                '~': appFullPath
+                '~': appFullPath,
+                jslib: join(__dirname, 'jslib/src')
             },
             symlinks: true
         },

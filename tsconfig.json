@@ -13,6 +13,7 @@
         ],
         "baseUrl": ".",
         "paths": {
+            "jslib/*": [ "jslib/src/*" ],
             "~/*": [
                 "app/*"
             ],
@@ -24,6 +25,13 @@
     },
     "exclude": [
         "node_modules",
-        "platforms"
+        "platforms",
+        "jslib/node_modules",
+        "dist",
+        "jslib/dist",
+        "jslib/spec",
+        "jslib/src/electron",
+        "jslib/src/angular/components/modal.component.ts",
+        "jslib/src/angular/directives/box-row.directive.ts"
     ]
 }
