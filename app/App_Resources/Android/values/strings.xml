@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">
-    My App Bitwarden
+    My App
   </string>
   <string name="title_activity_kimera">
-    My App Activity Bitwarden
+    My App Activity
   </string>
   <string name="AutoFillServiceSummary">
     Assist with filling username and password fields in other apps and on the web.
@@ -15,5 +15,8 @@
     your device\'s screen. Whenever Bitwarden detects a password field on the screen a notification will appear that allows
     you to quickly access your Bitwarden vault and automatically fill (auto-fill) the correct login information into the
     necessary fields.
+  </string>
+  <string name="MyVault">
+    My Vault
   </string>
 </resources>

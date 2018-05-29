@@ -13,7 +13,9 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "jslib/*": [ "jslib/src/*" ],
+            "jslib/*": [
+                "jslib/src/*"
+            ],
             "~/*": [
                 "app/*"
             ],

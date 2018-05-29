@@ -11,7 +11,7 @@
 		android:xlargeScreens="true"/>
 
 	<uses-sdk
-		android:minSdkVersion="19"
+		android:minSdkVersion="17"
 		android:targetSdkVersion="__APILEVEL__"/>
 
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -48,6 +48,16 @@
      		<meta-data 
 				android:name="android.accessibilityservice" 
 				android:resource="@xml/accessibilityservice" />
+		</service>
+		<service 
+			android:name="com.tns.autofill.AutofillService" 
+			android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+		   	<intent-filter>
+         		<action android:name="android.service.autofill.AutofillService" />
+     		</intent-filter>
+     		<meta-data 
+				android:name="android.autofill" 
+				android:resource="@xml/autofillservice" />
 		</service>
 	</application>
 </manifest>
