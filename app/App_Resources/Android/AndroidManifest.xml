@@ -40,7 +40,7 @@
 		</activity>
 		<activity android:name="com.tns.ErrorReportActivity"/>
 		<service 
-			android:name="com.tns.autofill.AutofillAccessibilityService" 
+			android:name="com.tns.AutofillAccessibilityService" 
 			android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
 		   	<intent-filter>
          		<action android:name="android.accessibilityservice.AccessibilityService" />
@@ -50,7 +50,7 @@
 				android:resource="@xml/accessibilityservice" />
 		</service>
 		<service 
-			android:name="com.tns.autofill.AutofillService" 
+			android:name="com.tns.AutofillService" 
 			android:permission="android.permission.BIND_AUTOFILL_SERVICE">
 		   	<intent-filter>
          		<action android:name="android.service.autofill.AutofillService" />
