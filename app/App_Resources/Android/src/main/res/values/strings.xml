@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">
-    My App
+    Bitwarden
   </string>
   <string name="title_activity_kimera">
-    My App Activity
+    Bitwarden
   </string>
   <string name="AutoFillServiceSummary">
     Assist with filling username and password fields in other apps and on the web.
