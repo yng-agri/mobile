@@ -13,5 +13,5 @@ tmp/
 typings/
 report/
 test-results.xml
-#hooks/
+hooks/
 !hooks/after-prepare/action-extension.js
