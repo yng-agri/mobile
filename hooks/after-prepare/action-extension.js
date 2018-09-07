@@ -28,7 +28,7 @@ module.exports = function (hookArgs) {
             return;
         }
 
-        // Add NativeScript framework to project
+        // Add NativeScript framework to main project
         mainProj.addFramework('$(SRCROOT)/internal/NativeScript.framework', {
             customFramework: true,
             embed: true,
@@ -57,16 +57,14 @@ module.exports = function (hookArgs) {
         const aeTarget = mainProj.addTarget(extensionName, 'app_extension');
 
         // Add NativeScript PreBuild phase to extension
-        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PreBuild',
-            '"$SRCROOT/internal/nativescript-pre-build"');
+        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PreBuild', '"$SRCROOT/internal/nativescript-pre-build"');
 
         // Add Source build phase to extension
         mainProj.addBuildPhase([], 'PBXSourcesBuildPhase', 'Sources', aeTarget.uuid);
         mainProj.addSourceFile('main.m', { target: aeTarget.uuid }, aeGroup.uuid);
 
         // Add NativeScript PreLink phase to extension
-        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PreLink',
-            '"$SRCROOT/internal/nativescript-pre-link"');
+        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PreLink', '"$SRCROOT/internal/nativescript-pre-link"');
 
         // Add Frameworks and Resources build phases to extension
         mainProj.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', aeTarget.uuid);
@@ -90,11 +88,11 @@ module.exports = function (hookArgs) {
             const cleanName = files[id].name ? files[id].name.replace(/"/g, '') : null;
 
             let frameworksIndex = frameworks.indexOf(cleanPath);
-            if(frameworksIndex === -1 && cleanName) {
+            if (frameworksIndex === -1 && cleanName) {
                 frameworksIndex = frameworks.indexOf(cleanName);
             }
             let resourcesIndex = resources.indexOf(cleanPath);
-            if(resourcesIndex === -1 && cleanName) {
+            if (resourcesIndex === -1 && cleanName) {
                 resourcesIndex = resources.indexOf(cleanName);
             }
 
@@ -121,14 +119,14 @@ module.exports = function (hookArgs) {
         }
 
         // Add NativeScript PostBuild phase to extension
-        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PostBuild',
-            '"$SRCROOT/internal/nativescript-post-build"');
+        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PostBuild', '"$SRCROOT/internal/nativescript-post-build"');
 
         // Add other links flags to extension
         mainProj.addToOtherLinkerFlags('"-sectcreate"', { productName: extensionName });
         mainProj.addToOtherLinkerFlags('__DATA', { productName: extensionName });
         mainProj.addToOtherLinkerFlags('__TNSMetadata', { productName: extensionName });
-        mainProj.addToOtherLinkerFlags('"\\"$(CONFIGURATION_BUILD_DIR)/metadata-$(CURRENT_ARCH).bin\\""', { productName: extensionName });
+        mainProj.addToOtherLinkerFlags('"\\"$(CONFIGURATION_BUILD_DIR)/metadata-$(CURRENT_ARCH).bin\\""',
+            { productName: extensionName });
 
         // Done
         fs.writeFileSync(mainProjPath, mainProj.writeSync());
