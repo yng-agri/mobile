@@ -11,13 +11,12 @@ module.exports = function (hookArgs) {
 
     // console.log(hookArgs);
 
-    const actionExtensionSrcPath = path.resolve(hookArgs.projectData.projectDir,
-        'app/ios/ActionExtension');
-    const actionExtensionDestPath = path.resolve(hookArgs.projectData.platformsDir,
-        'ios/ActionExtension');
+    const extensionName = 'ActionExtension';
+    const extensionSrcPath = path.resolve(hookArgs.projectData.projectDir, 'app/ios/' + extensionName);
+    const extensionDestPath = path.resolve(hookArgs.projectData.platformsDir, 'ios/' + extensionName);
 
-    shell('mkdir -p ' + actionExtensionDestPath);
-    shell('cp -r ' + actionExtensionSrcPath + '/* ' + actionExtensionDestPath);
+    shell('mkdir -p ' + extensionDestPath);
+    shell('cp -r ' + extensionSrcPath + '/* ' + extensionDestPath);
 
     const mainProjPath = path.resolve(hookArgs.projectData.platformsDir,
         'ios/' + hookArgs.projectData.projectName + '.xcodeproj/project.pbxproj');
@@ -30,9 +29,7 @@ module.exports = function (hookArgs) {
         }
 
         // Add NativeScript framework to project
-        const nsFrameworkPath = path.resolve(hookArgs.projectData.platformsDir,
-            'ios/internal/NativeScript.framework');
-        const nsFrameworkEmbedded = mainProj.addFramework(nsFrameworkPath, {
+        mainProj.addFramework('$(SRCROOT)/internal/NativeScript.framework', {
             customFramework: true,
             embed: true,
             link: true,
@@ -40,16 +37,16 @@ module.exports = function (hookArgs) {
 
         // Add new group with extension assets
         const aeGroup = mainProj.addPbxGroup([
-            'ActionExtension-Info.plist',
+            extensionName + '-Info.plist',
             'extension.js',
-        ], 'ActionExtension', 'ActionExtension');
+        ], extensionName, extensionName);
 
         const groups = mainProj.getPBXObject('PBXGroup');
-        for (let key in groups) {
-            if (!groups.hasOwnProperty(key)) {
+        for (let id in groups) {
+            if (!groups.hasOwnProperty(id) || id.indexOf('_comment') > -1) {
                 continue;
             }
-            const group = groups[key];
+            const group = groups[id];
             if (group.children && !group.name && !group.path) {
                 group.children.push({ value: aeGroup.uuid, comment: aeGroup.pbxGroup.name });
                 break;
@@ -57,73 +54,92 @@ module.exports = function (hookArgs) {
         }
 
         // Add extension target
-        const aeTarget = mainProj.addTarget('ActionExtension', 'app_extension');
+        const aeTarget = mainProj.addTarget(extensionName, 'app_extension');
 
         // Add NativeScript PreBuild phase to extension
-        mainProj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'NativeScript PreBuild', aeTarget.uuid, {
-            shellPath: '/bin/sh',
-            shellScript: '"$SRCROOT/internal/nativescript-pre-build"',
-            showEnvVarsInLog: false,
-        });
+        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PreBuild',
+            '"$SRCROOT/internal/nativescript-pre-build"');
 
         // Add Source build phase to extension
         mainProj.addBuildPhase([], 'PBXSourcesBuildPhase', 'Sources', aeTarget.uuid);
-        mainProj.addSourceFile(actionExtensionDestPath + '/main.m', { target: aeTarget.uuid }, aeGroup.uuid);
+        mainProj.addSourceFile('main.m', { target: aeTarget.uuid }, aeGroup.uuid);
 
         // Add NativeScript PreLink phase to extension
-        mainProj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'NativeScript PreLink', aeTarget.uuid, {
-            shellPath: '/bin/sh',
-            shellScript: '"$SRCROOT/internal/nativescript-pre-link"',
-            showEnvVarsInLog: false,
-        });
+        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PreLink',
+            '"$SRCROOT/internal/nativescript-pre-link"');
 
-        // Add Frameworks build phase to extension
+        // Add Frameworks and Resources build phases to extension
         mainProj.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', aeTarget.uuid);
-        const nsFramework = new pbxFile(nsFrameworkPath, { customFramework: true });
-        nsFramework.fileRef = nsFrameworkEmbedded.fileRef;
-        nsFramework.uuid = mainProj.generateUuid();
-        nsFramework.target = aeTarget.uuid;
-        mainProj.addToPbxBuildFileSection(nsFramework);
-        mainProj.addToPbxFrameworksBuildPhase(nsFramework);
-        mainProj.addToFrameworkSearchPaths(nsFramework, { productName: 'ActionExtension' });
-
-        // Add Resources build phase to extension
         mainProj.addBuildPhase([], 'PBXResourcesBuildPhase', 'Resources', aeTarget.uuid);
+
+        const frameworks = [
+            'TNSWidgets.framework',
+            'NativeScript.framework',
+        ];
+        const resources = [
+            'app',
+            'extension.js',
+        ];
         const files = mainProj.pbxFileReferenceSection();
         for (let id in files) {
-            if (!files.hasOwnProperty(id) || id.indexOf('_comment') > -1) {
+            if (!files.hasOwnProperty(id) || id.indexOf('_comment') > -1 || !files[id].path) {
                 continue;
             }
-            let f = null;
-            if (files[id].path == 'app' || files[id].path == ('"app"')) {
-                f = new pbxFile('app');
-            } else if (files[id].path == 'extension.js' || files[id].path == ('"extension.js"')) {
-                f = new pbxFile('extension.js');
+
+            const cleanPath = files[id].path.replace(/"/g, '');
+            const cleanName = files[id].name ? files[id].name.replace(/"/g, '') : null;
+
+            let frameworksIndex = frameworks.indexOf(cleanPath);
+            if(frameworksIndex === -1 && cleanName) {
+                frameworksIndex = frameworks.indexOf(cleanName);
             }
-            if (f != null) {
-                f.fileRef = id;
-                f.uuid = mainProj.generateUuid();
-                f.target = aeTarget.uuid;
-                mainProj.addToPbxBuildFileSection(f);
+            let resourcesIndex = resources.indexOf(cleanPath);
+            if(resourcesIndex === -1 && cleanName) {
+                resourcesIndex = resources.indexOf(cleanName);
+            }
+
+            let f = null;
+            if (frameworksIndex > -1) {
+                f = new pbxFile(cleanPath, { customFramework: true });
+            } else if (resourcesIndex > -1) {
+                f = new pbxFile(cleanPath);
+            }
+            if (f == null) {
+                continue;
+            }
+
+            f.fileRef = id;
+            f.uuid = mainProj.generateUuid();
+            f.target = aeTarget.uuid;
+            mainProj.addToPbxBuildFileSection(f);
+            if (frameworksIndex > -1) {
+                mainProj.addToPbxFrameworksBuildPhase(f);
+                mainProj.addToFrameworkSearchPaths(f, { productName: extensionName });
+            } else if (resourcesIndex > -1) {
                 mainProj.addToPbxResourcesBuildPhase(f);
             }
         }
 
         // Add NativeScript PostBuild phase to extension
-        mainProj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'NativeScript PostBuild', aeTarget.uuid, {
-            shellPath: '/bin/sh',
-            shellScript: '"$SRCROOT/internal/nativescript-post-build"',
-            showEnvVarsInLog: false,
-        });
+        addScriptBuildPhase(aeTarget.uuid, 'NativeScript PostBuild',
+            '"$SRCROOT/internal/nativescript-post-build"');
 
         // Add other links flags to extension
-        mainProj.addToOtherLinkerFlags('"-sectcreate"', { productName: 'ActionExtension' });
-        mainProj.addToOtherLinkerFlags('__DATA', { productName: 'ActionExtension' });
-        mainProj.addToOtherLinkerFlags('__TNSMetadata', { productName: 'ActionExtension' });
-        mainProj.addToOtherLinkerFlags('"\\"$(CONFIGURATION_BUILD_DIR)/metadata-$(CURRENT_ARCH).bin\\""', { productName: 'ActionExtension' });
+        mainProj.addToOtherLinkerFlags('"-sectcreate"', { productName: extensionName });
+        mainProj.addToOtherLinkerFlags('__DATA', { productName: extensionName });
+        mainProj.addToOtherLinkerFlags('__TNSMetadata', { productName: extensionName });
+        mainProj.addToOtherLinkerFlags('"\\"$(CONFIGURATION_BUILD_DIR)/metadata-$(CURRENT_ARCH).bin\\""', { productName: extensionName });
 
         // Done
         fs.writeFileSync(mainProjPath, mainProj.writeSync());
         console.log('pbxproj modifications written.');
     });
+
+    function addScriptBuildPhase(target, name, script) {
+        mainProj.addBuildPhase([], 'PBXShellScriptBuildPhase', name, target, {
+            shellPath: '/bin/sh',
+            shellScript: script,
+            showEnvVarsInLog: false,
+        });
+    }
 }
