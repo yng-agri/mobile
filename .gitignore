@@ -3,9 +3,9 @@ npm-debug.log
 
 *.js.map
 app/**/*.js
+!app/ios/**/*.js
 e2e/**/*.js
 e2e/reports/
-hooks/
 lib/
 node_modules/
 platforms/
@@ -13,3 +13,5 @@ tmp/
 typings/
 report/
 test-results.xml
+#hooks/
+!hooks/after-prepare/action-extension.js

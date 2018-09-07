@@ -265,5 +265,16 @@ module.exports = env => {
         }));
     }
 
+    if(platform === 'ios') {
+        config.plugins.push(new CopyWebpackPlugin([
+            {
+                from: resolve(projectRoot, 'app/ios/action-extension-starter.ios.js'),
+                to: dist,
+                context: projectRoot
+            },
+        ]));
+        config.entry["action-extension"] = resolve(__dirname, "app/ios/action-extension.ios.ts");
+    }
+
     return config;
 };
