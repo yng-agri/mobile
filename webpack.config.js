@@ -16,7 +16,9 @@ module.exports = env => {
         "tns-core-modules/ui/frame",
         "tns-core-modules/ui/frame/activity",
         resolve(__dirname, "app/android/accessibilityService.android.ts"),
-        resolve(__dirname, "app/android/autofillService.android.ts")
+        resolve(__dirname, "app/android/autofillService.android.ts"),
+        resolve(__dirname, "app/android/activity.android.ts"),
+        resolve(__dirname, "app/android/application.android.ts"),
     ];
 
     const platform = env && (env.android && "android" || env.ios && "ios");
