@@ -4,19 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const shell = require('child_process').execSync;
 
+const DevTeamId = 'LTZ2PFU5D6';
+
 module.exports = function (hookArgs) {
     if (hookArgs.platform !== 'iOS') {
         return;
     }
 
     // console.log(hookArgs);
-
-    const extensionName = 'ActionExtension';
-    const extensionSrcPath = path.resolve(hookArgs.projectData.projectDir, 'app/ios/' + extensionName);
-    const extensionDestPath = path.resolve(hookArgs.projectData.platformsDir, 'ios/' + extensionName);
-
-    shell('mkdir -p ' + extensionDestPath);
-    shell('cp -r ' + extensionSrcPath + '/* ' + extensionDestPath);
 
     const mainProjPath = path.resolve(hookArgs.projectData.platformsDir,
         'ios/' + hookArgs.projectData.projectName + '.xcodeproj/project.pbxproj');
@@ -35,11 +30,32 @@ module.exports = function (hookArgs) {
             link: true,
         });
 
+        addExtension(hookArgs, mainProj, 'ActionExtension', ['extension.js']);
+
+        // Add build properties
+        mainProj.addBuildProperty('"CODE_SIGN_IDENTITY[sdk=iphoneos*]"', '"iPhone Developer"');
+        mainProj.addBuildProperty('DEVELOPMENT_TEAM', DevTeamId);
+        mainProj.addBuildProperty('ENABLE_BITCODE', 'NO');
+
+        // Done
+        fs.writeFileSync(mainProjPath, mainProj.writeSync());
+        console.log('pbxproj modifications written.');
+    });
+
+    function addExtension(hookArgs, mainProj, extensionName, extensionResources) {
+        extensionResources = extensionResources || [];
+
+        // Copy extension assets
+        const extensionSrcPath = path.resolve(hookArgs.projectData.projectDir, 'app/ios/' + extensionName);
+        const extensionDestPath = path.resolve(hookArgs.projectData.platformsDir, 'ios/' + extensionName);
+
+        shell('mkdir -p ' + extensionDestPath);
+        shell('cp -r ' + extensionSrcPath + '/* ' + extensionDestPath);
+
         // Add new group with extension assets
         const aeGroup = mainProj.addPbxGroup([
             extensionName + '-Info.plist',
-            'extension.js',
-        ], extensionName, extensionName);
+        ].concat(extensionResources), extensionName, extensionName);
 
         const groups = mainProj.getPBXObject('PBXGroup');
         for (let id in groups) {
@@ -76,8 +92,7 @@ module.exports = function (hookArgs) {
         ];
         const resources = [
             'app',
-            'extension.js',
-        ];
+        ].concat(extensionResources);
         const files = mainProj.pbxFileReferenceSection();
         for (let id in files) {
             if (!files.hasOwnProperty(id) || id.indexOf('_comment') > -1 || !files[id].path) {
@@ -128,10 +143,10 @@ module.exports = function (hookArgs) {
         mainProj.addToOtherLinkerFlags('"\\"$(CONFIGURATION_BUILD_DIR)/metadata-$(CURRENT_ARCH).bin\\""',
             { productName: extensionName });
 
-        // Done
-        fs.writeFileSync(mainProjPath, mainProj.writeSync());
-        console.log('pbxproj modifications written.');
-    });
+        // Add target attributes for extension
+        mainProj.addTargetAttribute('DevelopmentTeam', DevTeamId, aeTarget);
+        mainProj.addTargetAttribute('ProvisioningStyle', 'Automatic', aeTarget);
+    }
 
     function addScriptBuildPhase(target, name, script) {
         mainProj.addBuildPhase([], 'PBXShellScriptBuildPhase', name, target, {
