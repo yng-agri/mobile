@@ -16,6 +16,18 @@
             "~/*": [
                 "app/*"
             ],
+            "jslib/*": [
+                "jslib/src/*"
+            ],
+            "@angular/*": [
+                "node_modules/@angular/*"
+            ],
+            "angular2-toaster": [
+                "node_modules/angular2-toaster"
+            ],
+            "angulartics2": [
+                "node_modules/angulartics2"
+            ],
             "*": [
                 "./node_modules/tns-core-modules/*",
                 "./node_modules/*"
@@ -26,7 +38,6 @@
         "node_modules",
         "platforms",
         "hooks",
-        "jslib",
         "app/ios/ActionExtension"
     ]
 }
