@@ -26,6 +26,7 @@
         "node_modules",
         "platforms",
         "hooks",
-        "jslib"
+        "jslib",
+        "app/ios/ActionExtension"
     ]
 }
