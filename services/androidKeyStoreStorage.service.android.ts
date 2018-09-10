@@ -50,8 +50,8 @@ export class AndroidKeyStoreStorageService implements StorageService {
             return null;
         }
         try {
-            const json = await this.cryptoService.decryptToUtf8(new CipherString(cs), aesKey);
-            return JSON.parse(json) as T;
+            const buffer = await this.cryptoService.decryptToBytes(new CipherString(cs), aesKey);
+            return Utils.fromBufferToB64(buffer) as any;
         } catch {
             console.error('Failed to decrypt from secure storage.');
             await this.storageService.remove(formattedKey);
@@ -66,13 +66,18 @@ export class AndroidKeyStoreStorageService implements StorageService {
             return;
         }
 
+        if (typeof (obj) !== 'string') {
+            throw new Error('Only base 64 strings can be stored in android key store.');
+        }
+
         const aesKey = await this.getAesKey();
         if (aesKey == null) {
             return;
         }
 
         try {
-            const cipherString = await this.cryptoService.encrypt(JSON.stringify(obj), aesKey);
+            const arr = Utils.fromB64ToArray(obj);
+            const cipherString = await this.cryptoService.encrypt(arr.buffer, aesKey);
             await this.storageService.save(formattedKey, cipherString.encryptedString);
         } catch {
             console.error('Failed to encrypt to secure storage.');
