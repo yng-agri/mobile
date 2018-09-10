@@ -15,7 +15,7 @@ const KeyAlias = 'bitwardenKey2';
 const SettingsPrefix = 'ksSecured2:';
 const AesKey = 'ksSecured2:aesKeyForService';
 
-export class AndroidKeyStoreStorageService implements StorageService {
+export class MobileSecureStorageService implements StorageService {
     private keyStore: java.security.KeyStore;
     private oldAndroid = false;
     private rsaMode: string;

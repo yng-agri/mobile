@@ -1,5 +1,5 @@
-@JavaProxy('com.tns.Application')
-class Application extends android.app.Application {
+@JavaProxy('com.tns.MainApplication')
+export class MainApplication extends android.app.Application {
     public onCreate(): void {
         super.onCreate();
 

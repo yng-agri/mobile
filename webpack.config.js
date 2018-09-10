@@ -17,8 +17,8 @@ module.exports = env => {
         "tns-core-modules/ui/frame/activity",
         resolve(__dirname, "app/android/accessibilityService.android.ts"),
         resolve(__dirname, "app/android/autofillService.android.ts"),
-        resolve(__dirname, "app/android/activity.android.ts"),
-        resolve(__dirname, "app/android/application.android.ts"),
+        //resolve(__dirname, "app/android/mainActivity.android.ts"),
+        //resolve(__dirname, "app/android/mainApplication.android.ts"),
     ];
 
     const platform = env && (env.android && "android" || env.ios && "ios");
@@ -89,9 +89,6 @@ module.exports = env => {
                 '~': appFullPath,
                 jslib: join(__dirname, 'jslib/src'),
             },
-            symlinks: true
-        },
-        resolveLoader: {
             symlinks: false
         },
         node: {

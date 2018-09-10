@@ -38,6 +38,9 @@
         "node_modules",
         "platforms",
         "hooks",
-        "app/ios/ActionExtension"
+        "app/ios/ActionExtension",
+        "jslib/node_modules",
+        "jslib/spec",
+        "jslib/src/electron"
     ]
 }

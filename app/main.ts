@@ -3,8 +3,6 @@ import { platformNativeScriptDynamic } from 'nativescript-angular/platform';
 
 import { AppModule } from './app.module';
 
-import { ApplicationDelegate } from '~/ios/applicationDelegate.ios';
-
 import {
     ios,
     on as applicationOn,
@@ -23,6 +21,19 @@ import {
 } from 'application';
 
 if (ios != null) {
+    class ApplicationDelegate extends UIResponder implements UIApplicationDelegate {
+        public static ObjCProtocols = [UIApplicationDelegate];
+    
+        applicationDidFinishLaunchingWithOptions(application: UIApplication,
+            launchOptions: NSDictionary<any, any>): boolean {
+            console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions);
+            return true;
+        }
+    
+        applicationDidBecomeActive(application: UIApplication): void {
+            console.log('applicationDidBecomeActive: ' + application);
+        }
+    }
     ios.delegate = ApplicationDelegate;
 } else if (android != null) {
     android.on(AndroidApplication.activityCreatedEvent, function (args: AndroidActivityBundleEventData) {
