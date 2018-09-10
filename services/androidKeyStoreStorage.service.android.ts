@@ -5,7 +5,9 @@ import { CryptoFunctionService } from 'jslib/abstractions/cryptoFunction.service
 import { StorageService } from 'jslib/abstractions/storage.service';
 
 import { Utils } from 'jslib/misc/utils';
-import { SymmetricCryptoKey, CipherString } from 'jslib/models/domain';
+
+import { CipherString } from 'jslib/models/domain/cipherString';
+import { SymmetricCryptoKey } from 'jslib/models/domain/symmetricCryptoKey';
 
 const AndroidKeyStore = 'AndroidKeyStore';
 const AesMode = 'AES/GCM/NoPadding';
