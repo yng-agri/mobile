@@ -11,6 +11,17 @@
   "description": "NativeScript Application",
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
+  "scripts": {
+    "sub:init": "git submodule update --init --recursive",
+    "sub:update": "git submodule update --remote",
+    "sub:pull": "git submodule foreach git pull",
+    "postinstall": "npm run sub:init",
+    "clean": "rimraf ./platforms",
+    "android": "tns run android --bundle",
+    "ios": "tns run ios --bundle",
+    "android:debug": "tns debug android --bundle",
+    "ios:debug": "tns debug ios --bundle"
+  },
   "dependencies": {
     "@angular/animations": "~6.1.0",
     "@angular/common": "~6.1.0",
@@ -38,6 +49,7 @@
     "nativescript-dev-typescript": "~0.7.0",
     "nativescript-dev-webpack": "^0.15.1",
     "tns-platform-declarations": "^4.2.0",
+    "rimraf": "^2.6.2",
     "typescript": "~2.7.2",
     "xcode": "git+https://git@github.com/kspearrin/cordova-node-xcode.git"
   },
