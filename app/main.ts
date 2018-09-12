@@ -23,13 +23,18 @@ import {
 if (ios != null) {
     class ApplicationDelegate extends UIResponder implements UIApplicationDelegate {
         public static ObjCProtocols = [UIApplicationDelegate];
-    
+
+        testString: string;
+
         applicationDidFinishLaunchingWithOptions(application: UIApplication,
             launchOptions: NSDictionary<any, any>): boolean {
             console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions);
+
+            this.testString = 'hello world';
+
             return true;
         }
-    
+
         applicationDidBecomeActive(application: UIApplication): void {
             console.log('applicationDidBecomeActive: ' + application);
         }
