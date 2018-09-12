@@ -18,7 +18,6 @@ module.exports = env => {
         resolve(__dirname, "app/android/accessibilityService.android.ts"),
         resolve(__dirname, "app/android/autofillService.android.ts"),
         resolve(__dirname, "app/android/mainActivity.android.ts"),
-        //resolve(__dirname, "app/android/mainApplication.android.ts"),
     ];
 
     const platform = env && (env.android && "android" || env.ios && "ios");
@@ -51,7 +50,7 @@ module.exports = env => {
     const appResourcesFullPath = resolve(projectRoot, appResourcesPath);
 
     const entryModule = aot ?
-        nsWebpack.getAotEntryModule(appFullPath) : 
+        nsWebpack.getAotEntryModule(appFullPath) :
         `${nsWebpack.getEntryModule(appFullPath)}.ts`;
     const entryPath = `.${sep}${entryModule}`;
 
@@ -109,7 +108,7 @@ module.exports = env => {
                         test: (module, chunks) => {
                             const moduleName = module.nameForCondition ? module.nameForCondition() : '';
                             return /[\\/]node_modules[\\/]/.test(moduleName) ||
-                                    appComponents.some(comp => comp === moduleName);
+                                appComponents.some(comp => comp === moduleName);
                         },
                         enforce: true,
                     },
@@ -200,7 +199,7 @@ module.exports = env => {
                 "process": undefined,
             }),
             // Remove all files from the out dir.
-            new CleanWebpackPlugin([ `${dist}/**/*` ]),
+            new CleanWebpackPlugin([`${dist}/**/*`]),
             // Copy native app resources to out dir.
             new CopyWebpackPlugin([
                 {
@@ -265,7 +264,7 @@ module.exports = env => {
         }));
     }
 
-    if(platform === 'ios') {
+    if (platform === 'ios') {
         config.plugins.push(new CopyWebpackPlugin([
             {
                 from: resolve(projectRoot, 'app/ios/action-extension-starter.ios.js'),
@@ -274,6 +273,8 @@ module.exports = env => {
             },
         ]));
         config.entry["action-extension"] = resolve(__dirname, "app/ios/action-extension.ios.ts");
+    } else if (platform === 'android') {
+        config.entry.application = resolve(__dirname, "app/android/mainApplication.android.ts");
     }
 
     return config;

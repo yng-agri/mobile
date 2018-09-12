@@ -28,6 +28,9 @@
             "angulartics2": [
                 "node_modules/angulartics2"
             ],
+            "node": [
+                "node_modules/@types/node"
+            ],
             "*": [
                 "./node_modules/tns-core-modules/*",
                 "./node_modules/*"
