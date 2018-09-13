@@ -1,3 +1,5 @@
+import { StateService } from 'jslib/services/state.service';
+
 export class ServiceContainer {
     registeredServices: Map<string, any> = new Map<string, any>();
     inited = false;
@@ -6,10 +8,12 @@ export class ServiceContainer {
         if (this.inited) {
             return;
         }
-        console.log('init service container');
+
+        const stateService = new StateService();
+
         this.inited = true;
         this.register('serviceContainer', this);
-        this.register('testString', 'hello world');
+        this.register('stateService', stateService);
     }
 
     register(serviceName: string, value: any) {

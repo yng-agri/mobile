@@ -22,6 +22,8 @@ import {
     AndroidActivityBackPressedEventData,
 } from 'application';
 
+require('./ts-helpers');
+
 if (ios != null) {
     class BitwardenApplicationDelegate extends UIResponder implements UIApplicationDelegate {
         public static ObjCProtocols = [UIApplicationDelegate];
