@@ -29,17 +29,14 @@ if (ios != null) {
         applicationDidFinishLaunchingWithOptions(application: UIApplication,
             launchOptions: NSDictionary<any, any>): boolean {
             console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions);
-            //ServiceContainer.init();
-            console.log(application);
+            const serviceContainer = new ServiceContainer();
+            serviceContainer.init();
+            application['serviceContainer'] = serviceContainer;
             return true;
         }
 
         applicationDidBecomeActive(application: UIApplication): void {
             console.log('applicationDidBecomeActive: ' + application);
-        }
-
-        getService(serviceName: string): any {
-            return ServiceContainer.resolve<any>(serviceName);
         }
     }
     ios.delegate = BitwardenApplicationDelegate;

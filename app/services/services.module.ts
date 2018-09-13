@@ -36,23 +36,21 @@ import { UserService } from 'jslib/abstractions/user.service';
 */
 
 function getApplicationService<T>(service: string) {
-    return (): T => {
-        if (androidApp) {
-            console.log(androidApp.context.getService(service));
-        } else if (iosApp) {
-            console.log(iosApp);
-        } else {
-            throw new Error('Unknown platform.');
-        }
-
-        return null;
-    };
+    let serviceContainer: ServiceContainer = null;
+    if (androidApp) {
+        serviceContainer = androidApp.context.serviceContainer;
+    } else if (iosApp) {
+        serviceContainer = iosApp.nativeApp.serviceContainer;
+    } else {
+        throw new Error('Unknown platform.');
+    }
+    return serviceContainer.resolve<T>(service);
 }
 
 export function initFactory(): Function {
     return () => {
         console.log('doing init');
-        getApplicationService('testString')();
+        console.log(getApplicationService<string>('testString'));
     };
 }
 
