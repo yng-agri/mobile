@@ -23,13 +23,14 @@ import {
 } from 'application';
 
 if (ios != null) {
-    class ApplicationDelegate extends UIResponder implements UIApplicationDelegate {
+    class BitwardenApplicationDelegate extends UIResponder implements UIApplicationDelegate {
         public static ObjCProtocols = [UIApplicationDelegate];
 
         applicationDidFinishLaunchingWithOptions(application: UIApplication,
             launchOptions: NSDictionary<any, any>): boolean {
             console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions);
-            ServiceContainer.init();
+            //ServiceContainer.init();
+            console.log(application);
             return true;
         }
 
@@ -41,7 +42,7 @@ if (ios != null) {
             return ServiceContainer.resolve<any>(serviceName);
         }
     }
-    ios.delegate = ApplicationDelegate;
+    ios.delegate = BitwardenApplicationDelegate;
 } else if (android != null) {
     android.on(AndroidApplication.activityCreatedEvent, function (args: AndroidActivityBundleEventData) {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity + ', Bundle: ' + args.bundle);

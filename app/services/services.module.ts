@@ -40,8 +40,7 @@ function getApplicationService<T>(service: string) {
         if (androidApp) {
             console.log(androidApp.context.getService(service));
         } else if (iosApp) {
-            console.log(iosApp.delegate);
-            console.log(iosApp.delegate.getService(service));
+            console.log(iosApp);
         } else {
             throw new Error('Unknown platform.');
         }
