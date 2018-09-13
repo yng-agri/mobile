@@ -1,5 +1,7 @@
 import { android as androidApp, ios as iosApp } from "application";
 
+import { ServiceContainer } from '../../services/serviceContainer';
+
 import {
     APP_INITIALIZER,
     LOCALE_ID,
@@ -36,10 +38,10 @@ import { UserService } from 'jslib/abstractions/user.service';
 function getApplicationService<T>(service: string) {
     return (): T => {
         if (androidApp) {
-            console.log(androidApp.context[service]);
+            console.log(androidApp.context.getService(service));
         } else if (iosApp) {
             console.log(iosApp.delegate);
-            console.log(iosApp.delegate[service]);
+            console.log(iosApp.delegate.getService(service));
         } else {
             throw new Error('Unknown platform.');
         }

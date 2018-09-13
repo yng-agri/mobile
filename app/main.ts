@@ -3,6 +3,8 @@ import { platformNativeScriptDynamic } from 'nativescript-angular/platform';
 
 import { AppModule } from './app.module';
 
+import { ServiceContainer } from '../services/serviceContainer';
+
 import {
     ios,
     on as applicationOn,
@@ -24,19 +26,19 @@ if (ios != null) {
     class ApplicationDelegate extends UIResponder implements UIApplicationDelegate {
         public static ObjCProtocols = [UIApplicationDelegate];
 
-        testString: string;
-
         applicationDidFinishLaunchingWithOptions(application: UIApplication,
             launchOptions: NSDictionary<any, any>): boolean {
             console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions);
-
-            this.testString = 'hello world';
-
+            ServiceContainer.init();
             return true;
         }
 
         applicationDidBecomeActive(application: UIApplication): void {
             console.log('applicationDidBecomeActive: ' + application);
+        }
+
+        getService(serviceName: string): any {
+            return ServiceContainer.resolve<any>(serviceName);
         }
     }
     ios.delegate = ApplicationDelegate;

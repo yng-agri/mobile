@@ -1,6 +1,8 @@
+import { ServiceContainer } from '../../services/serviceContainer';
+
 @JavaProxy('com.tns.MainApplication')
 export class MainApplication extends android.app.Application {
-    testString: string;
+    services: ServiceContainer;
 
     public onCreate(): void {
         super.onCreate();
@@ -8,7 +10,7 @@ export class MainApplication extends android.app.Application {
         // At this point modules have already been initialized
 
         // Enter custom initialization code here
-        this.testString = 'hello world';
+        ServiceContainer.init();
     }
 
     public attachBaseContext(baseContext: android.content.Context) {
@@ -16,5 +18,9 @@ export class MainApplication extends android.app.Application {
 
         // This code enables MultiDex support for the application (if needed)
         // android.support.multidex.MultiDex.install(this);
+    }
+
+    public getService(serviceName: string): any {
+        return ServiceContainer.resolve<any>(serviceName);
     }
 }
