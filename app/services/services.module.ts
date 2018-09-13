@@ -40,11 +40,11 @@ function getApplicationService<T>(service: string) {
     if (androidApp) {
         serviceContainer = androidApp.context.serviceContainer;
     } else if (iosApp) {
-        serviceContainer = iosApp.nativeApp.serviceContainer;
+        serviceContainer = iosApp.nativeApp['serviceContainer'];
     } else {
         throw new Error('Unknown platform.');
     }
-    return serviceContainer.resolve<T>(service);
+    return serviceContainer == null ? null : serviceContainer.resolve<T>(service);
 }
 
 export function initFactory(): Function {
