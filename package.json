@@ -34,6 +34,7 @@
     "@angular/router": "~6.1.0",
     "angular2-toaster": "6.1.0",
     "angulartics2": "6.3.0",
+    "lowdb": "1.0.0",
     "nativescript-angular": "~6.1.0",
     "nativescript-theme-core": "~1.0.4",
     "reflect-metadata": "~0.1.8",
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@angular/compiler-cli": "~6.1.0",
     "@ngtools/webpack": "~6.1.0",
+    "@types/lowdb": "^1.0.5",
     "@types/node": "8.0.19",
     "nativescript-dev-typescript": "~0.7.0",
     "nativescript-dev-webpack": "^0.15.1",
