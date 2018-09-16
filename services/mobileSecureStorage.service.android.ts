@@ -21,7 +21,7 @@ export class MobileSecureStorageService implements StorageService {
     private rsaMode: string;
 
     constructor(private storageService: StorageService, private cryptoFunctionService: CryptoFunctionService,
-        private cryptoService: CryptoService) {
+        private cryptoService: () => CryptoService) {
         this.oldAndroid = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M;
         this.rsaMode = this.oldAndroid ? 'RSA/ECB/PKCS1Padding' : 'RSA/ECB/OAEPWithSHA-1AndMGF1Padding';
     }
@@ -50,7 +50,7 @@ export class MobileSecureStorageService implements StorageService {
             return null;
         }
         try {
-            const buffer = await this.cryptoService.decryptToBytes(new CipherString(cs), aesKey);
+            const buffer = await this.cryptoService().decryptToBytes(new CipherString(cs), aesKey);
             return Utils.fromBufferToB64(buffer) as any;
         } catch {
             console.error('Failed to decrypt from secure storage.');
@@ -77,7 +77,7 @@ export class MobileSecureStorageService implements StorageService {
 
         try {
             const arr = Utils.fromB64ToArray(obj);
-            const cipherString = await this.cryptoService.encrypt(arr.buffer, aesKey);
+            const cipherString = await this.cryptoService().encrypt(arr.buffer, aesKey);
             await this.storageService.save(formattedKey, cipherString.encryptedString);
         } catch {
             console.error('Failed to encrypt to secure storage.');

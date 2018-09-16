@@ -4,7 +4,7 @@ import { StorageService } from 'jslib/abstractions/storage.service';
 
 export class MobileSecureStorageService implements StorageService {
     constructor(storageService: StorageService, cryptoFunctionService: CryptoFunctionService,
-        cryptoService: CryptoService);
+        cryptoService: () => CryptoService);
     get<T>(key: string): Promise<T>;
     save(key: string, obj: any): Promise<any>;
     remove(key: string): Promise<any>;

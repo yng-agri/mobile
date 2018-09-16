@@ -18,7 +18,7 @@ import { CryptoService } from 'jslib/abstractions/crypto.service';
 import { EnvironmentService } from 'jslib/abstractions/environment.service';
 import { ExportService } from 'jslib/abstractions/export.service';
 import { FolderService } from 'jslib/abstractions/folder.service';
-import { I18nService } from 'jslib/abstractions/i18n.service';
+import { I18nService as I18nService } from 'jslib/abstractions/i18n.service';
 import { LockService } from 'jslib/abstractions/lock.service';
 import { MessagingService } from 'jslib/abstractions/messaging.service';
 import { NotificationsService } from 'jslib/abstractions/notifications.service';
@@ -50,7 +50,8 @@ function getApplicationService<T>(service: string) {
 
 export function initFactory(): Function {
     return () => {
-        console.log('doing init');
+        getApplicationService<ServiceContainer>('serviceContainer')();
+        getApplicationService<any>('i18nService')().init();
     };
 }
 
@@ -60,6 +61,14 @@ export function initFactory(): Function {
     declarations: [],
     providers: [
         { provide: StateService, useFactory: getApplicationService<StateService>('stateService'), deps: [] },
+        //{ provide: CryptoService, useFactory: getApplicationService<CryptoService>('cryptoService'), deps: [] },
+        { provide: StorageService, useFactory: getApplicationService<StorageService>('storageService'), deps: [] },
+        {
+            provide: PlatformUtilsService,
+            useFactory: getApplicationService<PlatformUtilsService>('platformUtilsService'),
+            deps: []
+        },
+        { provide: I18nService, useFactory: getApplicationService<I18nService>('i18nService'), deps: [] },
         {
             provide: APP_INITIALIZER,
             useFactory: initFactory,
