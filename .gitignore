@@ -14,5 +14,5 @@ tmp/
 typings/
 report/
 test-results.xml
-#hooks/
-#!hooks/**/bitwarden.js
+hooks/
+!hooks/**/bitwarden.js
