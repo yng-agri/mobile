@@ -14,5 +14,5 @@ tmp/
 typings/
 report/
 test-results.xml
-hooks/
-!hooks/after-prepare/action-extension.js
+#hooks/
+#!hooks/**/bitwarden.js
