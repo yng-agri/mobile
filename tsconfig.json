@@ -31,6 +31,9 @@
             "node": [
                 "node_modules/@types/node"
             ],
+            "node-forge": [
+                "node_modules/@types/node-forge"
+            ],
             "*": [
                 "./node_modules/tns-core-modules/*",
                 "./node_modules/*"
