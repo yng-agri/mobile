@@ -37,6 +37,14 @@ module.exports = function (hookArgs) {
         mainProj.addBuildProperty('DEVELOPMENT_TEAM', DevTeamId);
         mainProj.addBuildProperty('ENABLE_BITCODE', 'NO');
 
+        // Add entitlements
+        const appEntitlementsSrcPath = path.resolve(hookArgs.projectData.projectDir, 'app/ios/app.entitlements');
+        const appEntitlementsDestPath = path.resolve(hookArgs.projectData.platformsDir, 'ios',
+            hookArgs.projectData.projectName, 'app.entitlements');
+        shell('cp ' + appEntitlementsSrcPath + ' ' + appEntitlementsDestPath);
+        mainProj.addBuildProperty('CODE_SIGN_ENTITLEMENTS',
+            hookArgs.projectData.projectName + '/app.entitlements');
+
         // Done
         fs.writeFileSync(mainProjPath, mainProj.writeSync());
         console.log('pbxproj modifications written.');

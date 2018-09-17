@@ -30,7 +30,7 @@ export class ItemDetailComponent implements OnInit {
         const id = +this.route.snapshot.params["id"];
         this.item = this.itemService.getItem(id);
         await this.stateService.save('hello', 'world!');
-        // await this.storageService.save('hello', 'world!!!!!!!!!!!!!');
+        await this.storageService.save('hello', 'world!!!!!!!!!!!!!');
         console.log('state: ' + (await this.stateService.get<string>('hello')));
         console.log('i18n: ' + this.i18nService.t('hello'));
         console.log('platform: ' + this.platformUtilsService.getDevice());

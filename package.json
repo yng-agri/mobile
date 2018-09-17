@@ -1,6 +1,6 @@
 {
   "nativescript": {
-    "id": "com.x8bit.bitwarden",
+    "id": "com.8bit.bitwarden",
     "tns-android": {
       "version": "4.2.0"
     },
