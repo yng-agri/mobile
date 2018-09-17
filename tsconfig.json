@@ -44,6 +44,12 @@
         "app/ios/ActionExtension",
         "jslib/node_modules",
         "jslib/spec",
-        "jslib/src/electron"
+        "jslib/src/electron",
+        "jslib/src/importers",
+        "jslib/src/angular/components/export.component.ts",
+        "jslib/src/services/export.service.ts",
+        "jslib/src/services/notifications.service.ts",
+        "jslib/src/services/nodeApi.service.ts",
+        "jslib/src/services/search.service.ts"
     ]
 }
