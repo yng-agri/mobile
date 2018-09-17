@@ -34,7 +34,7 @@ if (ios != null) {
             const serviceContainer = new ServiceContainer();
             serviceContainer.init();
             application['serviceContainer'] = serviceContainer;
-            return true; 
+            return true;
         }
 
         applicationDidBecomeActive(application: UIApplication): void {

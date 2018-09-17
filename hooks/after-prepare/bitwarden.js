@@ -15,8 +15,12 @@ module.exports = function (hookArgs) {
 
     const mainProjPath = path.resolve(hookArgs.projectData.platformsDir,
         'ios/' + hookArgs.projectData.projectName + '.xcodeproj/project.pbxproj');
-    const mainProj = xcode.project(mainProjPath);
+    const mainProjData = fs.readFileSync(mainProjPath, 'utf8');
+    if (mainProjData.indexOf('ActionExtension.appex') > -1) {
+        return;
+    }
 
+    const mainProj = xcode.project(mainProjPath);
     mainProj.parse((err) => {
         if (err) {
             console.error(err);
@@ -30,20 +34,15 @@ module.exports = function (hookArgs) {
             link: true,
         });
 
+        // Add entitlements to main project
+        addEntitlements('App', hookArgs.projectData.projectName);
+
         addExtension(hookArgs, mainProj, 'ActionExtension', ['extension.js']);
 
         // Add build properties
         mainProj.addBuildProperty('"CODE_SIGN_IDENTITY[sdk=iphoneos*]"', '"iPhone Developer"');
         mainProj.addBuildProperty('DEVELOPMENT_TEAM', DevTeamId);
         mainProj.addBuildProperty('ENABLE_BITCODE', 'NO');
-
-        // Add entitlements
-        const appEntitlementsSrcPath = path.resolve(hookArgs.projectData.projectDir, 'app/ios/app.entitlements');
-        const appEntitlementsDestPath = path.resolve(hookArgs.projectData.platformsDir, 'ios',
-            hookArgs.projectData.projectName, 'app.entitlements');
-        shell('cp ' + appEntitlementsSrcPath + ' ' + appEntitlementsDestPath);
-        mainProj.addBuildProperty('CODE_SIGN_ENTITLEMENTS',
-            hookArgs.projectData.projectName + '/app.entitlements');
 
         // Done
         fs.writeFileSync(mainProjPath, mainProj.writeSync());
@@ -154,6 +153,9 @@ module.exports = function (hookArgs) {
         // Add target attributes for extension
         mainProj.addTargetAttribute('DevelopmentTeam', DevTeamId, aeTarget);
         mainProj.addTargetAttribute('ProvisioningStyle', 'Automatic', aeTarget);
+
+        // Add entitlements for extension
+        addEntitlements(extensionName, extensionName);
     }
 
     function addScriptBuildPhase(target, name, script) {
@@ -162,5 +164,15 @@ module.exports = function (hookArgs) {
             shellScript: script,
             showEnvVarsInLog: false,
         });
+    }
+
+    function addEntitlements(name, productName) {
+        const entitlementsSrcPath = path.resolve(hookArgs.projectData.projectDir,
+            'app/ios/' + name + '.entitlements');
+        const entitlementsDestPath = path.resolve(hookArgs.projectData.platformsDir, 'ios',
+            hookArgs.projectData.projectName, name + '.entitlements');
+        shell('cp ' + entitlementsSrcPath + ' ' + entitlementsDestPath);
+        mainProj.addBuildProperty('CODE_SIGN_ENTITLEMENTS',
+            hookArgs.projectData.projectName + '/' + name + '.entitlements', null, productName);
     }
 }
