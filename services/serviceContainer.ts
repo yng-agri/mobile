@@ -10,11 +10,15 @@ import { MobilePlatformUtilsService } from './mobilePlatformUtils.service';
 export class ServiceContainer {
     registeredServices: Map<string, any> = new Map<string, any>();
     inited = false;
+    bootstrapped = false;
+
+    private bootstrapPromise: Promise<void> = null;
 
     init() {
         if (this.inited) {
             return;
         }
+        this.inited = true;
 
         const stateService = new StateService();
         const i18nService = new I18nService('en');
@@ -26,7 +30,6 @@ export class ServiceContainer {
         //    () => cryptoService);
         //cryptoService = new CryptoService(storageService, secureStorageService, cryptoFunctionService);
 
-        this.inited = true;
         this.register('serviceContainer', this);
         this.register('stateService', stateService);
         this.register('i18nService', i18nService);
@@ -37,7 +40,21 @@ export class ServiceContainer {
         //this.register('cryptoService', cryptoService);
     }
 
+    async bootstrap() {
+        if (this.bootstrapped) {
+            return Promise.resolve();
+        }
+        if (this.bootstrapPromise == null) {
+            this.bootstrapPromise = this.resolve<I18nService>('i18nService').init().then(() => {
+                this.bootstrapped = true;
+                this.bootstrapPromise = null;
+            });
+        }
+        return this.bootstrapPromise;
+    }
+
     register(serviceName: string, value: any) {
+        this.init();
         if (this.registeredServices.has(serviceName)) {
             throw new Error('Service ' + serviceName + ' has already been registered.');
         }
@@ -45,9 +62,7 @@ export class ServiceContainer {
     }
 
     resolve<T>(serviceName: string): T {
-        if (!this.inited) {
-            throw new Error('Service container has not been inited.');
-        }
+        this.init();
         if (this.registeredServices.has(serviceName)) {
             return this.registeredServices.get(serviceName) as T;
         }

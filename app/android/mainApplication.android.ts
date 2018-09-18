@@ -1,5 +1,7 @@
 import { ServiceContainer } from '../../services/serviceContainer';
 
+require('../ts-helpers');
+
 @JavaProxy('com.tns.MainApplication')
 export class MainApplication extends android.app.Application {
     serviceContainer: ServiceContainer;
@@ -12,6 +14,7 @@ export class MainApplication extends android.app.Application {
         // Enter custom initialization code here
         this.serviceContainer = new ServiceContainer();
         this.serviceContainer.init();
+        this.serviceContainer.bootstrap();
     }
 
     public attachBaseContext(baseContext: android.content.Context) {

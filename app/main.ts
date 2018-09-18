@@ -32,8 +32,9 @@ if (ios != null) {
             launchOptions: NSDictionary<any, any>): boolean {
             console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions);
             const serviceContainer = new ServiceContainer();
-            serviceContainer.init();
             application['serviceContainer'] = serviceContainer;
+            serviceContainer.init();
+            serviceContainer.bootstrap();
             return true;
         }
 

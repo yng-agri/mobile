@@ -49,9 +49,8 @@ function getApplicationService<T>(service: string) {
 }
 
 export function initFactory(): Function {
-    return () => {
-        getApplicationService<ServiceContainer>('serviceContainer')();
-        getApplicationService<any>('i18nService')().init();
+    return async () => {
+        await getApplicationService<ServiceContainer>('serviceContainer')().bootstrap();
     };
 }
 
