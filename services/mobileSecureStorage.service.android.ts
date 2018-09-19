@@ -201,7 +201,7 @@ export class MobileSecureStorageService implements StorageService {
             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry.getPrivateKey(),
                 javax.crypto.spec.OAEPParameterSpec.DEFAULT);
         }
-        const plainText = cipher.doFinal(Array.from(new Uint8Array(encData)));
+        const plainText = cipher.doFinal(this.toByteArr(encData));
         return this.toBuf(plainText);
     }
 
