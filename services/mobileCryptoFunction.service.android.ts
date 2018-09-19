@@ -1,5 +1,3 @@
-import { android as androidApp } from 'application';
-
 import { Utils } from 'jslib/misc/utils';
 
 import { MobileCryptoFunctionService as Common } from './mobileCryptoFunction.service.common';
@@ -19,71 +17,133 @@ const HmacAlgorithms = {
     sha512: 'HmacSHA512',
 };
 
+const RsaOaepAlgorithms = {
+    sha1: 'RSA/ECB/OAEPWithSHA1AndMGF1Padding',
+    sha256: 'RSA/ECB/OAEPWithSHA-256AndMGF1Padding',
+};
+
 export class MobileCryptoFunctionService extends Common {
     pbkdf2(password: string | ArrayBuffer, salt: string | ArrayBuffer, algorithm: 'sha256' | 'sha512',
         iterations: number): Promise<ArrayBuffer> {
-        return null;
+        const digest = algorithm === 'sha256' ? new org.spongycastle.crypto.digests.SHA256Digest() :
+            new org.spongycastle.crypto.digests.SHA512Digest();
+        const generator = new org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator(digest);
+        generator.init(this.toByteArr(password), this.toByteArr(salt), iterations);
+        const param: any = generator.generateDerivedMacParameters(algorithm === 'sha256' ? 256 : 512);
+        const key = param.getKey();
+        return Promise.resolve(this.toBuf(key));
     }
 
     hash(value: string | ArrayBuffer, algorithm: 'sha1' | 'sha256' | 'sha512' | 'md5'): Promise<ArrayBuffer> {
         const md = java.security.MessageDigest.getInstance(HashAlgorithms[algorithm]);
-        const hash = md.digest(this.toArr(value));
-        return Promise.resolve(new Uint8Array(hash).buffer);
+        const hash = md.digest(this.toByteArr(value));
+        return Promise.resolve(this.toBuf(hash));
     }
 
     hmac(value: ArrayBuffer, key: ArrayBuffer, algorithm: 'sha1' | 'sha256' | 'sha512'): Promise<ArrayBuffer> {
-        const keySpec = new javax.crypto.spec.SecretKeySpec(this.toArr(key), HmacAlgorithms[algorithm]);
+        const keySpec = new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), HmacAlgorithms[algorithm]);
         let mac = javax.crypto.Mac.getInstance(HmacAlgorithms[algorithm]);
         mac.init(keySpec);
-        const hmac = mac.doFinal(this.toArr(value));
-        return Promise.resolve(new Uint8Array(hmac).buffer);
+        const hmac = mac.doFinal(this.toByteArr(value));
+        return Promise.resolve(this.toBuf(hmac));
     }
 
     aesEncrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
-        const keySpec = new javax.crypto.spec.SecretKeySpec(this.toArr(key), 'AES');
-        const ivSpec = new javax.crypto.spec.IvParameterSpec(this.toArr(iv));
+        const keySpec = new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES');
+        const ivSpec = new javax.crypto.spec.IvParameterSpec(this.toByteArr(iv));
         let cipher = javax.crypto.Cipher.getInstance('AES/CBC/PKCS5Padding'); // TODO: what padding?
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-        const encBytes = cipher.doFinal(this.toArr(data));
-        return Promise.resolve(new Uint8Array(encBytes).buffer);
+        const encBytes = cipher.doFinal(this.toByteArr(data));
+        return Promise.resolve(this.toBuf(encBytes));
     }
 
     aesDecrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
-        const keySpec = new javax.crypto.spec.SecretKeySpec(this.toArr(key), 'AES');
-        const ivSpec = new javax.crypto.spec.IvParameterSpec(this.toArr(iv));
+        const keySpec = new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES');
+        const ivSpec = new javax.crypto.spec.IvParameterSpec(this.toByteArr(iv));
         let cipher = javax.crypto.Cipher.getInstance('AES/CBC/PKCS5Padding'); // TODO: what padding?
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        const decBytes = cipher.doFinal(this.toArr(data));
-        return Promise.resolve(new Uint8Array(decBytes).buffer);
+        const decBytes = cipher.doFinal(this.toByteArr(data));
+        return Promise.resolve(this.toBuf(decBytes));
     }
 
     rsaEncrypt(data: ArrayBuffer, publicKey: ArrayBuffer, algorithm: 'sha1' | 'sha256'): Promise<ArrayBuffer> {
-        return null;
+        // Convert from ASN1
+        const decoder = new org.spongycastle.asn1.ASN1InputStream(this.toByteArr(publicKey));
+        const topSequence = decoder.readObject();
+        const bitString = topSequence.getObjectAt(1);
+        const bitStringSequence = org.spongycastle.asn1.ASN1Sequence.getInstance(
+            org.spongycastle.asn1.ASN1Primitive.fromByteArray(bitString.getOctets()));
+        const modulus = bitStringSequence.getObjectAt(0);
+        const exponent = bitStringSequence.getObjectAt(1);
+        decoder.close();
+        const keySpec = new java.security.spec.RSAPublicKeySpec(modulus.getPositiveValue(),
+            exponent.getPositiveValue());
+        const factory = java.security.KeyFactory.getInstance('RSA');
+        const pub = factory.generatePublic(keySpec);
+        // Encrypt
+        const cipher = javax.crypto.Cipher.getInstance(RsaOaepAlgorithms[algorithm]);
+        cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, pub);
+        const cipherText = cipher.doFinal(this.toByteArr(data));
+        return Promise.resolve(this.toBuf(cipherText));
     }
 
     rsaDecrypt(data: ArrayBuffer, privateKey: ArrayBuffer, algorithm: 'sha1' | 'sha256'): Promise<ArrayBuffer> {
-        return null;
+        // Convert from PKCS8
+        const pkcs8Spec = new java.security.spec.PKCS8EncodedKeySpec(this.toByteArr(privateKey));
+        const factory = java.security.KeyFactory.getInstance('RSA');
+        const priv = factory.generatePrivate(pkcs8Spec);
+        // Decrypt
+        const cipher = javax.crypto.Cipher.getInstance(RsaOaepAlgorithms[algorithm]);
+        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, priv);
+        const cipherText = cipher.doFinal(this.toByteArr(data));
+        return Promise.resolve(this.toBuf(cipherText));
     }
 
     rsaExtractPublicKey(privateKey: ArrayBuffer): Promise<ArrayBuffer> {
-        return null;
+        // Convert from PKCS8
+        const pkcs8Spec = new java.security.spec.PKCS8EncodedKeySpec(this.toByteArr(privateKey));
+        const factory = java.security.KeyFactory.getInstance('RSA');
+        const priv = factory.generatePrivate(pkcs8Spec);
+        // Extract
+        const privKeySpec = factory.getKeySpec(priv,
+            java.security.spec.RSAPrivateKeySpec.class) as java.security.spec.RSAPrivateKeySpec;
+        const pubKeySpec = new java.security.spec.RSAPublicKeySpec(privKeySpec.getModulus(),
+            java.math.BigInteger.valueOf(65537));
+        const pub = factory.generatePublic(pubKeySpec).getEncoded();
+        return Promise.resolve(this.toBuf(pub));
     }
 
     async rsaGenerateKeyPair(length: 1024 | 2048 | 4096): Promise<[ArrayBuffer, ArrayBuffer]> {
-        return null;
+        const generator = java.security.KeyPairGenerator.getInstance(
+            android.security.keystore.KeyProperties.KEY_ALGORITHM_RSA);
+        generator.initialize(length);
+        const keyPair = generator.genKeyPair();
+        const publicKey = keyPair.getPublic().getEncoded();
+        const privateKey = keyPair.getPrivate().getEncoded();
+        const result = [this.toBuf(publicKey), this.toBuf(privateKey)];
+        return Promise.resolve(result as [ArrayBuffer, ArrayBuffer]);
     }
 
     randomBytes(length: number): Promise<ArrayBuffer> {
         const random = new java.security.SecureRandom();
-        const bytes = [length];
+        const bytes = Array.create('byte', length);
         random.nextBytes(bytes);
-        return Promise.resolve(new Uint8Array(bytes).buffer);
+        return Promise.resolve(this.toBuf(bytes));
     }
 
-    private toArr(value: string | ArrayBuffer): number[] {
+    private toByteArr(value: string | ArrayBuffer): native.Array<number> {
+        let arr: Uint8Array;
         if (typeof (value) === 'string') {
-            return Array.from(Utils.fromUtf8ToArray(value));
+            arr = Utils.fromUtf8ToArray(value);
+        } else {
+            arr = new Uint8Array(value);
         }
-        return Array.from(new Uint8Array(value));
+        const bytes = Array.create('byte', arr.length);
+        arr.forEach((v, i) => bytes[i] = v);
+        return bytes;
+    }
+
+    private toBuf(value: native.Array<number>): ArrayBuffer {
+        return new Uint8Array(value).buffer;
     }
 }

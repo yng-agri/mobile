@@ -15,6 +15,7 @@ import { AuthService } from 'jslib/abstractions/auth.service';
 import { CipherService } from 'jslib/abstractions/cipher.service';
 import { CollectionService } from 'jslib/abstractions/collection.service';
 import { CryptoService } from 'jslib/abstractions/crypto.service';
+import { CryptoFunctionService } from 'jslib/abstractions/cryptoFunction.service';
 import { EnvironmentService } from 'jslib/abstractions/environment.service';
 import { ExportService } from 'jslib/abstractions/export.service';
 import { FolderService } from 'jslib/abstractions/folder.service';
@@ -60,7 +61,8 @@ export function initFactory(): Function {
     declarations: [],
     providers: [
         { provide: StateService, useFactory: getApplicationService<StateService>('stateService'), deps: [] },
-        //{ provide: CryptoService, useFactory: getApplicationService<CryptoService>('cryptoService'), deps: [] },
+        { provide: CryptoService, useFactory: getApplicationService<CryptoService>('cryptoService'), deps: [] },
+        { provide: CryptoFunctionService, useFactory: getApplicationService<CryptoFunctionService>('cryptoFunctionService'), deps: [] },
         { provide: StorageService, useFactory: getApplicationService<StorageService>('storageService'), deps: [] },
         {
             provide: PlatformUtilsService,
