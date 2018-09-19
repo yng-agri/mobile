@@ -158,11 +158,10 @@ export class MobileSecureStorageService implements StorageService {
         if (existingKey != null) {
             return;
         }
-
         const random = new java.security.SecureRandom();
-        const keyBytes: number[] = [64];
+        const keyBytes = Array.create('byte', 64);
         random.nextBytes(keyBytes);
-        const key = new Uint8Array(keyBytes).buffer;
+        const key = this.toBuf(keyBytes);
         const encKey = this.oldAndroid ? this.rsaEncrypt(key) : this.aesEncrypt(key);
         await this.storageService.save(AesKey, encKey);
     }
@@ -171,69 +170,58 @@ export class MobileSecureStorageService implements StorageService {
         let entry = this.keyStore.getKey(KeyAlias, null);
         let cipher = javax.crypto.Cipher.getInstance(AesMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry);
-        const encBytes = cipher.doFinal(Array.from(new Uint8Array(input)));
+        const encBytes = cipher.doFinal(this.toByteArr(input));
         const ivBytes = cipher.getIV();
-
-        cipher.finalize();
-        entry.finalize();
-        cipher = null;
-        entry = null;
-
-        return Utils.fromBufferToB64(new Uint8Array(ivBytes).buffer) + '|' +
-            Utils.fromBufferToB64(new Uint8Array(encBytes).buffer);
+        return Utils.fromBufferToB64(this.toBuf(ivBytes)) + '|' + Utils.fromBufferToB64(this.toBuf(encBytes));
     }
 
     private aesDecrypt(iv: ArrayBuffer, encData: ArrayBuffer): ArrayBuffer {
         let entry = this.keyStore.getKey(KeyAlias, null);
         let cipher = javax.crypto.Cipher.getInstance(AesMode);
-        const spec = new javax.crypto.spec.GCMParameterSpec(128, Array.from(new Uint8Array(iv)));
+        const spec = new javax.crypto.spec.GCMParameterSpec(128, this.toByteArr(iv));
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry, spec);
-        const decBytes = cipher.doFinal(Array.from(new Uint8Array(encData)));
-
-        cipher.finalize();
-        entry.finalize();
-        cipher = null;
-        entry = null;
-
-        return new Uint8Array(decBytes).buffer;
+        const decBytes = cipher.doFinal(this.toByteArr(encData));
+        return this.toBuf(decBytes);
     }
 
     private rsaEncrypt(data: ArrayBuffer): string {
         let entry = this.getRsaKeyEntry(KeyAlias);
         let cipher = javax.crypto.Cipher.getInstance(this.rsaMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry.getCertificate().getPublicKey());
-        const cipherText = cipher.doFinal(Array.from(new Uint8Array(data)));
-
-        cipher.finalize();
-        entry.finalize();
-        cipher = null;
-        entry = null;
-
-        return Utils.fromBufferToB64(new Uint8Array(cipherText).buffer);
+        const cipherText = cipher.doFinal(this.toByteArr(data));
+        return Utils.fromBufferToB64(this.toBuf(cipherText));
     }
 
     private rsaDecrypt(encData: ArrayBuffer): ArrayBuffer {
         let entry = this.getRsaKeyEntry(KeyAlias);
         let cipher = javax.crypto.Cipher.getInstance(this.rsaMode);
-
         if (this.oldAndroid) {
             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry.getPrivateKey());
         } else {
             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry.getPrivateKey(),
                 javax.crypto.spec.OAEPParameterSpec.DEFAULT);
         }
-
         const plainText = cipher.doFinal(Array.from(new Uint8Array(encData)));
-
-        cipher.finalize();
-        entry.finalize();
-        cipher = null;
-        entry = null;
-
-        return new Uint8Array(plainText).buffer;
+        return this.toBuf(plainText);
     }
 
     private getRsaKeyEntry(alias: string) {
         return this.keyStore.getEntry(alias, null) as java.security.KeyStore.PrivateKeyEntry;
+    }
+
+    private toByteArr(value: string | ArrayBuffer): native.Array<number> {
+        let arr: Uint8Array;
+        if (typeof (value) === 'string') {
+            arr = Utils.fromUtf8ToArray(value);
+        } else {
+            arr = new Uint8Array(value);
+        }
+        const bytes = Array.create('byte', arr.length);
+        arr.forEach((v, i) => bytes[i] = v);
+        return bytes;
+    }
+
+    private toBuf(value: native.Array<number>): ArrayBuffer {
+        return new Uint8Array(value).buffer;
     }
 }
