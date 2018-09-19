@@ -1,7 +1,6 @@
 import { android as androidApp } from 'application';
 
 import { CryptoService } from 'jslib/abstractions/crypto.service';
-import { CryptoFunctionService } from 'jslib/abstractions/cryptoFunction.service';
 import { StorageService } from 'jslib/abstractions/storage.service';
 
 import { Utils } from 'jslib/misc/utils';
@@ -20,8 +19,7 @@ export class MobileSecureStorageService implements StorageService {
     private oldAndroid = false;
     private rsaMode: string;
 
-    constructor(private storageService: StorageService, private cryptoFunctionService: CryptoFunctionService,
-        private cryptoService: () => CryptoService) {
+    constructor(private storageService: StorageService, private cryptoService: () => CryptoService) {
         this.oldAndroid = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M;
         this.rsaMode = this.oldAndroid ? 'RSA/ECB/PKCS1Padding' : 'RSA/ECB/OAEPWithSHA-1AndMGF1Padding';
     }
@@ -128,7 +126,7 @@ export class MobileSecureStorageService implements StorageService {
                 .setSerialNumber(java.math.BigInteger.TEN);
 
             if (withDate) {
-                builder.setStartDate(new java.util.Date(0)).setEndDate(new java.util.Date(end.time));
+                builder.setStartDate(new java.util.Date(0)).setEndDate(end.getTime());
             }
 
             const spec = builder.build();
@@ -140,8 +138,8 @@ export class MobileSecureStorageService implements StorageService {
             const builder = new android.security.keystore.KeyGenParameterSpec.Builder(KeyAlias,
                 android.security.keystore.KeyProperties.PURPOSE_DECRYPT |
                 android.security.keystore.KeyProperties.PURPOSE_ENCRYPT)
-                .setBlockModes(android.security.keystore.KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE);
+                .setBlockModes([android.security.keystore.KeyProperties.BLOCK_MODE_GCM])
+                .setEncryptionPaddings([android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE]);
 
             if (withDate) {
                 builder.setKeyValidityStart(new java.util.Date(0)).setKeyValidityEnd(new java.util.Date(end.time));
@@ -161,7 +159,10 @@ export class MobileSecureStorageService implements StorageService {
             return;
         }
 
-        const key = await this.cryptoFunctionService.randomBytes(64);
+        const random = new java.security.SecureRandom();
+        const keyBytes: number[] = [64];
+        random.nextBytes(keyBytes);
+        const key = new Uint8Array(keyBytes).buffer;
         const encKey = this.oldAndroid ? this.rsaEncrypt(key) : this.aesEncrypt(key);
         await this.storageService.save(AesKey, encKey);
     }
@@ -170,7 +171,7 @@ export class MobileSecureStorageService implements StorageService {
         let entry = this.keyStore.getKey(KeyAlias, null);
         let cipher = javax.crypto.Cipher.getInstance(AesMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry);
-        const encBytes = cipher.doFinal(new Uint8Array(input));
+        const encBytes = cipher.doFinal(Array.from(new Uint8Array(input)));
         const ivBytes = cipher.getIV();
 
         cipher.finalize();
@@ -185,9 +186,9 @@ export class MobileSecureStorageService implements StorageService {
     private aesDecrypt(iv: ArrayBuffer, encData: ArrayBuffer): ArrayBuffer {
         let entry = this.keyStore.getKey(KeyAlias, null);
         let cipher = javax.crypto.Cipher.getInstance(AesMode);
-        const spec = new javax.crypto.spec.GCMParameterSpec(128, new Uint8Array(iv));
+        const spec = new javax.crypto.spec.GCMParameterSpec(128, Array.from(new Uint8Array(iv)));
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry, spec);
-        const decBytes = cipher.doFinal(new Uint8Array(encData));
+        const decBytes = cipher.doFinal(Array.from(new Uint8Array(encData)));
 
         cipher.finalize();
         entry.finalize();
@@ -201,7 +202,7 @@ export class MobileSecureStorageService implements StorageService {
         let entry = this.getRsaKeyEntry(KeyAlias);
         let cipher = javax.crypto.Cipher.getInstance(this.rsaMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry.getCertificate().getPublicKey());
-        const cipherText = cipher.doFinal(new Uint8Array(data));
+        const cipherText = cipher.doFinal(Array.from(new Uint8Array(data)));
 
         cipher.finalize();
         entry.finalize();
@@ -222,7 +223,7 @@ export class MobileSecureStorageService implements StorageService {
                 javax.crypto.spec.OAEPParameterSpec.DEFAULT);
         }
 
-        const plainText = cipher.doFinal(new Uint8Array(encData));
+        const plainText = cipher.doFinal(Array.from(new Uint8Array(encData)));
 
         cipher.finalize();
         entry.finalize();

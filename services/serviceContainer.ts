@@ -2,9 +2,9 @@ import { StateService } from 'jslib/services/state.service';
 
 import { I18nService } from './i18n.service';
 import { LowdbStorageService } from './lowdbStorage.service';
-//import { MobileSecureStorageService } from './mobileSecureStorage.service';
-//import { NodeCryptoFunctionService } from 'jslib/services/nodeCryptoFunction.service';
-//import { CryptoService } from 'jslib/services';
+import { MobileSecureStorageService } from './mobileSecureStorage.service';
+import { MobileCryptoFunctionService } from './mobileCryptoFunction.service';
+import { CryptoService } from 'jslib/services/crypto.service';
 import { MobilePlatformUtilsService } from './mobilePlatformUtils.service';
 
 export class ServiceContainer {
@@ -23,21 +23,20 @@ export class ServiceContainer {
         const stateService = new StateService();
         const i18nService = new I18nService('en');
         const platformUtilsService = new MobilePlatformUtilsService(i18nService);
-        //const cryptoFunctionService = new NodeCryptoFunctionService();
+        const cryptoFunctionService = new MobileCryptoFunctionService();
         const storageService = new LowdbStorageService();
-        //let cryptoService: CryptoService = null;
-        //const secureStorageService = new MobileSecureStorageService(storageService, cryptoFunctionService,
-        //    () => cryptoService);
-        //cryptoService = new CryptoService(storageService, secureStorageService, cryptoFunctionService);
+        let cryptoService: CryptoService = null;
+        const secureStorageService = new MobileSecureStorageService(storageService, () => cryptoService);
+        cryptoService = new CryptoService(storageService, secureStorageService, cryptoFunctionService);
 
         this.register('serviceContainer', this);
         this.register('stateService', stateService);
         this.register('i18nService', i18nService);
         this.register('platformUtilsService', platformUtilsService);
-        //this.register('cryptoFunctionService', cryptoFunctionService);
+        this.register('cryptoFunctionService', cryptoFunctionService);
         this.register('storageService', storageService);
-        //this.register('secureStorageService', secureStorageService);
-        //this.register('cryptoService', cryptoService);
+        this.register('secureStorageService', secureStorageService);
+        this.register('cryptoService', cryptoService);
     }
 
     async bootstrap() {
@@ -46,6 +45,8 @@ export class ServiceContainer {
         }
         if (this.bootstrapPromise == null) {
             this.bootstrapPromise = this.resolve<I18nService>('i18nService').init().then(() => {
+                return this.resolve<MobileSecureStorageService>('secureStorageService').init();
+            }).then(() => {
                 this.bootstrapped = true;
                 this.bootstrapPromise = null;
             });

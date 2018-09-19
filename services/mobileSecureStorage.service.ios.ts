@@ -6,6 +6,10 @@ const KeyChainService = 'com.8bit.bitwarden';
 const KeyChainAccessGroup = 'LTZ2PFU5D6.com.8bit.bitwarden';
 
 export class MobileSecureStorageService implements StorageService {
+    init() {
+        return Promise.resolve();
+    }
+
     async get<T>(key: string): Promise<T> {
         try {
             const query = this.getRecordQuery(key);
