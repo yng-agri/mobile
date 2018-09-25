@@ -16,14 +16,14 @@
         "build:native": "tns plugin build",
         "test:android": "npm run tsc && npm run tslint && cd ../demo && tns build android && tns test android --justlaunch --emulator",
         "test:ios": "npm run tsc && npm run tslint && cd ../demo && tns build ios && tns test ios --justlaunch --emulator",
-        "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
+        "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude '**/node_modules/**' --exclude 'demo/**/*' --exclude '**/*.d.ts'",
         "plugin:tscwatch": "npm run tsc -- -w",
         "demo:ios": "npm run tsc && cd ../demo && tns run ios --syncAllFiles",
         "demo:android": "npm run tsc && cd ../demo && tns run android --syncAllFiles",
         "demo:reset": "cd ../demo && npx rimraf -- hooks node_modules platforms package-lock.json",
         "plugin:prepare": "npm run build && cd ../demo && tns plugin remove nativescript-bw-crypto && tns plugin add ../src",
         "clean": "npm run demo:reset && npx rimraf -- node_modules package-lock.json && npm i",
-        "ci:tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**'",
+        "ci:tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**' --exclude 'demo/**/*' --exclude '**/*.d.ts'",
         "prepack": "npm run build:native"
     },
     "devDependencies": {

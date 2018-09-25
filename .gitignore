@@ -19,4 +19,4 @@ hooks/
 !plugins/**/src/platforms/
 plugins/**/src/**/*.js
 plugins/**/demo/app/**/*.js
-!plugins/**/demo/app/tests/**/*.js
+!plugins/**/demo/app/tests/tests.js

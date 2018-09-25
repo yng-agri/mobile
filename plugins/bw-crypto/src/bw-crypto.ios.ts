@@ -1,5 +1,3 @@
-import { Common } from './bw-crypto.common';
-
-export class BwCrypto extends Common {
+export class BwCrypto {
 
 }
