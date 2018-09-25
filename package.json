@@ -34,6 +34,7 @@
     "@angular/router": "~6.1.0",
     "angular2-toaster": "6.1.0",
     "angulartics2": "6.3.0",
+    "bitwarden-crypto": "file:plugins/crypto",
     "lowdb": "1.0.0",
     "nativescript-angular": "~6.1.0",
     "nativescript-theme-core": "~1.0.4",
