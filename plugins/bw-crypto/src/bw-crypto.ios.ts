@@ -37,6 +37,13 @@ export class BwCrypto {
     }
 
     randomBytes(length: number): Promise<ArrayBuffer> {
-        return Promise.resolve(null);
+        const intRef = new interop.Reference<any>();
+        const status = SecRandomCopyBytes(kSecRandomDefault, length, intRef);
+        if (status === noErr) {
+            const buffer = interop.bufferFromData(intRef.value as NSData);
+            return Promise.resolve(buffer);
+        } else {
+            throw new Error('SecRandomCopyBytes failed with status ' + status + '.');
+        }
     }
 }
