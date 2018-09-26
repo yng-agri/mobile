@@ -34,6 +34,9 @@
             "node-forge": [
                 "node_modules/@types/node-forge"
             ],
+            "tns-platform-declarations/*": [
+                "node_modules/tns-platform-declarations/*"
+            ],
             "*": [
                 "./node_modules/tns-core-modules/*",
                 "./node_modules/*"
@@ -44,6 +47,7 @@
         "node_modules",
         "platforms",
         "hooks",
+        "plugins",
         "app/ios/ActionExtension",
         "jslib/node_modules",
         "jslib/spec",

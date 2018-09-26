@@ -1,4 +1,4 @@
-export declare class BwCrypto {
+export class BwCrypto {
     pbkdf2(password: string | ArrayBuffer, salt: string | ArrayBuffer, algorithm: 'sha256' | 'sha512',
         iterations: number): Promise<ArrayBuffer>;
     hash(value: string | ArrayBuffer, algorithm: 'sha1' | 'sha256' | 'sha512' | 'md5'): Promise<ArrayBuffer>;

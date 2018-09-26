@@ -5,18 +5,26 @@ import { Utils } from 'jslib/misc/utils';
 import { SymmetricCryptoKey } from 'jslib/models/domain/symmetricCryptoKey';
 import { DecryptParameters } from 'jslib/models/domain/decryptParameters';
 
-export abstract class MobileCryptoFunctionService implements CryptoFunctionService {
+import { BwCrypto } from 'nativescript-bw-crypto';
+
+export class MobileCryptoFunctionService implements CryptoFunctionService {
+    private bwCrypto: BwCrypto;
+
+    constructor() {
+        this.bwCrypto = new BwCrypto();
+    }
+
     pbkdf2(password: string | ArrayBuffer, salt: string | ArrayBuffer, algorithm: 'sha256' | 'sha512',
         iterations: number): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.pbkdf2(password, salt, algorithm, iterations);
     }
 
     hash(value: string | ArrayBuffer, algorithm: 'sha1' | 'sha256' | 'sha512' | 'md5'): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.hash(value, algorithm);
     }
 
     hmac(value: ArrayBuffer, key: ArrayBuffer, algorithm: 'sha1' | 'sha256' | 'sha512'): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.hmac(value, key, algorithm);
     }
 
     async compare(a: ArrayBuffer, b: ArrayBuffer): Promise<boolean> {
@@ -47,7 +55,7 @@ export abstract class MobileCryptoFunctionService implements CryptoFunctionServi
     }
 
     aesEncrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.aesEncrypt(data, iv, key);
     }
 
     aesDecryptFastParameters(data: string, iv: string, mac: string, key: SymmetricCryptoKey):
@@ -78,26 +86,26 @@ export abstract class MobileCryptoFunctionService implements CryptoFunctionServi
     }
 
     aesDecrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.aesDecrypt(data, iv, key);
     }
 
     rsaEncrypt(data: ArrayBuffer, publicKey: ArrayBuffer, algorithm: 'sha1' | 'sha256'): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.rsaEncrypt(data, publicKey, algorithm);
     }
 
     rsaDecrypt(data: ArrayBuffer, privateKey: ArrayBuffer, algorithm: 'sha1' | 'sha256'): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.rsaDecrypt(data, privateKey, algorithm);
     }
 
     rsaExtractPublicKey(privateKey: ArrayBuffer): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.rsaExtractPublicKey(privateKey);
     }
 
     async rsaGenerateKeyPair(length: 1024 | 2048 | 4096): Promise<[ArrayBuffer, ArrayBuffer]> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.rsaGenerateKeyPair(length);
     }
 
     randomBytes(length: number): Promise<ArrayBuffer> {
-        throw new Error('Not implemented');
+        return this.bwCrypto.randomBytes(length);
     }
 }

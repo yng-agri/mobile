@@ -17,6 +17,7 @@ test-results.xml
 hooks/
 !hooks/**/bitwarden.js
 !plugins/**/src/platforms/
+plugins/**/publish/package
 plugins/**/src/**/*.js
 plugins/**/demo/app/**/*.js
 !plugins/**/demo/app/tests/tests.js
