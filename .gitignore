@@ -19,5 +19,9 @@ hooks/
 !plugins/**/src/platforms/
 plugins/**/publish/package
 plugins/**/src/**/*.js
+plugins/**/src/**/*.aar
+plugins/**/src/**/*.jar
+plugins/**/src/*.android.d.ts
+plugins/**/src/*.ios.d.ts
 plugins/**/demo/app/**/*.js
 !plugins/**/demo/app/tests/tests.js
