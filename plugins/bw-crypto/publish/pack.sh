@@ -11,7 +11,6 @@ install(){
 }
 
 pack() {
-
     echo 'Clearing /src and /package...'
     node_modules/.bin/rimraf "$TO_SOURCE_DIR"
     node_modules/.bin/rimraf "$PACK_DIR"
