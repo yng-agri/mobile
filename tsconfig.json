@@ -31,9 +31,6 @@
             "node": [
                 "node_modules/@types/node"
             ],
-            "node-forge": [
-                "node_modules/@types/node-forge"
-            ],
             "tns-platform-declarations/*": [
                 "node_modules/tns-platform-declarations/*"
             ],

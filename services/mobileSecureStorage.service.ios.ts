@@ -1,3 +1,4 @@
+import { CryptoService } from 'jslib/abstractions/crypto.service';
 import { StorageService } from 'jslib/abstractions/storage.service';
 
 import { Utils } from 'jslib/misc/utils';
@@ -6,6 +7,9 @@ const KeyChainService = 'com.8bit.bitwarden';
 const KeyChainAccessGroup = 'LTZ2PFU5D6.com.8bit.bitwarden';
 
 export class MobileSecureStorageService implements StorageService {
+    constructor(private storageService: StorageService, private cryptoService: () => CryptoService) {
+    }
+
     init() {
         return Promise.resolve();
     }
