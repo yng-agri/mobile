@@ -54,13 +54,13 @@ export class MobileSecureStorageService implements StorageService {
 
     private getRecordQuery(key: string, obj: any = null) {
         const query = NSMutableDictionary.new();
-        query.setValueForKey(kSecClass, kSecClassGenericPassword);
-        query.setValueForKey(kSecAttrAccessGroup, KeyChainAccessGroup);
-        query.setValueForKey(kSecAttrService, KeyChainService);
-        query.setValueForKey(kSecAttrAccount, key);
+        query.setValueForKey(kSecClassGenericPassword, kSecClass);
+        query.setValueForKey(KeyChainAccessGroup, kSecAttrAccessGroup);
+        query.setValueForKey(KeyChainService, kSecAttrService);
+        query.setValueForKey(key, kSecAttrAccount);
         if (obj == null) {
-            query.setObjectForKey(kSecReturnData, kCFBooleanTrue);
-            query.setValueForKey(kSecMatchLimit, kSecMatchLimitOne);
+            query.setValueForKey(kCFBooleanTrue, kSecReturnData);
+            query.setValueForKey(kSecMatchLimitOne, kSecMatchLimit);
         }
         else {
             if (typeof (obj) !== 'string') {
@@ -70,7 +70,7 @@ export class MobileSecureStorageService implements StorageService {
             const intRef = new interop.Reference(interop.types.int8, interop.alloc(data.length));
             data.forEach((d, i) => intRef[i] = d);
             const nsData = NSData.dataWithBytesLength(intRef, data.length);
-            query.setObjectForKey(kSecValueData, nsData);
+            query.setValueForKey(nsData, kSecValueData);
         }
         return query;
     }
