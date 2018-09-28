@@ -97,11 +97,31 @@ export class BwCrypto {
     }
 
     rsaEncrypt(data: ArrayBuffer, publicKey: ArrayBuffer, algorithm: 'sha1' | 'sha256'): Promise<ArrayBuffer> {
-        return Promise.resolve(null);
+        const tag = this.makeTag(true);
+        const keyRef = this.importKey(tag, publicKey, true);
+        const nsData = this.toNSData(data);
+        const alg = algorithm === 'sha256' ? kSecKeyAlgorithmRSAEncryptionOAEPSHA256 :
+            kSecKeyAlgorithmRSAEncryptionOAEPSHA1;
+        try {
+            const encData = SecKeyCreateEncryptedData(keyRef.value, alg, nsData, null);
+            return Promise.resolve(interop.bufferFromData(encData));
+        } catch (e) {
+            throw new Error('SecKeyCreateEncryptedData failed: ' + e);
+        }
     }
 
     rsaDecrypt(data: ArrayBuffer, privateKey: ArrayBuffer, algorithm: 'sha1' | 'sha256'): Promise<ArrayBuffer> {
-        return Promise.resolve(null);
+        const tag = this.makeTag(false);
+        const keyRef = this.importKey(tag, privateKey, false);
+        const nsData = this.toNSData(data);
+        const alg = algorithm === 'sha256' ? kSecKeyAlgorithmRSAEncryptionOAEPSHA256 :
+            kSecKeyAlgorithmRSAEncryptionOAEPSHA1;
+        try {
+            const decData = SecKeyCreateDecryptedData(keyRef.value, alg, nsData, null);
+            return Promise.resolve(interop.bufferFromData(decData));
+        } catch (e) {
+            throw new Error('SecKeyCreateDecryptedData failed: ' + e);
+        }
     }
 
     rsaExtractPublicKey(privateKey: ArrayBuffer): Promise<ArrayBuffer> {
@@ -115,17 +135,17 @@ export class BwCrypto {
     }
 
     rsaGenerateKeyPair(length: 1024 | 2048 | 4096): Promise<[ArrayBuffer, ArrayBuffer]> {
-        const tag = 'com.8bit.bitwarden.' + (NSUUID.alloc().init().UUIDString).toLowerCase();
-
+        const publicTab = this.makeTag(true);
+        const privateTag = this.makeTag(true);
         const publicAttr = NSMutableDictionary.new();
         publicAttr.setValueForKey(true, kSecAttrIsPermanent);
-        publicAttr.setValueForKey(tag + '.publicKey', kSecAttrApplicationTag);
+        publicAttr.setValueForKey(publicTab, kSecAttrApplicationTag);
         publicAttr.setValueForKey(kSecClassKey, kSecClass);
         publicAttr.setValueForKey(kCFBooleanTrue, kSecReturnData);
 
         const privateAttr = NSMutableDictionary.new();
         privateAttr.setValueForKey(true, kSecAttrIsPermanent);
-        privateAttr.setValueForKey(tag + '.privateKey', kSecAttrApplicationTag);
+        privateAttr.setValueForKey(privateTag, kSecAttrApplicationTag);
         privateAttr.setValueForKey(kSecClassKey, kSecClass);
         privateAttr.setValueForKey(kCFBooleanTrue, kSecReturnData);
 
@@ -148,7 +168,7 @@ export class BwCrypto {
         }
 
         const privateData = interop.bufferFromData(privateResultRef.value);
-        return Promise.resolve(this.privateKeyToDerPair(privateData));
+        return Promise.resolve(this.privateKeyToPkcs8Pair(privateData));
     }
 
     randomBytes(length: number): Promise<ArrayBuffer> {
@@ -174,7 +194,7 @@ export class BwCrypto {
         }
     }
 
-    private privateKeyToDerPair(pkcs1PrivateKey: ArrayBuffer): [ArrayBuffer, ArrayBuffer] {
+    private privateKeyToPkcs8Pair(pkcs1PrivateKey: ArrayBuffer): [ArrayBuffer, ArrayBuffer] {
         const pkcs1ByteString = String.fromCharCode.apply(null, new Uint8Array(pkcs1PrivateKey));
         const asn1 = forge.asn1.fromDer(pkcs1ByteString);
 
@@ -192,11 +212,59 @@ export class BwCrypto {
         return [publicKeyArr, privateKeyArr];
     }
 
+    private privateKeyToPkcs1Data(pkcs8PrivateKey: ArrayBuffer): NSData {
+        const pkcs8ByteString = String.fromCharCode.apply(null, new Uint8Array(pkcs8PrivateKey));
+        const asn1 = forge.asn1.fromDer(pkcs8ByteString);
+        const privateKey = forge.pki.privateKeyFromAsn1(asn1);
+        const rsaPrivateKey = forge.pki.privateKeyToAsn1(privateKey);
+        const derPrivateKey = forge.asn1.toDer(rsaPrivateKey).getBytes();
+        const privateKeyArr = this.fromByteStringToArray(derPrivateKey).buffer;
+        return this.toNSData(privateKeyArr);
+    }
+
+    private publicKeyToPkcs1Data(pkcs8PublicKey: ArrayBuffer): NSData {
+        const pkcs8ByteString = String.fromCharCode.apply(null, new Uint8Array(pkcs8PublicKey));
+        const asn1 = forge.asn1.fromDer(pkcs8ByteString);
+        const publicKey = forge.pki.publicKeyFromAsn1(asn1);
+        const rsaPublicKey = forge.pki.publicKeyToAsn1(publicKey);
+        const derPrivateKey = forge.asn1.toDer(rsaPublicKey).getBytes();
+        const privateKeyArr = this.fromByteStringToArray(derPrivateKey).buffer;
+        return this.toNSData(privateKeyArr);
+    }
+
     private fromByteStringToArray(str: string): Uint8Array {
         const arr = new Uint8Array(str.length);
         for (let i = 0; i < str.length; i++) {
             arr[i] = str.charCodeAt(i);
         }
         return arr;
+    }
+
+    private importKey(tag: string, key: ArrayBuffer, isPublic: boolean): interop.Reference<any> {
+        const keyData = isPublic ? this.publicKeyToPkcs1Data(key) : this.privateKeyToPkcs1Data(key);
+
+        const query = NSMutableDictionary.new();
+        query.setValueForKey(kSecClassKey, kSecClass);
+        query.setValueForKey(tag, kSecAttrApplicationTag);
+        query.setValueForKey(kSecAttrKeyTypeRSA, kSecAttrType);
+        query.setValueForKey(kSecAttrAccessibleWhenUnlocked, kSecAttrAccessible);
+        query.setValueForKey(keyData, kSecValueData);
+        query.setValueForKey(isPublic ? kSecAttrKeyClassPublic : kSecAttrKeyClassPrivate, kSecAttrKeyClass);
+        query.setValueForKey(kCFBooleanTrue, kSecReturnRef);
+
+        const keyRef = new interop.Reference<any>();
+        const addStatus = SecItemAdd(query, keyRef);
+        if (addStatus !== noErr) {
+            throw new Error('SecItemAdd failed with status ' + addStatus + '.');
+        }
+        return keyRef;
+    }
+
+    private makeTag(isPublic: boolean) {
+        const base = 'com.8bit.bitwarden.' + (NSUUID.alloc().init().UUIDString).toLowerCase();
+        if (isPublic) {
+            return base + '.publicKey';
+        }
+        return base + '.privateKey';
     }
 }

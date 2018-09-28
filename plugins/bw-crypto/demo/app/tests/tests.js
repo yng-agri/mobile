@@ -108,17 +108,10 @@ describe('aesDecrypt', () => {
         expect(Utils.fromBufferToUtf8(decValue)).toBe('EncryptMe!');
     });
 });
-/*
+
 describe('rsaEncrypt', () => {
-    it('should successfully encrypt and then decrypt data', async () => {
-        const pubKey = Utils.fromB64ToArray(RsaPublicKey);
-        const privKey = Utils.fromB64ToArray(RsaPrivateKey);
-        const value = 'EncryptMe!';
-        const data = Utils.fromUtf8ToArray(value);
-        const encValue = await bwCrypto.rsaEncrypt(data.buffer, pubKey.buffer, 'sha1');
-        const decValue = await bwCrypto.rsaDecrypt(encValue, privKey.buffer, 'sha1');
-        expect(Utils.fromBufferToUtf8(decValue)).toBe(value);
-    });
+    testRsaEncrypt('sha1');
+    testRsaEncrypt('sha256');
 });
 
 describe('rsaDecrypt', () => {
@@ -140,7 +133,7 @@ describe('rsaExtractPublicKey', () => {
         expect(Utils.fromBufferToB64(publicKey)).toBe(RsaPublicKey);
     });
 });
-*/
+
 describe('rsaGenerateKeyPair', () => {
     testRsaGenerateKeyPair(1024);
     testRsaGenerateKeyPair(2048);
@@ -222,6 +215,18 @@ function testHmac(algorithm, mac) {
         const key = Utils.fromUtf8ToArray('secretkey').buffer;
         let computedMac = await bwCrypto.hmac(value, key, algorithm);
         expect(Utils.fromBufferToHex(computedMac)).toBe(mac);
+    });
+}
+
+function testRsaEncrypt(algorithm) {
+    it('should successfully encrypt and then decrypt data with ' + algorithm, async () => {
+        const pubKey = Utils.fromB64ToArray(RsaPublicKey);
+        const privKey = Utils.fromB64ToArray(RsaPrivateKey);
+        const value = 'EncryptMe!';
+        const data = Utils.fromUtf8ToArray(value);
+        const encValue = await bwCrypto.rsaEncrypt(data.buffer, pubKey.buffer, algorithm);
+        const decValue = await bwCrypto.rsaDecrypt(encValue, privKey.buffer, algorithm);
+        expect(Utils.fromBufferToUtf8(decValue)).toBe(value);
     });
 }
 
