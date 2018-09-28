@@ -1,6 +1,7 @@
 *.map
 *.ts
 !*.d.ts
+typings/*
 tsconfig.json
 platforms/android/*
 !platforms/android/include.gradle
