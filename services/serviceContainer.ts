@@ -39,7 +39,7 @@ export class ServiceContainer {
         this.register('cryptoService', cryptoService);
     }
 
-    async bootstrap() {
+    bootstrap() {
         if (this.bootstrapped) {
             return Promise.resolve();
         }

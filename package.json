@@ -49,6 +49,7 @@
     "@ngtools/webpack": "~6.1.0",
     "@types/lowdb": "^1.0.5",
     "@types/node": "8.0.19",
+    "@types/papaparse": "^4.5.4",
     "nativescript-dev-typescript": "~0.7.0",
     "nativescript-dev-webpack": "^0.15.1",
     "tns-platform-declarations": "^4.2.0",

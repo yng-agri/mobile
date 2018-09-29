@@ -1,4 +1,4 @@
-import { android as androidApp, ios as iosApp } from "application";
+import { android as androidApp, ios as iosApp } from 'application';
 
 import { ServiceContainer } from '../../services/serviceContainer';
 
@@ -40,7 +40,7 @@ function getApplicationService<T>(service: string) {
         if (androidApp) {
             serviceContainer = androidApp.context.serviceContainer;
         } else if (iosApp) {
-            serviceContainer = iosApp.nativeApp['serviceContainer'];
+            serviceContainer = iosApp.delegate.serviceContainer;
         }
         if (serviceContainer == null) {
             throw new Error('Cannot resolve service container.');

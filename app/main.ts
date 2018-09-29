@@ -27,14 +27,14 @@ require('./ts-helpers');
 if (ios != null) {
     class BitwardenApplicationDelegate extends UIResponder implements UIApplicationDelegate {
         public static ObjCProtocols = [UIApplicationDelegate];
+        public static serviceContainer: ServiceContainer = null
 
         applicationDidFinishLaunchingWithOptions(application: UIApplication,
             launchOptions: NSDictionary<any, any>): boolean {
             console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions);
-            const serviceContainer = new ServiceContainer();
-            application['serviceContainer'] = serviceContainer;
-            serviceContainer.init();
-            serviceContainer.bootstrap();
+            BitwardenApplicationDelegate.serviceContainer = new ServiceContainer();
+            BitwardenApplicationDelegate.serviceContainer.init();
+            BitwardenApplicationDelegate.serviceContainer.bootstrap();
             return true;
         }
 
