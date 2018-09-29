@@ -73,27 +73,11 @@ export class BwCrypto {
     }
 
     aesEncrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
-        const ivData = this.toNSData(iv);
-        const inData = this.toNSData(data);
-        const keyData = this.toNSData(key);
-        const outData = NSMutableData.dataWithLength(inData.length + kCCBlockSizeAES128);
-        const outSize = new interop.Reference(interop.types.uint64, interop.alloc(outData.length));
-        CCCrypt(kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding, keyData.bytes, keyData.length,
-            ivData.bytes, inData.bytes, inData.length, outData.mutableBytes, outData.length, outSize);
-        const encData = NSData.dataWithBytesNoCopyLength(outData.mutableBytes, outSize.value);
-        return Promise.resolve(interop.bufferFromData(encData));
+        return this.aesOperation(true, data, iv, key);
     }
 
     aesDecrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
-        const ivData = this.toNSData(iv);
-        const inData = this.toNSData(data);
-        const keyData = this.toNSData(key);
-        const outData = NSMutableData.dataWithLength(inData.length + kCCBlockSizeAES128);
-        const outSize = new interop.Reference(interop.types.uint64, interop.alloc(outData.length));
-        CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding, keyData.bytes, keyData.length,
-            ivData.bytes, inData.bytes, inData.length, outData.mutableBytes, outData.length, outSize);
-        const decData = NSData.dataWithBytesNoCopyLength(outData.mutableBytes, outSize.value);
-        return Promise.resolve(interop.bufferFromData(decData));
+        return this.aesOperation(false, data, iv, key);
     }
 
     rsaEncrypt(data: ArrayBuffer, publicKey: ArrayBuffer, algorithm: 'sha1' | 'sha256'): Promise<ArrayBuffer> {
@@ -266,5 +250,18 @@ export class BwCrypto {
             return base + '.publicKey';
         }
         return base + '.privateKey';
+    }
+
+    private aesOperation(encrypt: boolean, data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer) {
+        const ivData = this.toNSData(iv);
+        const inData = this.toNSData(data);
+        const keyData = this.toNSData(key);
+        const outData = NSMutableData.dataWithLength(inData.length + kCCBlockSizeAES128);
+        const outSize = new interop.Reference(interop.types.uint64, interop.alloc(outData.length));
+        const operation = encrypt ? kCCEncrypt : kCCDecrypt;
+        CCCrypt(operation, kCCAlgorithmAES128, kCCOptionPKCS7Padding, keyData.bytes, keyData.length,
+            ivData.bytes, inData.bytes, inData.length, outData.mutableBytes, outData.length, outSize);
+        outData.length = outSize.value;
+        return Promise.resolve(interop.bufferFromData(outData));
     }
 }
