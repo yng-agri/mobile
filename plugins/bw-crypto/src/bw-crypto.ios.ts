@@ -91,6 +91,8 @@ export class BwCrypto {
             return Promise.resolve(interop.bufferFromData(encData));
         } catch (e) {
             throw new Error('SecKeyCreateEncryptedData failed: ' + e);
+        } finally {
+            this.deleteKey(tag);
         }
     }
 
@@ -105,25 +107,28 @@ export class BwCrypto {
             return Promise.resolve(interop.bufferFromData(decData));
         } catch (e) {
             throw new Error('SecKeyCreateDecryptedData failed: ' + e);
+        } finally {
+            this.deleteKey(tag);
         }
     }
 
     rsaExtractPublicKey(privateKey: ArrayBuffer): Promise<ArrayBuffer> {
         const privateKeyByteString = String.fromCharCode.apply(null, new Uint8Array(privateKey));
         const privateKeyAsn1 = forge.asn1.fromDer(privateKeyByteString);
-        const forgePrivateKey = (forge as any).pki.privateKeyFromAsn1(privateKeyAsn1);
-        const forgePublicKey = (forge.pki as any).setRsaPublicKey(forgePrivateKey.n, forgePrivateKey.e);
-        const publicKeyAsn1 = (forge.pki as any).publicKeyToAsn1(forgePublicKey);
+        const forgePrivateKey = forge.pki.privateKeyFromAsn1(privateKeyAsn1);
+        const forgePublicKey = forge.pki.setRsaPublicKey(forgePrivateKey.n, forgePrivateKey.e);
+        const publicKeyAsn1 = forge.pki.publicKeyToAsn1(forgePublicKey);
         const publicKeyByteString = forge.asn1.toDer(publicKeyAsn1).data;
         return Promise.resolve(this.fromByteStringToArray(publicKeyByteString).buffer);
     }
 
     rsaGenerateKeyPair(length: 1024 | 2048 | 4096): Promise<[ArrayBuffer, ArrayBuffer]> {
-        const publicTab = this.makeTag(true);
-        const privateTag = this.makeTag(true);
+        const publicTag = this.makeTag(true);
+        const privateTag = this.makeTag(false);
+
         const publicAttr = NSMutableDictionary.new();
         publicAttr.setValueForKey(true, kSecAttrIsPermanent);
-        publicAttr.setValueForKey(publicTab, kSecAttrApplicationTag);
+        publicAttr.setValueForKey(publicTag, kSecAttrApplicationTag);
         publicAttr.setValueForKey(kSecClassKey, kSecClass);
         publicAttr.setValueForKey(kCFBooleanTrue, kSecReturnData);
 
@@ -145,14 +150,21 @@ export class BwCrypto {
         if (status !== noErr) {
             throw new Error('SecKeyGeneratePair failed with status ' + status + '.');
         }
-        const privateResultRef = new interop.Reference<any>();
-        const privateStatus = SecItemCopyMatching(privateAttr, privateResultRef);
-        if (privateStatus !== noErr) {
-            throw new Error('SecItemCopyMatching failed for private key with status ' + privateStatus + '.');
-        }
 
-        const privateData = interop.bufferFromData(privateResultRef.value);
-        return Promise.resolve(this.privateKeyToPkcs8Pair(privateData));
+        let pair: [ArrayBuffer, ArrayBuffer] = null;
+        try {
+            const privateResultRef = new interop.Reference<any>();
+            const privateStatus = SecItemCopyMatching(privateAttr, privateResultRef);
+            if (privateStatus !== noErr) {
+                throw new Error('SecItemCopyMatching failed for private key with status ' + privateStatus + '.');
+            }
+            const privateData = interop.bufferFromData(privateResultRef.value);
+            pair = this.privateKeyToPkcs8Pair(privateData);
+        } finally {
+            this.deleteKey(publicTag);
+            this.deleteKey(privateTag);
+        }
+        return Promise.resolve(pair);
     }
 
     randomBytes(length: number): Promise<ArrayBuffer> {
@@ -237,11 +249,22 @@ export class BwCrypto {
         query.setValueForKey(kCFBooleanTrue, kSecReturnRef);
 
         const keyRef = new interop.Reference<any>();
-        const addStatus = SecItemAdd(query, keyRef);
-        if (addStatus !== noErr) {
-            throw new Error('SecItemAdd failed with status ' + addStatus + '.');
+        const status = SecItemAdd(query, keyRef);
+        if (status !== noErr) {
+            throw new Error('SecItemAdd failed with status ' + status + '.');
         }
         return keyRef;
+    }
+
+    private deleteKey(tag: string) {
+        const query = NSMutableDictionary.new();
+        query.setValueForKey(kSecClassKey, kSecClass);
+        query.setValueForKey(tag, kSecAttrApplicationTag);
+        query.setValueForKey(kSecAttrKeyTypeRSA, kSecAttrType);
+        const status = SecItemDelete(query);
+        if (status !== noErr) {
+            throw new Error('SecItemDelete failed with status ' + status + '.');
+        }
     }
 
     private makeTag(isPublic: boolean) {
