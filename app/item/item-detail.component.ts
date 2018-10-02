@@ -8,8 +8,10 @@ import { StateService } from "jslib/abstractions/state.service";
 import { I18nService } from "jslib/abstractions/i18n.service";
 import { PlatformUtilsService } from "jslib/abstractions/platformUtils.service";
 import { StorageService } from "jslib/abstractions/storage.service";
+import { CryptoService } from "jslib/abstractions/crypto.service";
 import { CryptoFunctionService } from "jslib/abstractions/cryptoFunction.service";
 import { Utils } from "jslib/misc/utils";
+import { SymmetricCryptoKey } from "jslib/models/domain";
 
 @Component({
     selector: "ns-details",
@@ -27,6 +29,7 @@ export class ItemDetailComponent implements OnInit {
         private platformUtilsService: PlatformUtilsService,
         private storageService: StorageService,
         private cryptoFunctionService: CryptoFunctionService,
+        private cryptoService: CryptoService,
     ) { }
 
     async ngOnInit() {
@@ -64,5 +67,11 @@ export class ItemDetailComponent implements OnInit {
         console.log('hmac2: ' +
             Utils.fromBufferToB64(await this.cryptoFunctionService.hmac(
                 Utils.fromUtf8ToArray('Hi3').buffer, key, 'sha256')));
+        const bigKey = await this.cryptoFunctionService.randomBytes(64);
+        const cKey = new SymmetricCryptoKey(bigKey);
+        const cEnc = await this.cryptoService.encrypt('Hello World Enc');
+        console.log('c enc: ' + cEnc.encryptedString);
+        const cDec = await this.cryptoService.decryptToUtf8(cEnc, cKey);
+        console.log('c dec: ' + cDec);
     }
 }
