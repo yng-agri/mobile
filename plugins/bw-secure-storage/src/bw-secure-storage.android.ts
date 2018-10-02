@@ -1,14 +1,18 @@
 const AndroidKeyStore = 'AndroidKeyStore';
 const AesMode = 'AES/GCM/NoPadding';
+const RsaMode = 'RSA/ECB/PKCS1Padding';
 const KeyAlias = 'bitwardenKey3';
-const SettingsPrefix = 'ksSecured3:';
+const PrefsPrefix = 'ksSecured3:';
 const AesKey = 'ksSecured3:aesKeyForService';
 
 export class BwSecureStorage {
     private keyStore: java.security.KeyStore;
     private oldAndroid = false;
-    private rsaMode: string;
     private androidContext: android.content.Context;
+
+    constructor() {
+        this.oldAndroid = android.os.Build.VERSION.SDK_INT < 23;
+    }
 
     init(options: any) {
         if (options == null || options.androidContext == null) {
@@ -26,7 +30,7 @@ export class BwSecureStorage {
     }
 
     get<T>(key: string): Promise<T> {
-        const formattedKey = SettingsPrefix + key;
+        const formattedKey = PrefsPrefix + key;
         const cs = this.getPref(formattedKey);
         if (cs == null) {
             return Promise.resolve(null);
@@ -53,7 +57,7 @@ export class BwSecureStorage {
     }
 
     save(key: string, obj: any): Promise<any> {
-        const formattedKey = SettingsPrefix + key;
+        const formattedKey = PrefsPrefix + key;
         if (obj === null) {
             this.removePref(formattedKey);
             return Promise.resolve();
@@ -80,7 +84,7 @@ export class BwSecureStorage {
     }
 
     remove(key: string): Promise<any> {
-        this.removePref(SettingsPrefix + key);
+        this.removePref(PrefsPrefix + key);
         return Promise.resolve();
     }
 
@@ -117,7 +121,7 @@ export class BwSecureStorage {
             return;
         }
 
-        this.clearSettings();
+        this.clearPrefs();
         const end = java.util.Calendar.getInstance();
         end.add(java.util.Calendar.YEAR, 99);
 
@@ -133,8 +137,7 @@ export class BwSecureStorage {
             }
 
             const spec = builder.build();
-            const gen = java.security.KeyPairGenerator.getInstance(
-                android.security.keystore.KeyProperties.KEY_ALGORITHM_RSA, AndroidKeyStore);
+            const gen = java.security.KeyPairGenerator.getInstance('RSA', AndroidKeyStore);
             gen.initialize(spec);
             gen.generateKeyPair();
         } else {
@@ -162,17 +165,13 @@ export class BwSecureStorage {
         if (existingKey != null) {
             return;
         }
-        const random = new java.security.SecureRandom();
-        const keyBytes = Array.create('byte', 32);
-        random.nextBytes(keyBytes);
-        const key = this.toBuf(keyBytes);
+        const key = this.toBuf(this.randomBytes(32));
         const encKey = this.oldAndroid ? this.rsaEncrypt(key) : this.aesEncrypt(key);
         this.savePref(AesKey, encKey);
     }
 
     private aesEncrypt(input: ArrayBuffer, key: ArrayBuffer = null): string {
-        const entry = key != null ? new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES') :
-            this.keyStore.getKey(KeyAlias, null);
+        const entry = this.getAesKeyEntry(key);
         const cipher = javax.crypto.Cipher.getInstance(AesMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry);
         const encBytes = cipher.doFinal(this.toByteArr(input));
@@ -181,33 +180,39 @@ export class BwSecureStorage {
     }
 
     private aesDecrypt(iv: ArrayBuffer, encData: ArrayBuffer, key: ArrayBuffer = null): ArrayBuffer {
-        const entry = key != null ? new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES') :
-            this.keyStore.getKey(KeyAlias, null);
+        const entry = this.getAesKeyEntry(key);
         const cipher = javax.crypto.Cipher.getInstance(AesMode);
-        const spec = new javax.crypto.spec.GCMParameterSpec(128, this.toByteArr(iv));
+        const ivBytes = this.toByteArr(iv);
+        const spec = this.oldAndroid ? new javax.crypto.spec.IvParameterSpec(ivBytes) :
+            new javax.crypto.spec.GCMParameterSpec(128, ivBytes);
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry, spec);
         const decBytes = cipher.doFinal(this.toByteArr(encData));
         return this.toBuf(decBytes);
     }
 
     private rsaEncrypt(data: ArrayBuffer): string {
-        const entry = this.getRsaKeyEntry(KeyAlias);
-        const cipher = javax.crypto.Cipher.getInstance(this.rsaMode);
+        const entry = this.getRsaKeyEntry();
+        const cipher = javax.crypto.Cipher.getInstance(RsaMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry.getCertificate().getPublicKey());
         const cipherText = cipher.doFinal(this.toByteArr(data));
         return this.fromBufferToB64(this.toBuf(cipherText));
     }
 
     private rsaDecrypt(encData: ArrayBuffer): ArrayBuffer {
-        const entry = this.getRsaKeyEntry(KeyAlias);
-        const cipher = javax.crypto.Cipher.getInstance(this.rsaMode);
+        const entry = this.getRsaKeyEntry();
+        const cipher = javax.crypto.Cipher.getInstance(RsaMode);
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry.getPrivateKey());
         const plainText = cipher.doFinal(this.toByteArr(encData));
         return this.toBuf(plainText);
     }
 
-    private getRsaKeyEntry(alias: string) {
-        return this.keyStore.getEntry(alias, null) as java.security.KeyStore.PrivateKeyEntry;
+    private getRsaKeyEntry() {
+        return this.keyStore.getEntry(KeyAlias, null) as java.security.KeyStore.PrivateKeyEntry;
+    }
+
+    private getAesKeyEntry(key: ArrayBuffer) {
+        return key != null ? new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES') :
+            this.keyStore.getKey(KeyAlias, null);
     }
 
     private toByteArr(value: string | ArrayBuffer): native.Array<number> {
@@ -220,6 +225,13 @@ export class BwSecureStorage {
             arr.forEach((v, i) => bytes[i] = v);
             return bytes;
         }
+    }
+
+    private randomBytes(length: number) {
+        const random = new java.security.SecureRandom();
+        const keyBytes = Array.create('byte', length);
+        random.nextBytes(keyBytes);
+        return keyBytes;
     }
 
     private toBuf(value: native.Array<number>): ArrayBuffer {
@@ -235,14 +247,14 @@ export class BwSecureStorage {
         return new Uint8Array(arr);
     }
 
-    private clearSettings() {
+    private clearPrefs() {
         const sharedPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this.androidContext);
         const sharedPrefsEditor = sharedPrefs.edit();
         let removed = false;
         const prefKeys = sharedPrefs.getAll().keySet();
         for (let i = 0; i < prefKeys.size(); i++) {
             const key: string = prefKeys[i];
-            if (key.indexOf(SettingsPrefix) === 0) {
+            if (key.indexOf(PrefsPrefix) === 0) {
                 removed = true;
                 sharedPrefsEditor.remove(key);
             }
