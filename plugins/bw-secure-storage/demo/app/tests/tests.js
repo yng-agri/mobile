@@ -6,7 +6,7 @@ var bwSecureStorage = new BwSecureStorage();
 if (application.android) {
     bwSecureStorage.init({ androidContext: application.android.context });
 } else {
-    bwSecureStorage.init();
+    bwSecureStorage.init({ keyChainService: 'org.nativescript.demo' });
 }
 
 it('should save and then get the same value', async () => {

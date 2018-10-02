@@ -1,66 +1,60 @@
-const KeyChainService = 'com.8bit.bitwarden';
-const KeyChainAccessGroup = 'LTZ2PFU5D6.com.8bit.bitwarden';
-
 export class BwSecureStorage {
+    private keyChainService = 'bw-secure-storage';
+    private keyChainAccessGroup: string = null;
+
     init(options: any) {
-        // Nothing to init on iOS
+        if (options != null) {
+            if (options.keyChainService != null) {
+                this.keyChainService = options.keyChainService;
+            }
+            if (options.keyChainAccessGroup != null) {
+                this.keyChainAccessGroup = options.keyChainAccessGroup;
+            }
+        }
     }
 
     get<T>(key: string): Promise<T> {
-        try {
-            const query = this.getRecordQuery(key);
-            const intRef = new interop.Reference<any>();
-            this.checkError(SecItemCopyMatching(query, intRef));
-            const b64 = (intRef.value as NSData).base64EncodedStringWithOptions(0);
-            return Promise.resolve(b64 as any);
-        } catch (e) {
-            return Promise.reject(e);
+        const query = this.getRecordQuery(key);
+        query.setValueForKey(kCFBooleanTrue, kSecReturnData);
+        query.setValueForKey(kSecMatchLimitOne, kSecMatchLimit);
+        const intRef = new interop.Reference<any>();
+        const resultCode = SecItemCopyMatching(query, intRef);
+        if (resultCode !== noErr) {
+            return Promise.resolve(null);
         }
+        const b64 = (intRef.value as NSData).base64EncodedStringWithOptions(0);
+        return Promise.resolve(b64 as any);
     }
 
-    async save(key: string, obj: any): Promise<any> {
+    save(key: string, obj: any): Promise<any> {
         if (typeof (obj) !== 'string') {
-            throw new Error('Only base 64 strings can be stored in android key store.');
+            return Promise.reject('Only base 64 strings can be stored in android key store.');
         }
-        try {
-            await this.remove(key);
-            const query = this.getRecordQuery(key, obj);
-            this.checkError(SecItemAdd(query, null));
-            return Promise.resolve();
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        return this.remove(key).then(() => {
+            const query = this.getRecordQuery(key);
+            const data = NSData.alloc().initWithBase64EncodedStringOptions(obj, 0);
+            query.setValueForKey(data, kSecValueData);
+            const resultCode = SecItemAdd(query, null);
+            if (resultCode !== noErr) {
+                throw new Error('SecItemAdd failed. Result code: ' + resultCode);
+            }
+        });
     }
 
     remove(key: string): Promise<any> {
-        try {
-            const query = this.getRecordQuery(key);
-            this.checkError(SecItemDelete(query));
-            return Promise.resolve();
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        const query = this.getRecordQuery(key);
+        SecItemDelete(query);
+        return Promise.resolve();
     }
 
-    private checkError(resultCode: number) {
-        if (resultCode !== errSecSuccess) {
-            throw new Error('Failed to execute key chain action. Result code: ' + resultCode);
-        }
-    }
-
-    private getRecordQuery(key: string, obj: any = null) {
+    private getRecordQuery(key: string) {
         const query = NSMutableDictionary.new();
         query.setValueForKey(kSecClassGenericPassword, kSecClass);
-        query.setValueForKey(KeyChainAccessGroup, kSecAttrAccessGroup);
-        query.setValueForKey(KeyChainService, kSecAttrService);
-        query.setValueForKey(key, kSecAttrAccount);
-        if (obj == null) {
-            query.setValueForKey(kCFBooleanTrue, kSecReturnData);
-            query.setValueForKey(kSecMatchLimitOne, kSecMatchLimit);
-        } else {
-            const data = NSData.alloc().initWithBase64EncodedStringOptions(obj, 0);
-            query.setValueForKey(data, kSecValueData);
+        if (this.keyChainAccessGroup != null) {
+            query.setValueForKey(this.keyChainAccessGroup, kSecAttrAccessGroup);
         }
+        query.setValueForKey(this.keyChainService, kSecAttrService);
+        query.setValueForKey(key, kSecAttrAccount);
         return query;
     }
 }
