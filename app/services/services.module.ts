@@ -34,6 +34,8 @@ import { TokenService } from 'jslib/abstractions/token.service';
 import { TotpService } from 'jslib/abstractions/totp.service';
 import { UserService } from 'jslib/abstractions/user.service';
 
+import { MobileSecureStorageService } from '../../services/mobileSecureStorage.service';
+
 function getApplicationService<T>(service: string) {
     return (): T => {
         let serviceContainer: ServiceContainer = null;
@@ -64,6 +66,7 @@ export function initFactory(): Function {
         { provide: CryptoService, useFactory: getApplicationService<CryptoService>('cryptoService'), deps: [] },
         { provide: CryptoFunctionService, useFactory: getApplicationService<CryptoFunctionService>('cryptoFunctionService'), deps: [] },
         { provide: StorageService, useFactory: getApplicationService<StorageService>('storageService'), deps: [] },
+        { provide: MobileSecureStorageService, useFactory: getApplicationService<MobileSecureStorageService>('secureStorageService'), deps: [] },
         {
             provide: PlatformUtilsService,
             useFactory: getApplicationService<PlatformUtilsService>('platformUtilsService'),

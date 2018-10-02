@@ -13,8 +13,9 @@ export class ServiceContainer {
     bootstrapped = false;
 
     private bootstrapPromise: Promise<void> = null;
+    private options: any;
 
-    init() {
+    init(options: any = null) {
         if (this.inited) {
             return;
         }
@@ -25,10 +26,15 @@ export class ServiceContainer {
         const platformUtilsService = new MobilePlatformUtilsService(i18nService);
         const cryptoFunctionService = new MobileCryptoFunctionService();
         const storageService = new LowdbStorageService();
-        let cryptoService: CryptoService = null;
-        const secureStorageService = new MobileSecureStorageService(storageService, () => cryptoService);
-        cryptoService = new CryptoService(storageService, secureStorageService, cryptoFunctionService);
+        const secureStorageService = new MobileSecureStorageService();
+        const cryptoService = new CryptoService(storageService, secureStorageService, cryptoFunctionService);
 
+        this.options = options;
+        if (this.options != null) {
+            if (this.options.androidAppContext != null) {
+                this.register('androidAppContext', this.options.androidAppContext);
+            }
+        }
         this.register('serviceContainer', this);
         this.register('stateService', stateService);
         this.register('i18nService', i18nService);
@@ -45,8 +51,8 @@ export class ServiceContainer {
         }
         if (this.bootstrapPromise == null) {
             this.bootstrapPromise = this.resolve<I18nService>('i18nService').init().then(() => {
-                return this.resolve<MobileSecureStorageService>('secureStorageService').init();
-            }).then(() => {
+                this.resolve<MobileSecureStorageService>('secureStorageService').init(
+                    this.options != null ? this.options.androidAppContext : null);
                 this.bootstrapped = true;
                 this.bootstrapPromise = null;
             });
@@ -62,10 +68,13 @@ export class ServiceContainer {
         this.registeredServices.set(serviceName, value);
     }
 
-    resolve<T>(serviceName: string): T {
+    resolve<T>(serviceName: string, dontThrow = false): T {
         this.init();
         if (this.registeredServices.has(serviceName)) {
             return this.registeredServices.get(serviceName) as T;
+        }
+        if (dontThrow) {
+            return null;
         }
         throw new Error('Service ' + serviceName + ' is not registered.');
     }

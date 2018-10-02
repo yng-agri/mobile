@@ -10,6 +10,9 @@ import { PlatformUtilsService } from "jslib/abstractions/platformUtils.service";
 import { StorageService } from "jslib/abstractions/storage.service";
 import { CryptoService } from "jslib/abstractions/crypto.service";
 import { CryptoFunctionService } from "jslib/abstractions/cryptoFunction.service";
+
+import { MobileSecureStorageService } from "../../services/mobileSecureStorage.service";
+
 import { Utils } from "jslib/misc/utils";
 import { SymmetricCryptoKey } from "jslib/models/domain";
 
@@ -30,6 +33,7 @@ export class ItemDetailComponent implements OnInit {
         private storageService: StorageService,
         private cryptoFunctionService: CryptoFunctionService,
         private cryptoService: CryptoService,
+        private mobileSecureStorageService: MobileSecureStorageService,
     ) { }
 
     async ngOnInit() {
@@ -37,10 +41,14 @@ export class ItemDetailComponent implements OnInit {
         this.item = this.itemService.getItem(id);
         await this.stateService.save('hello', 'world!');
         await this.storageService.save('hello', 'world!!!!!!!!!!!!!');
+        const b64Secure = Utils.fromBufferToB64(Utils.fromUtf8ToArray('secure world!!!!!!!!!!!!!').buffer);
+        await this.mobileSecureStorageService.save('hello', b64Secure);
         console.log('state: ' + (await this.stateService.get<string>('hello')));
         console.log('i18n: ' + this.i18nService.t('hello'));
         console.log('platform: ' + this.platformUtilsService.getDevice());
         console.log('storage: ' + (await this.storageService.get<string>('hello')));
+        const gotb64secure = await this.mobileSecureStorageService.get<string>('hello');
+        console.log('secure storage: ' + Utils.fromBufferToUtf8(Utils.fromB64ToArray(gotb64secure).buffer));
         console.log('pbkdf2: ' +
             Utils.fromBufferToB64(await this.cryptoFunctionService.pbkdf2('1234', '123456', 'sha256', 5000)));
         console.log('hash: ' +
