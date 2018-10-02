@@ -154,7 +154,7 @@ export class BwSecureStorage {
                 .setEncryptionPaddings([android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE]);
 
             if (withDate) {
-                builder.setKeyValidityStart(new java.util.Date(0)).setKeyValidityEnd(new java.util.Date(end.time));
+                builder.setKeyValidityStart(new java.util.Date(0)).setKeyValidityEnd(end.getTime());
             }
 
             const spec = builder.build();
@@ -246,7 +246,7 @@ export class BwSecureStorage {
         const prefKeys = sharedPrefs.getAll().keySet();
         for (let i = 0; i < prefKeys.size(); i++) {
             const key: string = prefKeys[i];
-            if (key.indexOf(PrefsPrefix) === 0) {
+            if (key != null && key.indexOf(PrefsPrefix) === 0) {
                 removed = true;
                 sharedPrefsEditor.remove(key);
             }
