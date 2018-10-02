@@ -18,6 +18,10 @@ const RsaOaepAlgorithms = {
     sha256: 'RSA/ECB/OAEPWithSHA-256AndMGF1Padding',
 };
 
+const AesAlgorithms = {
+    cbc: 'AES/CBC/PKCS5Padding',
+};
+
 export class BwCrypto {
     pbkdf2(password: string | ArrayBuffer, salt: string | ArrayBuffer, algorithm: 'sha256' | 'sha512',
         iterations: number): Promise<ArrayBuffer> {
@@ -47,7 +51,7 @@ export class BwCrypto {
     aesEncrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
         const keySpec = new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES');
         const ivSpec = new javax.crypto.spec.IvParameterSpec(this.toByteArr(iv));
-        const cipher = javax.crypto.Cipher.getInstance('AES/CBC/PKCS5Padding'); // TODO: what padding?
+        const cipher = javax.crypto.Cipher.getInstance(AesAlgorithms.cbc);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, keySpec, ivSpec);
         const encBytes = cipher.doFinal(this.toByteArr(data));
         return Promise.resolve(this.toBuf(encBytes));
@@ -56,7 +60,7 @@ export class BwCrypto {
     aesDecrypt(data: ArrayBuffer, iv: ArrayBuffer, key: ArrayBuffer): Promise<ArrayBuffer> {
         const keySpec = new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES');
         const ivSpec = new javax.crypto.spec.IvParameterSpec(this.toByteArr(iv));
-        const cipher = javax.crypto.Cipher.getInstance('AES/CBC/PKCS5Padding'); // TODO: what padding?
+        const cipher = javax.crypto.Cipher.getInstance(AesAlgorithms.cbc);
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, keySpec, ivSpec);
         const decBytes = cipher.doFinal(this.toByteArr(data));
         return Promise.resolve(this.toBuf(decBytes));
