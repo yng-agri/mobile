@@ -9,6 +9,7 @@ export class BwSecureStorage {
     private keyStore: java.security.KeyStore;
     private oldAndroid = false;
     private androidContext: android.content.Context;
+    private inited = false;
 
     constructor() {
         this.oldAndroid = android.os.Build.VERSION.SDK_INT < 23;
@@ -27,9 +28,11 @@ export class BwSecureStorage {
             this.generateKeyStore(false);
         }
         this.generateAesKey();
+        this.inited = true;
     }
 
     get<T>(key: string): Promise<T> {
+        this.checkInited();
         const formattedKey = PrefsPrefix + key;
         const cs = this.getPref(formattedKey);
         if (cs == null) {
@@ -57,6 +60,7 @@ export class BwSecureStorage {
     }
 
     save(key: string, obj: any): Promise<any> {
+        this.checkInited();
         const formattedKey = PrefsPrefix + key;
         if (obj === null) {
             this.removePref(formattedKey);
@@ -84,6 +88,7 @@ export class BwSecureStorage {
     }
 
     remove(key: string): Promise<any> {
+        this.checkInited();
         this.removePref(PrefsPrefix + key);
         return Promise.resolve();
     }
@@ -213,6 +218,12 @@ export class BwSecureStorage {
     private getAesKeyEntry(key: ArrayBuffer) {
         return key != null ? new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES') :
             this.keyStore.getKey(KeyAlias, null);
+    }
+
+    private checkInited() {
+        if (!this.inited) {
+            throw new Error('BwSecureStorage not inited.');
+        }
     }
 
     private toByteArr(value: string | ArrayBuffer): native.Array<number> {
