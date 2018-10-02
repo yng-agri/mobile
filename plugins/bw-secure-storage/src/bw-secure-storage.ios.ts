@@ -57,8 +57,7 @@ export class BwSecureStorage {
         if (obj == null) {
             query.setValueForKey(kCFBooleanTrue, kSecReturnData);
             query.setValueForKey(kSecMatchLimitOne, kSecMatchLimit);
-        }
-        else {
+        } else {
             const data = NSData.alloc().initWithBase64EncodedStringOptions(obj, 0);
             query.setValueForKey(data, kSecValueData);
         }

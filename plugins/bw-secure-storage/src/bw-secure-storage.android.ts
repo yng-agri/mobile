@@ -49,8 +49,8 @@ export class BwSecureStorage {
         try {
             const ivBytes = this.fromB64ToArray(parts[0]);
             const encBytes = this.fromB64ToArray(parts[1]);
-            const buffer = this.aesDecrypt(ivBytes.buffer, encBytes.buffer, aesKey);
-            return Promise.resolve(this.fromBufferToB64(buffer) as any);
+            const decArr = this.aesDecrypt(ivBytes, encBytes, aesKey);
+            return Promise.resolve(this.fromArrayToB64(decArr) as any);
         } catch {
             // tslint:disable-next-line
             console.error('Failed to decrypt from secure storage.');
@@ -78,7 +78,7 @@ export class BwSecureStorage {
 
         try {
             const arr = this.fromB64ToArray(obj);
-            const cs = this.aesEncrypt(arr.buffer, aesKey);
+            const cs = this.aesEncrypt(arr, aesKey);
             this.savePref(formattedKey, cs);
         } catch {
             // tslint:disable-next-line
@@ -93,7 +93,7 @@ export class BwSecureStorage {
         return Promise.resolve();
     }
 
-    private getAesKey(): ArrayBuffer {
+    private getAesKey(): native.Array<number> {
         const encKey = this.getPref(AesKey);
         if (encKey == null) {
             return null;
@@ -102,7 +102,7 @@ export class BwSecureStorage {
         try {
             if (this.oldAndroid) {
                 const encKeyBytes = this.fromB64ToArray(encKey);
-                const key = this.rsaDecrypt(encKeyBytes.buffer);
+                const key = this.rsaDecrypt(encKeyBytes);
                 return key;
             } else {
                 const parts = encKey.split('|');
@@ -111,7 +111,7 @@ export class BwSecureStorage {
                 }
                 const ivBytes = this.fromB64ToArray(parts[0]);
                 const encKeyBytes = this.fromB64ToArray(parts[1]);
-                const key = this.aesDecrypt(ivBytes.buffer, encKeyBytes.buffer);
+                const key = this.aesDecrypt(ivBytes, encKeyBytes);
                 return key;
             }
         } catch {
@@ -170,71 +170,57 @@ export class BwSecureStorage {
         if (existingKey != null) {
             return;
         }
-        const key = this.toBuf(this.randomBytes(32));
+        const key = this.randomBytes(32);
         const encKey = this.oldAndroid ? this.rsaEncrypt(key) : this.aesEncrypt(key);
         this.savePref(AesKey, encKey);
     }
 
-    private aesEncrypt(input: ArrayBuffer, key: ArrayBuffer = null): string {
+    private aesEncrypt(input: native.Array<number>, key: native.Array<number> = null): string {
         const entry = this.getAesKeyEntry(key);
         const cipher = javax.crypto.Cipher.getInstance(AesMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry);
-        const encBytes = cipher.doFinal(this.toByteArr(input));
+        const encBytes = cipher.doFinal(input);
         const ivBytes = cipher.getIV();
-        return this.fromBufferToB64(this.toBuf(ivBytes)) + '|' + this.fromBufferToB64(this.toBuf(encBytes));
+        return this.fromArrayToB64(ivBytes) + '|' + this.fromArrayToB64(encBytes);
     }
 
-    private aesDecrypt(iv: ArrayBuffer, encData: ArrayBuffer, key: ArrayBuffer = null): ArrayBuffer {
+    private aesDecrypt(iv: native.Array<number>, encData: native.Array<number>,
+        key: native.Array<number> = null): native.Array<number> {
         const entry = this.getAesKeyEntry(key);
         const cipher = javax.crypto.Cipher.getInstance(AesMode);
-        const ivBytes = this.toByteArr(iv);
-        const spec = this.oldAndroid ? new javax.crypto.spec.IvParameterSpec(ivBytes) :
-            new javax.crypto.spec.GCMParameterSpec(128, ivBytes);
+        const spec = this.oldAndroid ? new javax.crypto.spec.IvParameterSpec(iv) :
+            new javax.crypto.spec.GCMParameterSpec(128, iv);
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry, spec);
-        const decBytes = cipher.doFinal(this.toByteArr(encData));
-        return this.toBuf(decBytes);
+        return cipher.doFinal(encData);
     }
 
-    private rsaEncrypt(data: ArrayBuffer): string {
+    private rsaEncrypt(data: native.Array<number>): string {
         const entry = this.getRsaKeyEntry();
         const cipher = javax.crypto.Cipher.getInstance(RsaMode);
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, entry.getCertificate().getPublicKey());
-        const cipherText = cipher.doFinal(this.toByteArr(data));
-        return this.fromBufferToB64(this.toBuf(cipherText));
+        const cipherText = cipher.doFinal(data);
+        return this.fromArrayToB64(cipherText);
     }
 
-    private rsaDecrypt(encData: ArrayBuffer): ArrayBuffer {
+    private rsaDecrypt(encData: native.Array<number>): native.Array<number> {
         const entry = this.getRsaKeyEntry();
         const cipher = javax.crypto.Cipher.getInstance(RsaMode);
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, entry.getPrivateKey());
-        const plainText = cipher.doFinal(this.toByteArr(encData));
-        return this.toBuf(plainText);
+        return cipher.doFinal(encData);
     }
 
     private getRsaKeyEntry() {
         return this.keyStore.getEntry(KeyAlias, null) as java.security.KeyStore.PrivateKeyEntry;
     }
 
-    private getAesKeyEntry(key: ArrayBuffer) {
-        return key != null ? new javax.crypto.spec.SecretKeySpec(this.toByteArr(key), 'AES') :
+    private getAesKeyEntry(key: native.Array<number>) {
+        return key != null ? new javax.crypto.spec.SecretKeySpec(key, 'AES') :
             this.keyStore.getKey(KeyAlias, null);
     }
 
     private checkInited() {
         if (!this.inited) {
             throw new Error('BwSecureStorage not inited.');
-        }
-    }
-
-    private toByteArr(value: string | ArrayBuffer): native.Array<number> {
-        if (typeof (value) === 'string') {
-            const strVal = new java.lang.String(value);
-            return strVal.getBytes('UTF-8');
-        } else {
-            const arr = new Uint8Array(value);
-            const bytes = Array.create('byte', arr.length);
-            arr.forEach((v, i) => bytes[i] = v);
-            return bytes;
         }
     }
 
@@ -245,17 +231,12 @@ export class BwSecureStorage {
         return keyBytes;
     }
 
-    private toBuf(value: native.Array<number>): ArrayBuffer {
-        return new Uint8Array(value).buffer;
+    private fromArrayToB64(arr: native.Array<number>): string {
+        return android.util.Base64.encodeToString(arr, android.util.Base64.NO_WRAP);
     }
 
-    private fromBufferToB64(buffer: ArrayBuffer): string {
-        return android.util.Base64.encodeToString(this.toByteArr(buffer), android.util.Base64.NO_WRAP);
-    }
-
-    private fromB64ToArray(str: string): Uint8Array {
-        const arr = android.util.Base64.decode(str, android.util.Base64.NO_WRAP);
-        return new Uint8Array(arr);
+    private fromB64ToArray(str: string): native.Array<number> {
+        return android.util.Base64.decode(str, android.util.Base64.NO_WRAP);
     }
 
     private clearPrefs() {
