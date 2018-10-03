@@ -10,6 +10,7 @@ import { PlatformUtilsService } from "jslib/abstractions/platformUtils.service";
 import { StorageService } from "jslib/abstractions/storage.service";
 import { CryptoService } from "jslib/abstractions/crypto.service";
 import { CryptoFunctionService } from "jslib/abstractions/cryptoFunction.service";
+import { ApiService } from "jslib/abstractions/api.service";
 
 import { MobileSecureStorageService } from "../../services/mobileSecureStorage.service";
 
@@ -34,6 +35,7 @@ export class ItemDetailComponent implements OnInit {
         private cryptoFunctionService: CryptoFunctionService,
         private cryptoService: CryptoService,
         private mobileSecureStorageService: MobileSecureStorageService,
+        private apiService: ApiService,
     ) { }
 
     async ngOnInit() {
@@ -75,11 +77,15 @@ export class ItemDetailComponent implements OnInit {
         console.log('hmac2: ' +
             Utils.fromBufferToB64(await this.cryptoFunctionService.hmac(
                 Utils.fromUtf8ToArray('Hi3').buffer, key, 'sha256')));
+        /*
         const bigKey = await this.cryptoFunctionService.randomBytes(64);
         const cKey = new SymmetricCryptoKey(bigKey);
         const cEnc = await this.cryptoService.encrypt('Hello World Enc');
         console.log('c enc: ' + cEnc.encryptedString);
         const cDec = await this.cryptoService.decryptToUtf8(cEnc, cKey);
         console.log('c dec: ' + cDec);
+        */
+        const response = await this.apiService.fetch(new Request('https://api.bitwarden.com/alive'));
+        console.log('api response: ' + await response.text());
     }
 }

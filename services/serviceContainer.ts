@@ -4,8 +4,11 @@ import { I18nService } from './i18n.service';
 import { LowdbStorageService } from './lowdbStorage.service';
 import { MobileSecureStorageService } from './mobileSecureStorage.service';
 import { MobileCryptoFunctionService } from './mobileCryptoFunction.service';
-import { CryptoService } from 'jslib/services/crypto.service';
 import { MobilePlatformUtilsService } from './mobilePlatformUtils.service';
+
+import { ApiService } from 'jslib/services/api.service';
+import { CryptoService } from 'jslib/services/crypto.service';
+import { TokenService } from 'jslib/services/token.service';
 
 export class ServiceContainer {
     registeredServices: Map<string, any> = new Map<string, any>();
@@ -28,6 +31,9 @@ export class ServiceContainer {
         const storageService = new LowdbStorageService();
         const secureStorageService = new MobileSecureStorageService();
         const cryptoService = new CryptoService(storageService, secureStorageService, cryptoFunctionService);
+        const tokenService = new TokenService(storageService);
+        const apiService = new ApiService(tokenService, platformUtilsService,
+            (expired) => { return Promise.resolve(); });
 
         this.options = options;
         if (this.options != null) {
@@ -43,6 +49,8 @@ export class ServiceContainer {
         this.register('storageService', storageService);
         this.register('secureStorageService', secureStorageService);
         this.register('cryptoService', cryptoService);
+        this.register('tokenService', tokenService);
+        this.register('apiService', apiService);
     }
 
     bootstrap() {

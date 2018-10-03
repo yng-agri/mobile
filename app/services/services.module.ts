@@ -62,6 +62,8 @@ export function initFactory(): Function {
     ],
     declarations: [],
     providers: [
+        { provide: ApiService, useFactory: getApplicationService<ApiService>('apiService'), deps: [] },
+        { provide: TokenService, useFactory: getApplicationService<TokenService>('tokenService'), deps: [] },
         { provide: StateService, useFactory: getApplicationService<StateService>('stateService'), deps: [] },
         { provide: CryptoService, useFactory: getApplicationService<CryptoService>('cryptoService'), deps: [] },
         { provide: CryptoFunctionService, useFactory: getApplicationService<CryptoFunctionService>('cryptoFunctionService'), deps: [] },
