@@ -88,7 +88,8 @@ export class MobilePlatformUtilsService implements PlatformUtilsService {
         return true;
     }
 
-    showToast(type: 'error' | 'success' | 'warning' | 'info', title: string, text: string, global?: any): void {
+    showToast(type: 'error' | 'success' | 'warning' | 'info', title: string, text: string | string[],
+        options?: any): void {
 
     }
 

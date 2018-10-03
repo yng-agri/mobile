@@ -32,8 +32,6 @@
     "@angular/platform-browser": "~6.1.0",
     "@angular/platform-browser-dynamic": "~6.1.0",
     "@angular/router": "~6.1.0",
-    "angular2-toaster": "6.1.0",
-    "angulartics2": "6.3.0",
     "lowdb": "1.0.0",
     "nativescript-angular": "~6.1.0",
     "nativescript-bw-crypto": "file:plugins/bw-crypto/publish/package/nativescript-bw-crypto-1.0.0.tgz",
