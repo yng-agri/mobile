@@ -42,6 +42,7 @@
         "app/ios/ActionExtension",
         "jslib/node_modules",
         "jslib/spec",
+        "jslib/dist",
         "jslib/src/electron",
         "jslib/src/importers",
         "jslib/src/angular/components/export.component.ts",

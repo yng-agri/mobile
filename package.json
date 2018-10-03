@@ -19,6 +19,8 @@
     "clean": "rimraf ./platforms",
     "android": "tns run android --bundle",
     "ios": "tns run ios --bundle",
+    "android:sim": "tns run android --bundle --emulator",
+    "ios:sim": "tns run ios --bundle --emulator",
     "android:debug": "tns debug android --bundle",
     "ios:debug": "tns debug ios --bundle"
   },
