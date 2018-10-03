@@ -98,6 +98,10 @@ export class MobilePlatformUtilsService implements PlatformUtilsService {
         return Promise.resolve(false);
     }
 
+    eventTrack(action: string, label?: string, options?: any) {
+
+    }
+
     isDev(): boolean {
         return true;
     }
