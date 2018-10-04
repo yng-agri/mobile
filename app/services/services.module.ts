@@ -73,6 +73,10 @@ export function initFactory(): Function {
     providers: [
         { provide: MessagingService, useValue: messagingService },
         { provide: BroadcasterService, useValue: broadcasterService },
+        { provide: EnvironmentService, useFactory: getApplicationService<EnvironmentService>('environmentService'), deps: [] },
+        { provide: LockService, useFactory: getApplicationService<LockService>('lockService'), deps: [] },
+        { provide: SyncService, useFactory: getApplicationService<SyncService>('syncService'), deps: [] },
+        { provide: AuthService, useFactory: getApplicationService<AuthService>('authService'), deps: [] },
         { provide: TotpService, useFactory: getApplicationService<TotpService>('totpService'), deps: [] },
         { provide: AuditService, useFactory: getApplicationService<AuditService>('auditService'), deps: [] },
         { provide: PasswordGenerationService, useFactory: getApplicationService<PasswordGenerationService>('passwordGenerationService'), deps: [] },

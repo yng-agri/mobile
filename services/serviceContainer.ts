@@ -10,16 +10,20 @@ import { MobileMainMessagingService } from './mobileMainMessaging.service';
 import { AppIdService } from 'jslib/services/appId.service';
 import { ApiService } from 'jslib/services/api.service';
 import { AuditService } from 'jslib/services/audit.service';
+import { AuthService } from 'jslib/services/auth.service';
 import { CipherService } from 'jslib/services/cipher.service';
 import { CollectionService } from 'jslib/services/collection.service';
 import { ContainerService } from 'jslib/services/container.service';
 import { CryptoService } from 'jslib/services/crypto.service';
+import { EnvironmentService } from 'jslib/services/environment.service';
 import { ExportService } from 'jslib/services/export.service';
 import { FolderService } from 'jslib/services/folder.service';
+import { LockService } from 'jslib/services/lock.service';
 import { PasswordGenerationService } from 'jslib/services/passwordGeneration.service';
 import { TokenService } from 'jslib/services/token.service';
 import { SearchService } from 'jslib/services/search.service';
 import { SettingsService } from 'jslib/services/settings.service';
+import { SyncService } from 'jslib/services/sync.service';
 import { TotpService } from 'jslib/services/totp.service';
 import { UserService } from 'jslib/services/user.service';
 
@@ -59,30 +63,26 @@ export class ServiceContainer {
             i18nService, cipherService);
         const collectionService = new CollectionService(cryptoService, userService, storageService, i18nService);
         searchService = new SearchService(cipherService, platformUtilsService);
-        /*
         const lockService = new LockService(cipherService, folderService, collectionService,
-            cryptoService, platformUtilsService, storageService, messagingService, searchService, null);
+            cryptoService, platformUtilsService, storageService, this.messagingService, searchService, null);
         const syncService = new SyncService(userService, apiService, settingsService,
-            folderService, cipherService, cryptoService, collectionService, storageService, messagingService,
-            async (expired: boolean) => messagingService.send('logout', { expired: expired }));
-            */
+            folderService, cipherService, cryptoService, collectionService, storageService, this.messagingService,
+            async (expired: boolean) => this.messagingService.send('logout', { expired: expired }));
         const passwordGenerationService = new PasswordGenerationService(cryptoService, storageService);
         const totpService = new TotpService(storageService, cryptoFunctionService);
         const containerService = new ContainerService(cryptoService, platformUtilsService);
-        /*
-        const authService = new AuthService(cryptoService, apiService,
-            userService, tokenService, appIdService, i18nService, platformUtilsService, messagingService);
-            */
+        const authService = new AuthService(cryptoService, apiService, userService, tokenService,
+            appIdService, i18nService, platformUtilsService, this.messagingService);
         const exportService = new ExportService(folderService, cipherService, apiService);
         const auditService = new AuditService(cryptoFunctionService, apiService);
         /*
         const notificationsService = new NotificationsService(userService, syncService, appIdService,
             apiService, cryptoService, async () => messagingService.send('logout', { expired: true }));
-        const environmentService = new EnvironmentService(apiService, storageService, notificationsService);
-        
-        const analytics = new Analytics(window, () => isDev(), platformUtilsService, storageService, appIdService);
-        */
-        // containerService.attachToWindow(global);
+            */
+        const environmentService = new EnvironmentService(apiService, storageService, null);
+
+        // const analytics = new Analytics(window, () => isDev(), platformUtilsService, storageService, appIdService);
+        containerService.attachToGlobal(global);
 
         this.options = options;
         if (this.options != null) {
@@ -113,6 +113,10 @@ export class ServiceContainer {
         this.register('exportService', exportService);
         this.register('auditService', auditService);
         this.register('messagingService', this.messagingService);
+        this.register('authService', authService);
+        this.register('lockService', lockService);
+        this.register('syncService', syncService);
+        this.register('environmentService', environmentService);
     }
 
     bootstrap() {
