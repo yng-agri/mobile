@@ -64,6 +64,13 @@ export function initFactory(): Function {
     providers: [
         { provide: ApiService, useFactory: getApplicationService<ApiService>('apiService'), deps: [] },
         { provide: TokenService, useFactory: getApplicationService<TokenService>('tokenService'), deps: [] },
+        { provide: UserService, useFactory: getApplicationService<UserService>('userService'), deps: [] },
+        { provide: AppIdService, useFactory: getApplicationService<AppIdService>('appIdService'), deps: [] },
+        { provide: SettingsService, useFactory: getApplicationService<SettingsService>('settingsService'), deps: [] },
+        { provide: CipherService, useFactory: getApplicationService<CipherService>('cipherService'), deps: [] },
+        { provide: FolderService, useFactory: getApplicationService<FolderService>('folderService'), deps: [] },
+        { provide: CollectionService, useFactory: getApplicationService<CollectionService>('collectionService'), deps: [] },
+        { provide: SearchService, useFactory: getApplicationService<SearchService>('searchService'), deps: [] },
         { provide: StateService, useFactory: getApplicationService<StateService>('stateService'), deps: [] },
         { provide: CryptoService, useFactory: getApplicationService<CryptoService>('cryptoService'), deps: [] },
         { provide: CryptoFunctionService, useFactory: getApplicationService<CryptoFunctionService>('cryptoFunctionService'), deps: [] },
