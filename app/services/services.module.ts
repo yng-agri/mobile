@@ -61,8 +61,9 @@ const messagingService = new MobileBroadcasterMessagingService(broadcasterServic
 
 export function initFactory(): Function {
     return async () => {
-        await getApplicationService<ServiceContainer>('serviceContainer')().bootstrap();
-        messagingService.init(getServiceContainer());
+        const serviceContainer = getServiceContainer();
+        await serviceContainer.bootstrap();
+        messagingService.init(serviceContainer);
     };
 }
 

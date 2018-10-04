@@ -18,6 +18,7 @@ import { Utils } from "jslib/misc/utils";
 import { SymmetricCryptoKey } from "jslib/models/domain";
 import { BroadcasterService } from "jslib/angular/services/broadcaster.service";
 import { MessagingService } from "jslib/abstractions/messaging.service";
+import { AuthService } from "jslib/abstractions/auth.service";
 
 @Component({
     selector: "ns-details",
@@ -40,6 +41,7 @@ export class ItemDetailComponent implements OnInit {
         private apiService: ApiService,
         private broadcasterService: BroadcasterService,
         private messagingService: MessagingService,
+        private authService: AuthService,
     ) { }
 
     async ngOnInit() {
@@ -97,5 +99,7 @@ export class ItemDetailComponent implements OnInit {
             console.log(message);
         });
         this.messagingService.send('printFromItemDetails', { name: 'MEEE!!' });
+
+        console.log(await this.authService.logIn('hello@bitwarden.com', 'somepassword'));
     }
 }

@@ -125,6 +125,9 @@ export class ServiceContainer {
         }
         if (this.bootstrapPromise == null) {
             this.bootstrapPromise = this.resolve<I18nService>('i18nService').init().then(() => {
+                this.resolve<AuthService>('authService').init();
+                return this.resolve<EnvironmentService>('environmentService').setUrlsFromStorage();
+            }).then(() => {
                 this.resolve<MobileSecureStorageService>('secureStorageService').init(
                     this.options != null ? this.options.androidAppContext : null);
                 this.bootstrapped = true;
