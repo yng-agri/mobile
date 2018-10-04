@@ -8,13 +8,18 @@ import { MobilePlatformUtilsService } from './mobilePlatformUtils.service';
 
 import { AppIdService } from 'jslib/services/appId.service';
 import { ApiService } from 'jslib/services/api.service';
+import { AuditService } from 'jslib/services/audit.service';
 import { CipherService } from 'jslib/services/cipher.service';
 import { CollectionService } from 'jslib/services/collection.service';
+import { ContainerService } from 'jslib/services/container.service';
 import { CryptoService } from 'jslib/services/crypto.service';
+import { ExportService } from 'jslib/services/export.service';
 import { FolderService } from 'jslib/services/folder.service';
+import { PasswordGenerationService } from 'jslib/services/passwordGeneration.service';
 import { TokenService } from 'jslib/services/token.service';
 import { SearchService } from 'jslib/services/search.service';
 import { SettingsService } from 'jslib/services/settings.service';
+import { TotpService } from 'jslib/services/totp.service';
 import { UserService } from 'jslib/services/user.service';
 
 export class ServiceContainer {
@@ -33,6 +38,7 @@ export class ServiceContainer {
 
         const stateService = new StateService();
         const i18nService = new I18nService('en');
+        // const messagingService = new MobileMessagingService();
         const platformUtilsService = new MobilePlatformUtilsService(i18nService);
         const cryptoFunctionService = new MobileCryptoFunctionService();
         const storageService = new LowdbStorageService();
@@ -51,6 +57,30 @@ export class ServiceContainer {
             i18nService, cipherService);
         const collectionService = new CollectionService(cryptoService, userService, storageService, i18nService);
         searchService = new SearchService(cipherService, platformUtilsService);
+        /*
+        const lockService = new LockService(cipherService, folderService, collectionService,
+            cryptoService, platformUtilsService, storageService, messagingService, searchService, null);
+        const syncService = new SyncService(userService, apiService, settingsService,
+            folderService, cipherService, cryptoService, collectionService, storageService, messagingService,
+            async (expired: boolean) => messagingService.send('logout', { expired: expired }));
+            */
+        const passwordGenerationService = new PasswordGenerationService(cryptoService, storageService);
+        const totpService = new TotpService(storageService, cryptoFunctionService);
+        const containerService = new ContainerService(cryptoService, platformUtilsService);
+        /*
+        const authService = new AuthService(cryptoService, apiService,
+            userService, tokenService, appIdService, i18nService, platformUtilsService, messagingService);
+            */
+        const exportService = new ExportService(folderService, cipherService, apiService);
+        const auditService = new AuditService(cryptoFunctionService, apiService);
+        /*
+        const notificationsService = new NotificationsService(userService, syncService, appIdService,
+            apiService, cryptoService, async () => messagingService.send('logout', { expired: true }));
+        const environmentService = new EnvironmentService(apiService, storageService, notificationsService);
+        
+        const analytics = new Analytics(window, () => isDev(), platformUtilsService, storageService, appIdService);
+        */
+        // containerService.attachToWindow(global);
 
         this.options = options;
         if (this.options != null) {
@@ -75,6 +105,11 @@ export class ServiceContainer {
         this.register('folderService', folderService);
         this.register('collectionService', collectionService);
         this.register('searchService', searchService);
+        this.register('passwordGenerationService', passwordGenerationService);
+        this.register('totpService', totpService);
+        this.register('containerService', containerService);
+        this.register('exportService', exportService);
+        this.register('auditService', auditService);
     }
 
     bootstrap() {

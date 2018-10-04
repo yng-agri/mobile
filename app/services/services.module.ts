@@ -62,6 +62,11 @@ export function initFactory(): Function {
     ],
     declarations: [],
     providers: [
+        { provide: TotpService, useFactory: getApplicationService<TotpService>('totpService'), deps: [] },
+        { provide: AuditService, useFactory: getApplicationService<AuditService>('auditService'), deps: [] },
+        { provide: PasswordGenerationService, useFactory: getApplicationService<PasswordGenerationService>('passwordGenerationService'), deps: [] },
+        { provide: ExportService, useFactory: getApplicationService<ExportService>('exportService'), deps: [] },
+        { provide: ApiService, useFactory: getApplicationService<ApiService>('apiService'), deps: [] },
         { provide: ApiService, useFactory: getApplicationService<ApiService>('apiService'), deps: [] },
         { provide: TokenService, useFactory: getApplicationService<TokenService>('tokenService'), deps: [] },
         { provide: UserService, useFactory: getApplicationService<UserService>('userService'), deps: [] },
