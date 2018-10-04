@@ -34,26 +34,35 @@ import { TokenService } from 'jslib/abstractions/token.service';
 import { TotpService } from 'jslib/abstractions/totp.service';
 import { UserService } from 'jslib/abstractions/user.service';
 
+import { BroadcasterService } from 'jslib/angular/services/broadcaster.service';
+
 import { MobileSecureStorageService } from '../../services/mobileSecureStorage.service';
+import { MobileBroadcasterMessagingService } from '../../services/mobileBroadcasterMessaging.service';
+
+function getServiceContainer() {
+    let serviceContainer: ServiceContainer = null;
+    if (androidApp) {
+        serviceContainer = androidApp.context.serviceContainer;
+    } else if (iosApp) {
+        serviceContainer = iosApp.delegate.serviceContainer;
+    }
+    if (serviceContainer == null) {
+        throw new Error('Cannot resolve service container.');
+    }
+    return serviceContainer;
+}
 
 function getApplicationService<T>(service: string) {
-    return (): T => {
-        let serviceContainer: ServiceContainer = null;
-        if (androidApp) {
-            serviceContainer = androidApp.context.serviceContainer;
-        } else if (iosApp) {
-            serviceContainer = iosApp.delegate.serviceContainer;
-        }
-        if (serviceContainer == null) {
-            throw new Error('Cannot resolve service container.');
-        }
-        return serviceContainer.resolve<T>(service);
-    };
+    return (): T => getServiceContainer().resolve<T>(service);
 }
+
+const broadcasterService = new BroadcasterService();
+const messagingService = new MobileBroadcasterMessagingService(broadcasterService);
 
 export function initFactory(): Function {
     return async () => {
         await getApplicationService<ServiceContainer>('serviceContainer')().bootstrap();
+        messagingService.init(getServiceContainer());
     };
 }
 
@@ -62,6 +71,8 @@ export function initFactory(): Function {
     ],
     declarations: [],
     providers: [
+        { provide: MessagingService, useValue: messagingService },
+        { provide: BroadcasterService, useValue: broadcasterService },
         { provide: TotpService, useFactory: getApplicationService<TotpService>('totpService'), deps: [] },
         { provide: AuditService, useFactory: getApplicationService<AuditService>('auditService'), deps: [] },
         { provide: PasswordGenerationService, useFactory: getApplicationService<PasswordGenerationService>('passwordGenerationService'), deps: [] },

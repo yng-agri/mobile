@@ -5,6 +5,7 @@ import { LowdbStorageService } from './lowdbStorage.service';
 import { MobileSecureStorageService } from './mobileSecureStorage.service';
 import { MobileCryptoFunctionService } from './mobileCryptoFunction.service';
 import { MobilePlatformUtilsService } from './mobilePlatformUtils.service';
+import { MobileMainMessagingService } from './mobileMainMessaging.service';
 
 import { AppIdService } from 'jslib/services/appId.service';
 import { ApiService } from 'jslib/services/api.service';
@@ -29,6 +30,7 @@ export class ServiceContainer {
 
     private bootstrapPromise: Promise<void> = null;
     private options: any;
+    private messagingService: MobileMainMessagingService
 
     init(options: any = null) {
         if (this.inited) {
@@ -36,9 +38,9 @@ export class ServiceContainer {
         }
         this.inited = true;
 
+        this.messagingService = new MobileMainMessagingService();
         const stateService = new StateService();
         const i18nService = new I18nService('en');
-        // const messagingService = new MobileMessagingService();
         const platformUtilsService = new MobilePlatformUtilsService(i18nService);
         const cryptoFunctionService = new MobileCryptoFunctionService();
         const storageService = new LowdbStorageService();
@@ -110,6 +112,7 @@ export class ServiceContainer {
         this.register('containerService', containerService);
         this.register('exportService', exportService);
         this.register('auditService', auditService);
+        this.register('messagingService', this.messagingService);
     }
 
     bootstrap() {
@@ -144,5 +147,13 @@ export class ServiceContainer {
             return null;
         }
         throw new Error('Service ' + serviceName + ' is not registered.');
+    }
+
+    registerMessageClient(client: string, callback: (message: any) => void) {
+        this.messagingService.registerClient(client, callback);
+    }
+
+    removeMessageClient(client: string) {
+        this.messagingService.removeClient(client);
     }
 }
