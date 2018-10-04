@@ -15,6 +15,11 @@ export class MainApplication extends android.app.Application {
         this.serviceContainer = new ServiceContainer();
         this.serviceContainer.init({ androidAppContext: this.getApplicationContext() });
         this.serviceContainer.bootstrap();
+
+        this.serviceContainer.registerMessageClient('MainApplication', (message: any) => {
+            console.log('Got message in MainApplication');
+            console.log(message);
+        });
     }
 
     public attachBaseContext(baseContext: android.content.Context) {

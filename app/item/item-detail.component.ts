@@ -16,6 +16,8 @@ import { MobileSecureStorageService } from "../../services/mobileSecureStorage.s
 
 import { Utils } from "jslib/misc/utils";
 import { SymmetricCryptoKey } from "jslib/models/domain";
+import { BroadcasterService } from "jslib/angular/services/broadcaster.service";
+import { MessagingService } from "jslib/abstractions/messaging.service";
 
 @Component({
     selector: "ns-details",
@@ -36,6 +38,8 @@ export class ItemDetailComponent implements OnInit {
         private cryptoService: CryptoService,
         private mobileSecureStorageService: MobileSecureStorageService,
         private apiService: ApiService,
+        private broadcasterService: BroadcasterService,
+        private messagingService: MessagingService,
     ) { }
 
     async ngOnInit() {
@@ -87,5 +91,11 @@ export class ItemDetailComponent implements OnInit {
         */
         const response = await this.apiService.fetch(new Request('https://api.bitwarden.com/alive'));
         console.log('api response: ' + await response.text());
+
+        this.broadcasterService.subscribe('ItemDetails', (message: any) => {
+            console.log('Got message in ItemDetails');
+            console.log(message);
+        });
+        this.messagingService.send('printFromItemDetails', { name: 'MEEE!!' });
     }
 }
