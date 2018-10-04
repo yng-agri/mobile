@@ -6,9 +6,16 @@ import { MobileSecureStorageService } from './mobileSecureStorage.service';
 import { MobileCryptoFunctionService } from './mobileCryptoFunction.service';
 import { MobilePlatformUtilsService } from './mobilePlatformUtils.service';
 
+import { AppIdService } from 'jslib/services/appId.service';
 import { ApiService } from 'jslib/services/api.service';
+import { CipherService } from 'jslib/services/cipher.service';
+import { CollectionService } from 'jslib/services/collection.service';
 import { CryptoService } from 'jslib/services/crypto.service';
+import { FolderService } from 'jslib/services/folder.service';
 import { TokenService } from 'jslib/services/token.service';
+import { SearchService } from 'jslib/services/search.service';
+import { SettingsService } from 'jslib/services/settings.service';
+import { UserService } from 'jslib/services/user.service';
 
 export class ServiceContainer {
     registeredServices: Map<string, any> = new Map<string, any>();
@@ -34,6 +41,16 @@ export class ServiceContainer {
         const tokenService = new TokenService(storageService);
         const apiService = new ApiService(tokenService, platformUtilsService,
             (expired) => { return Promise.resolve(); });
+        const appIdService = new AppIdService(storageService);
+        const userService = new UserService(tokenService, storageService);
+        const settingsService = new SettingsService(userService, storageService);
+        let searchService: SearchService = null;
+        const cipherService = new CipherService(cryptoService, userService, settingsService,
+            apiService, storageService, i18nService, platformUtilsService, () => searchService);
+        const folderService = new FolderService(cryptoService, userService, apiService, storageService,
+            i18nService, cipherService);
+        const collectionService = new CollectionService(cryptoService, userService, storageService, i18nService);
+        searchService = new SearchService(cipherService, platformUtilsService);
 
         this.options = options;
         if (this.options != null) {
@@ -51,6 +68,13 @@ export class ServiceContainer {
         this.register('cryptoService', cryptoService);
         this.register('tokenService', tokenService);
         this.register('apiService', apiService);
+        this.register('appIdService', appIdService);
+        this.register('userService', userService);
+        this.register('settingsService', settingsService);
+        this.register('cipherService', cipherService);
+        this.register('folderService', folderService);
+        this.register('collectionService', collectionService);
+        this.register('searchService', searchService);
     }
 
     bootstrap() {
