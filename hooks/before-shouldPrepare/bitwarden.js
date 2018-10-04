@@ -9,6 +9,8 @@ module.exports = function (hookArgs) {
         'android/app/src/main/assets/app/application.js');
     if (fs.existsSync(appPath)) {
         const content = fs.readFileSync(appPath, 'utf8');
-        fs.writeFileSync(appPath, 'require("./vendor");\n' + content);
+        if(!content.startsWith('require("./vendor");')) {
+            fs.writeFileSync(appPath, 'require("./vendor");\n' + content);
+        }
     }
 }
