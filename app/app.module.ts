@@ -7,9 +7,9 @@ import { NativeScriptFormsModule } from 'nativescript-angular/forms';
 import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app.routing';
 import { TabsComponent } from './tabs.component';
 
+import { AppRoutingModule } from './app-routing.module';
 import { ServicesModule } from './services/services.module';
 
 import { CiphersComponent } from './vault/ciphers.component';

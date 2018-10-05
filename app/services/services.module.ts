@@ -109,6 +109,11 @@ export function initFactory(): Function {
             deps: [],
             multi: true,
         },
+        {
+            provide: LOCALE_ID,
+            useFactory: () => getApplicationService<I18nService>('i18nService')().translationLocale,
+            deps: [],
+        },
     ],
 })
 export class ServicesModule {
