@@ -1,0 +1,8 @@
+<ActionBar title="Items" class="action-bar"></ActionBar>
+<StackLayout class="page">
+    <ListView [items]="ciphers" class="list-group">
+        <ng-template let-c="item">
+            <Label [nsRouterLink]="['/cipher-view', c.id]" [text]="c.name" class="list-group-item"></Label>
+        </ng-template>
+    </ListView>
+</StackLayout>

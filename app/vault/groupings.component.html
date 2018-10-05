@@ -1,0 +1,8 @@
+<ActionBar title="My Vault" class="action-bar"></ActionBar>
+<StackLayout class="page">
+    <ListView [items]="groupings" class="list-group">
+        <ng-template let-g="item">
+            <Label [nsRouterLink]="['/vault/ciphers', g.id]" [text]="g.name" class="list-group-item"></Label>
+        </ng-template>
+    </ListView>
+</StackLayout>

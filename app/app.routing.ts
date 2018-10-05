@@ -1,14 +1,30 @@
-import { NgModule } from "@angular/core";
-import { NativeScriptRouterModule } from "nativescript-angular/router";
-import { Routes } from "@angular/router";
+import { NgModule } from '@angular/core';
+import { NativeScriptRouterModule } from 'nativescript-angular/router';
+import { Routes } from '@angular/router';
 
-import { ItemsComponent } from "./item/items.component";
-import { ItemDetailComponent } from "./item/item-detail.component";
+import { TabsComponent } from './tabs.component';
+
+import { CiphersComponent } from './vault/ciphers.component';
+import { GroupingsComponent } from './vault/groupings.component';
+import { VaultComponent } from './vault/vault.component';
 
 const routes: Routes = [
-    { path: "", redirectTo: "/items", pathMatch: "full" },
-    { path: "items", component: ItemsComponent },
-    { path: "item/:id", component: ItemDetailComponent },
+    { path: '', redirectTo: '/tabs/(vaultoutlet:vault)', pathMatch: 'full' },
+    {
+        path: 'tabs',
+        component: TabsComponent,
+        children: [
+            {
+                path: 'vault',
+                component: VaultComponent,
+                outlet: 'vaultoutlet',
+                children: [
+                    { path: 'groupings', component: GroupingsComponent },
+                    { path: 'ciphers/:id', component: CiphersComponent },
+                ],
+            },
+        ],
+    },
 ];
 
 @NgModule({

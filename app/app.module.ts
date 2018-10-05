@@ -1,42 +1,43 @@
-import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
-import { NativeScriptModule } from "nativescript-angular/nativescript.module";
-import { AppRoutingModule } from "./app.routing";
-import { AppComponent } from "./app.component";
+import {
+    NgModule,
+    NO_ERRORS_SCHEMA,
+} from '@angular/core';
 
-import { ItemService } from "./item/item.service";
-import { ItemsComponent } from "./item/items.component";
-import { ItemDetailComponent } from "./item/item-detail.component";
+import { NativeScriptFormsModule } from 'nativescript-angular/forms';
+import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 
-import { ServicesModule } from "~/services/services.module";
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app.routing';
+import { TabsComponent } from './tabs.component';
 
-// Uncomment and add to NgModule imports if you need to use two-way binding
-// import { NativeScriptFormsModule } from "nativescript-angular/forms";
+import { ServicesModule } from './services/services.module';
 
-// Uncomment and add to NgModule imports if you need to use the HttpClient wrapper
-// import { NativeScriptHttpClientModule } from "nativescript-angular/http-client";
+import { CiphersComponent } from './vault/ciphers.component';
+import { GroupingsComponent } from './vault/groupings.component';
+import { VaultComponent } from './vault/vault.component';
+
 
 @NgModule({
     bootstrap: [
         AppComponent
     ],
     imports: [
+        NativeScriptFormsModule,
         NativeScriptModule,
         AppRoutingModule,
         ServicesModule
     ],
     declarations: [
         AppComponent,
-        ItemsComponent,
-        ItemDetailComponent
+        TabsComponent,
+        GroupingsComponent,
+        CiphersComponent,
+        VaultComponent,
     ],
-    providers: [
-        ItemService
-    ],
+    providers: [],
     schemas: [
         NO_ERRORS_SCHEMA
     ]
 })
-/*
-Pass your application module to the bootstrapModule function located in main.ts to start your app
-*/
+
 export class AppModule { }
