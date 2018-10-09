@@ -34,6 +34,7 @@ export class LowdbStorageService implements StorageService {
     private db: lowdb.LowdbSync<any>;
     private defaults: any;
     private allowCache = true;
+    private dataFilePath: string;
 
     constructor(defaults?: any) {
         this.defaults = defaults;
@@ -49,9 +50,19 @@ export class LowdbStorageService implements StorageService {
             dir = fs.knownFolders.documents().path;
         }
 
-        const p = fs.path.join(dir, 'data.json');
-        const adapter = new NativeScriptAdapter(p);
-        this.db = lowdb<lowdb.AdapterSync>(adapter as any);
+        this.dataFilePath = fs.path.join(dir, 'data.json');
+        const adapter = new NativeScriptAdapter(this.dataFilePath);
+
+        try {
+            this.db = lowdb<lowdb.AdapterSync>(adapter as any);
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+                adapter.write({});
+                this.db = lowdb<lowdb.AdapterSync>(adapter as any);
+            } else {
+                throw e;
+            }
+        }
     }
 
     init() {
@@ -62,9 +73,7 @@ export class LowdbStorageService implements StorageService {
     }
 
     get<T>(key: string): Promise<T> {
-        if (!this.allowCache) {
-            this.db.read();
-        }
+        this.readForNoCache();
         const val = this.db.get(key).value();
         if (val == null) {
             return Promise.resolve(null);
@@ -73,18 +82,20 @@ export class LowdbStorageService implements StorageService {
     }
 
     save(key: string, obj: any): Promise<any> {
-        if (!this.allowCache) {
-            this.db.read();
-        }
+        this.readForNoCache();
         this.db.set(key, obj).write();
         return Promise.resolve();
     }
 
     remove(key: string): Promise<any> {
+        this.readForNoCache();
+        this.db.unset(key).write();
+        return Promise.resolve();
+    }
+
+    private readForNoCache() {
         if (!this.allowCache) {
             this.db.read();
         }
-        this.db.unset(key).write();
-        return Promise.resolve();
     }
 }
