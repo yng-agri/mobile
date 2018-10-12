@@ -10,6 +10,10 @@ import { NativescriptBottomNavigationModule} from "nativescript-bottom-navigatio
 import { AppComponent } from './app.component';
 import { TabsComponent } from './tabs.component';
 
+import { HomeComponent } from './accounts/home.component';
+import { LoginComponent } from './accounts/login.component';
+import { RegisterComponent } from './accounts/register.component';
+
 import { AppRoutingModule } from './app-routing.module';
 import { ServicesModule } from './services/services.module';
 
@@ -35,6 +39,9 @@ import { VaultComponent } from './vault/vault.component';
         GroupingsComponent,
         CiphersComponent,
         VaultComponent,
+        HomeComponent,
+        LoginComponent,
+        RegisterComponent,
     ],
     providers: [],
     schemas: [

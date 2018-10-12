@@ -1,13 +1,10 @@
-import { Page } from 'ui/page';
-import {
-    Component,
-    OnInit,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterExtensions } from "nativescript-angular/router";
 import {
     OnTabPressedEventData,
     OnTabSelectedEventData,
 } from 'nativescript-bottom-navigation';
+import { Page } from 'ui/page';
 
 @Component({
     selector: 'app-tabs',
