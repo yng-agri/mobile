@@ -9,7 +9,7 @@ import { GroupingsComponent } from './vault/groupings.component';
 import { VaultComponent } from './vault/vault.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/tabs/(vaultoutlet:vault)', pathMatch: 'full' },
+    { path: '', redirectTo: '/tabs', pathMatch: 'full' },
     {
         path: 'tabs',
         component: TabsComponent,
@@ -17,7 +17,6 @@ const routes: Routes = [
             {
                 path: 'vault',
                 component: VaultComponent,
-                outlet: 'vaultoutlet',
                 children: [
                     { path: 'groupings', component: GroupingsComponent },
                     { path: 'ciphers/:id', component: CiphersComponent },

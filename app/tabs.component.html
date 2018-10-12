@@ -1,11 +1,13 @@
-<TabView class="tab-view">
-    <StackLayout *tabItem="{title: 'My Vault'}">
-        <router-outlet name="vaultoutlet"></router-outlet>
+<GridLayout rows="*, auto">
+    <StackLayout row="0">
+        <router-outlet></router-outlet>
     </StackLayout>
-    <StackLayout *tabItem="{title: 'Generator'}">
-        
+    <StackLayout row="1" verticalAlignment="bottom">
+        <BottomNavigation activeColor="blue" inactiveColor="black" backgroundColor="gray" keyLineColor="black"
+            (tabSelected)="onTabSelected($event)" (tabPressed)="onTabPressed($event)" row="1">
+            <BottomNavigationTab title="My Vault" icon="ic_heart"></BottomNavigationTab>
+            <BottomNavigationTab title="Generator" icon="ic_heart"></BottomNavigationTab>
+            <BottomNavigationTab title="Settings" icon="ic_heart"></BottomNavigationTab>
+        </BottomNavigation>
     </StackLayout>
-    <StackLayout *tabItem="{title: 'Settings'}">
-        
-    </StackLayout>
-</TabView>
+</GridLayout>

@@ -5,6 +5,7 @@ import {
 
 import { NativeScriptFormsModule } from 'nativescript-angular/forms';
 import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
+import { NativescriptBottomNavigationModule} from "nativescript-bottom-navigation/angular";
 
 import { AppComponent } from './app.component';
 import { TabsComponent } from './tabs.component';
@@ -24,6 +25,7 @@ import { VaultComponent } from './vault/vault.component';
     imports: [
         NativeScriptFormsModule,
         NativeScriptModule,
+        NativescriptBottomNavigationModule,
         AppRoutingModule,
         ServicesModule
     ],
