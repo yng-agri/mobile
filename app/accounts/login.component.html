@@ -1,1 +1,11 @@
-<ActionBar title="Log In" class="action-bar"></ActionBar>
+<ActionBar title="Bitwarden" class="action-bar">
+    <ActionItem text="Log In" (tap)="submit()"></ActionItem>
+</ActionBar>
+<StackLayout class="page">
+    <TextField hint="Email" [(ngModel)]='email' secure="false" keyboardType="email" returnKeyType="next" autocorrect="false"
+        class="input input-border">
+    </TextField>
+    <TextField hint="Master Password" [(ngModel)]='masterPassword' secure="true" returnKeyType="go" (returnPress)="submit()"
+        autocorrect="false" class="input input-border">
+    </TextField>
+</StackLayout>

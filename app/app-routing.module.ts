@@ -13,7 +13,7 @@ import { GroupingsComponent } from './vault/groupings.component';
 import { VaultComponent } from './vault/vault.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: '', redirectTo: '/tabs', pathMatch: 'full' },
     { path: 'home', component: HomeComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },

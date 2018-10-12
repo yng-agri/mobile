@@ -1,8 +1,35 @@
 <ActionBar title="My Vault" class="action-bar"></ActionBar>
 <StackLayout class="page">
-    <ListView [items]="groupings" class="list-group">
-        <ng-template let-g="item">
-            <Label [nsRouterLink]="['/tabs/vault/ciphers', g.id]" [text]="g.name" class="list-group-item"></Label>
+    <ListView [items]="items" [itemTemplateSelector]="templateSelector" class="list-group">
+        <ng-template let-h="item" nsTemplateKey="header">
+            <StackLayout class="list-group-header">
+                <Label [text]="h.name"></Label>
+            </StackLayout>
+        </ng-template>
+        <ng-template let-c="item" nsTemplateKey="cipher">
+            <GridLayout class="list-group-item" rows="auto, *" columns="80, *">
+                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
+                <Label row="0" col="1" [text]="c.name" class="list-group-item-heading"></Label>
+                <Label row="1" col="1" [text]="c.subTitle" class="list-group-item-text"></Label>
+            </GridLayout>
+        </ng-template>
+        <ng-template let-t="item" nsTemplateKey="type">
+            <GridLayout class="list-group-item" rows="auto, *" columns="80, *">
+                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
+                <Label row="0" col="1" [text]="t.name"></Label>
+            </GridLayout>
+        </ng-template>
+        <ng-template let-f="item" nsTemplateKey="folder">
+            <GridLayout class="list-group-item" rows="auto, *" columns="80, *">
+                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
+                <Label row="0" col="1" [text]="f.name"></Label>
+            </GridLayout>
+        </ng-template>
+        <ng-template let-c="item" nsTemplateKey="collection">
+            <GridLayout class="list-group-item" rows="auto, *" columns="80, *">
+                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
+                <Label row="0" col="1" [text]="c.name"></Label>
+            </GridLayout>
         </ng-template>
     </ListView>
 </StackLayout>

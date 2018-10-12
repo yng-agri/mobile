@@ -10,3 +10,9 @@ of writing your own CSS rules. For a full list of class names in the theme
 refer to http://docs.nativescript.org/ui/theme.
 */
 @import '~nativescript-theme-core/css/core.light.css';
+
+.list-group-header {
+    background-color: gray;
+    padding: 10;
+    color: white;
+}
