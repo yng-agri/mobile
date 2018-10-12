@@ -1,3 +1,4 @@
+import { Page } from 'ui/page';
 import {
     Component,
     OnInit,
@@ -14,7 +15,9 @@ import {
 })
 
 export class TabsComponent {
-    constructor(private router: RouterExtensions) { }
+    constructor(private router: RouterExtensions, private page: Page) {
+        this.page.actionBarHidden = true;
+    }
 
     ngOnInit(): void {
         this.router.navigate(['/tabs/vault/groupings']);
