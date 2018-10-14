@@ -5,8 +5,6 @@ import { DeviceType } from 'jslib/enums/deviceType';
 import { I18nService } from 'jslib/abstractions/i18n.service';
 import { PlatformUtilsService } from 'jslib/abstractions/platformUtils.service';
 
-import { Utils } from 'jslib/misc/utils';
-
 export class MobilePlatformUtilsService implements PlatformUtilsService {
     identityClientId = 'mobile';
 
@@ -54,10 +52,6 @@ export class MobilePlatformUtilsService implements PlatformUtilsService {
 
     analyticsId(): string {
         return null;
-    }
-
-    getDomain(uriString: string): string {
-        return Utils.getHostname(uriString);
     }
 
     isViewOpen(): boolean {
