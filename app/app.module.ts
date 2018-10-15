@@ -4,13 +4,18 @@ import {
 } from '@angular/core';
 
 import { NativeScriptFormsModule } from 'nativescript-angular/forms';
+import { ModalDialogService } from 'nativescript-angular/modal-dialog';
 import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
-import { NativescriptBottomNavigationModule} from "nativescript-bottom-navigation/angular";
+import { NativescriptBottomNavigationModule } from "nativescript-bottom-navigation/angular";
 
 import { AppComponent } from './app.component';
+import { ModalComponent } from './modal.component';
 import { TabsComponent } from './tabs.component';
 
+import { EnvironmentComponent } from './accounts/environment.component';
+import { HintComponent } from './accounts/hint.component';
 import { HomeComponent } from './accounts/home.component';
+import { LockComponent } from './accounts/lock.component';
 import { LoginComponent } from './accounts/login.component';
 import { RegisterComponent } from './accounts/register.component';
 
@@ -35,6 +40,7 @@ import { VaultComponent } from './vault/vault.component';
     ],
     declarations: [
         AppComponent,
+        ModalComponent,
         TabsComponent,
         GroupingsComponent,
         CiphersComponent,
@@ -42,8 +48,16 @@ import { VaultComponent } from './vault/vault.component';
         HomeComponent,
         LoginComponent,
         RegisterComponent,
+        EnvironmentComponent,
+        HintComponent,
+        LockComponent,
     ],
-    providers: [],
+    providers: [
+        ModalDialogService,
+    ],
+    entryComponents: [
+        ModalComponent,
+    ],
     schemas: [
         NO_ERRORS_SCHEMA
     ]

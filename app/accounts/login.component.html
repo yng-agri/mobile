@@ -8,4 +8,5 @@
     <TextField hint="Master Password" [(ngModel)]='masterPassword' secure="true" returnKeyType="go" (returnPress)="submit()"
         autocorrect="false" class="input input-border">
     </TextField>
+    <Button class="btn btn-primary btn-active" id="button" text="Password Hint" (tap)="hint()"></Button>
 </StackLayout>

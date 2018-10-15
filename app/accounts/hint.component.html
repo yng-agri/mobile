@@ -1,0 +1,7 @@
+<ActionBar title="Password Hint" class="action-bar">
+    <ActionItem text="Submit" (tap)="submit()"></ActionItem>
+</ActionBar>
+<StackLayout class="page">
+    <TextField hint="Email Address" [(ngModel)]="email" keyboardType="email" returnKeyType="go" (returnPress)="submit()" class="input input-border">
+    </TextField>
+</StackLayout>

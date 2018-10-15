@@ -1,5 +1,11 @@
-import { Component } from '@angular/core';
-import { RouterExtensions } from "nativescript-angular/router";
+import {
+    Component,
+    ViewContainerRef,
+} from '@angular/core';
+import { ModalDialogService } from 'nativescript-angular/directives/dialogs';
+import { RouterExtensions } from 'nativescript-angular/router';
+
+import { ModalComponent } from '../modal.component';
 
 import { AuthService } from 'jslib/abstractions/auth.service';
 import { I18nService } from 'jslib/abstractions/i18n.service';
@@ -16,7 +22,8 @@ import { LoginComponent as BaseLoginComponent } from 'jslib/angular/components/l
 export class LoginComponent extends BaseLoginComponent {
     constructor(authService: AuthService, private routerExtensions: RouterExtensions,
         platformUtilsService: PlatformUtilsService, i18nService: I18nService,
-        syncService: SyncService, storageService: StorageService) {
+        syncService: SyncService, storageService: StorageService,
+        private modalDialogService: ModalDialogService, private vcRef: ViewContainerRef) {
         super(authService, null, platformUtilsService, i18nService, storageService);
         this.onSuccessfulLogin = () => {
             return syncService.fullSync(true);
@@ -31,7 +38,13 @@ export class LoginComponent extends BaseLoginComponent {
         };
     }
 
-    settings() {
-        this.routerExtensions.navigate(['environment']);
+    hint() {
+        this.modalDialogService.showModal(ModalComponent, {
+            context: { path: 'hint' },
+            fullscreen: true,
+            viewContainerRef: this.vcRef,
+        }).then((res) => {
+            console.log(res);
+        });
     }
 }
