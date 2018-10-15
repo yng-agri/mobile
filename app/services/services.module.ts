@@ -36,6 +36,8 @@ import { UserService } from 'jslib/abstractions/user.service';
 
 import { BroadcasterService } from 'jslib/angular/services/broadcaster.service';
 
+import { LaunchGuardService } from '../services/launch-guard.service';
+
 import { MobileSecureStorageService } from '../../services/mobileSecureStorage.service';
 import { MobileBroadcasterMessagingService } from '../../services/mobileBroadcasterMessaging.service';
 
@@ -72,6 +74,7 @@ export function initFactory(): Function {
     ],
     declarations: [],
     providers: [
+        LaunchGuardService,
         { provide: MessagingService, useValue: messagingService },
         { provide: BroadcasterService, useValue: broadcasterService },
         { provide: EnvironmentService, useFactory: getApplicationService<EnvironmentService>('environmentService'), deps: [] },

@@ -12,9 +12,11 @@ import { CiphersComponent } from './vault/ciphers.component';
 import { GroupingsComponent } from './vault/groupings.component';
 import { VaultComponent } from './vault/vault.component';
 
+import { LaunchGuardService } from './services/launch-guard.service';
+
 const routes: Routes = [
-    { path: '', redirectTo: '/tabs', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent },
+    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: 'home', component: HomeComponent, canActivate: [LaunchGuardService] },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     {
