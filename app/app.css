@@ -16,3 +16,9 @@ refer to http://docs.nativescript.org/ui/theme.
     padding: 10;
     color: white;
 }
+
+TabView {
+    tab-background-color: white;
+    selected-tab-text-color: blue;
+    android-selected-tab-highlight-color: blue;
+}

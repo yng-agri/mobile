@@ -22,7 +22,7 @@
         <ng-template let-f="item" nsTemplateKey="folder">
             <GridLayout class="list-group-item" rows="auto, *" columns="80, *">
                 <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
-                <Label row="0" col="1" [text]="f.name"></Label>
+                <Label row="0" col="1" [text]="f.name" [nsRouterLink]="['../ciphers', f.id]"></Label>
             </GridLayout>
         </ng-template>
         <ng-template let-c="item" nsTemplateKey="collection">

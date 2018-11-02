@@ -2,6 +2,7 @@ import {
     Component,
     OnInit,
 } from '@angular/core';
+import { RouterExtensions } from 'nativescript-angular/router';
 
 @Component({
     selector: 'app-ciphers',
@@ -11,11 +12,15 @@ import {
 export class CiphersComponent implements OnInit {
     ciphers: any[] = [];
 
-    constructor() { }
+    constructor(private routerExtensions: RouterExtensions) { }
 
     ngOnInit(): void {
         for (let i = 0; i < 100; i++) {
             this.ciphers.push({ id: i, name: 'Item #' + (i + 1) });
         }
+    }
+
+    close() {
+        this.routerExtensions.back();
     }
 }

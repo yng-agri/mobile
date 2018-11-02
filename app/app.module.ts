@@ -6,7 +6,6 @@ import {
 import { NativeScriptFormsModule } from 'nativescript-angular/forms';
 import { ModalDialogService } from 'nativescript-angular/modal-dialog';
 import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
-import { NativescriptBottomNavigationModule } from "nativescript-bottom-navigation/angular";
 
 import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
@@ -24,7 +23,6 @@ import { ServicesModule } from './services/services.module';
 
 import { CiphersComponent } from './vault/ciphers.component';
 import { GroupingsComponent } from './vault/groupings.component';
-import { VaultComponent } from './vault/vault.component';
 
 
 @NgModule({
@@ -34,7 +32,6 @@ import { VaultComponent } from './vault/vault.component';
     imports: [
         NativeScriptFormsModule,
         NativeScriptModule,
-        NativescriptBottomNavigationModule,
         AppRoutingModule,
         ServicesModule
     ],
@@ -44,7 +41,6 @@ import { VaultComponent } from './vault/vault.component';
         TabsComponent,
         GroupingsComponent,
         CiphersComponent,
-        VaultComponent,
         HomeComponent,
         LoginComponent,
         RegisterComponent,

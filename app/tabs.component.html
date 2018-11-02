@@ -1,13 +1,10 @@
-<GridLayout rows="*, auto">
-    <StackLayout row="0">
-        <router-outlet></router-outlet>
-    </StackLayout>
-    <StackLayout row="1" verticalAlignment="bottom">
-        <BottomNavigation activeColor="blue" inactiveColor="black" backgroundColor="gray" keyLineColor="black"
-            (tabSelected)="onTabSelected($event)" (tabPressed)="onTabPressed($event)" row="1">
-            <BottomNavigationTab title="My Vault" icon="ic_heart"></BottomNavigationTab>
-            <BottomNavigationTab title="Generator" icon="ic_heart"></BottomNavigationTab>
-            <BottomNavigationTab title="Settings" icon="ic_heart"></BottomNavigationTab>
-        </BottomNavigation>
-    </StackLayout>
-</GridLayout>
+<StackLayout>
+    <TabView androidTabsPosition="bottom">
+        <page-router-outlet *tabItem="{title: 'My Vault', iconSource: 'res://ic_heart', textTransform: 'none'}" name="vaultTab">
+        </page-router-outlet>
+        <page-router-outlet *tabItem="{title: 'Generator', iconSource: 'res://ic_heart', textTransform: 'none'}" name="generatorTab">
+        </page-router-outlet>
+        <page-router-outlet *tabItem="{title: 'Settings', iconSource: 'res://ic_heart', textTransform: 'none'}" name="settingsTab">
+        </page-router-outlet>
+    </TabView>
+</StackLayout>

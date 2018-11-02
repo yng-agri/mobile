@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ModalDialogParams } from "nativescript-angular/modal-dialog";
 import { RouterExtensions } from "nativescript-angular/router";
 
 import { ApiService } from 'jslib/abstractions/api.service';
@@ -12,11 +14,9 @@ import { HintComponent as BaseHintComponent } from 'jslib/angular/components/hin
     templateUrl: 'hint.component.html',
 })
 export class HintComponent extends BaseHintComponent {
-    constructor(routerExtensions: RouterExtensions, platformUtilsService: PlatformUtilsService,
+    constructor(params: ModalDialogParams, platformUtilsService: PlatformUtilsService,
         i18nService: I18nService, apiService: ApiService) {
         super(null, i18nService, apiService, platformUtilsService);
-        this.onSuccessfulSubmit = () => {
-            routerExtensions.navigate(['/home']);
-        };
+        this.onSuccessfulSubmit = () => params.closeCallback();
     }
 }

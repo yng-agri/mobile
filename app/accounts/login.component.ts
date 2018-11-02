@@ -2,7 +2,7 @@ import {
     Component,
     ViewContainerRef,
 } from '@angular/core';
-import { ModalDialogService } from 'nativescript-angular/directives/dialogs';
+import { ModalDialogParams, ModalDialogService } from 'nativescript-angular/directives/dialogs';
 import { RouterExtensions } from 'nativescript-angular/router';
 
 import { ModalComponent } from '../modal.component';
@@ -20,15 +20,17 @@ import { LoginComponent as BaseLoginComponent } from 'jslib/angular/components/l
     templateUrl: 'login.component.html',
 })
 export class LoginComponent extends BaseLoginComponent {
-    constructor(authService: AuthService, private routerExtensions: RouterExtensions,
+    constructor(authService: AuthService, routerExtensions: RouterExtensions,
         platformUtilsService: PlatformUtilsService, i18nService: I18nService,
         syncService: SyncService, storageService: StorageService,
-        private modalDialogService: ModalDialogService, private vcRef: ViewContainerRef) {
+        private modalDialogService: ModalDialogService, private vcRef: ViewContainerRef,
+        params: ModalDialogParams) {
         super(authService, null, platformUtilsService, i18nService, storageService);
         this.onSuccessfulLogin = () => {
             return syncService.fullSync(true);
         };
         this.onSuccessfulLoginNavigate = () => {
+            params.closeCallback()
             routerExtensions.navigate(['tabs'], { clearHistory: true });
             return Promise.resolve();
         };

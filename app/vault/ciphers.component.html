@@ -1,4 +1,6 @@
-<ActionBar title="Items" class="action-bar"></ActionBar>
+<ActionBar title="Items" class="action-bar">
+    <NavigationButton text="Back" android.systemIcon="ic_menu_back" (tap)="close()"></NavigationButton>
+</ActionBar>
 <StackLayout class="page">
     <ListView [items]="ciphers" class="list-group">
         <ng-template let-c="item">

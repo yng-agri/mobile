@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterExtensions } from "nativescript-angular/router";
-import {
-    OnTabPressedEventData,
-    OnTabSelectedEventData,
-} from 'nativescript-bottom-navigation';
 import { Page } from 'ui/page';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-tabs',
@@ -12,19 +9,13 @@ import { Page } from 'ui/page';
 })
 
 export class TabsComponent {
-    constructor(private router: RouterExtensions, private page: Page) {
+    constructor(private router: RouterExtensions, private page: Page,
+        private activatedRoute: ActivatedRoute) {
         this.page.actionBarHidden = true;
     }
 
     ngOnInit(): void {
-        this.router.navigate(['/tabs/vault/groupings']);
-    }
-
-    onTabPressed(args: OnTabPressedEventData): void {
-        console.log(`Tab pressed:  ${args.index}`);
-    }
-
-    onTabSelected(args: OnTabSelectedEventData): void {
-        console.log(`Tab selected:  ${args.oldIndex}`);
+        this.router.navigate([{ outlets: { vaultTab: ['groupings'] } }],
+            { relativeTo: this.activatedRoute });
     }
 }

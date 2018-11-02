@@ -13,7 +13,6 @@ import { RegisterComponent } from './accounts/register.component';
 
 import { CiphersComponent } from './vault/ciphers.component';
 import { GroupingsComponent } from './vault/groupings.component';
-import { VaultComponent } from './vault/vault.component';
 
 import { LaunchGuardService } from './services/launch-guard.service';
 
@@ -39,14 +38,8 @@ const routes: Routes = [
         path: 'tabs',
         component: TabsComponent,
         children: [
-            {
-                path: 'vault',
-                component: VaultComponent,
-                children: [
-                    { path: 'groupings', component: GroupingsComponent },
-                    { path: 'ciphers/:id', component: CiphersComponent },
-                ],
-            },
+            { path: 'groupings', component: GroupingsComponent, outlet: 'vaultTab' },
+            { path: 'ciphers/:id', component: CiphersComponent, outlet: 'vaultTab' },
         ],
     },
 ];
