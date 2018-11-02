@@ -2,8 +2,8 @@ import {
     Component,
     OnInit,
 } from '@angular/core';
-import { ItemEventData } from 'ui/list-view/list-view';
-import { EventData } from 'data/observable';
+import { ActivatedRoute } from '@angular/router';
+import { RouterExtensions } from 'nativescript-angular/router';
 
 import { CipherType } from 'jslib/enums/cipherType';
 
@@ -40,8 +40,6 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
     searchPending = false;
 
     private loadedTimeout: any;
-    private selectedTimeout: any;
-    private preventSelected = false;
     private noFolderListSize = 100;
     private searchTimeout: any = null;
     private hasSearched = false;
@@ -50,7 +48,8 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
 
     constructor(collectionService: CollectionService, folderService: FolderService,
         private broadcasterService: BroadcasterService, private syncService: SyncService,
-        private searchService: SearchService, private cipherService: CipherService) {
+        private searchService: SearchService, private cipherService: CipherService,
+        private routerExtensions: RouterExtensions, private route: ActivatedRoute) {
         super(collectionService, folderService);
     }
 
@@ -209,5 +208,28 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
             return 'collection';
         }
         return 'folder';
+    }
+
+    async selectType(type: CipherType) {
+        super.selectType(type);
+        this.routerExtensions.navigate(['../ciphers'],
+            { queryParams: { type: type }, relativeTo: this.route });
+    }
+
+    async selectFolder(folder: FolderView) {
+        super.selectFolder(folder);
+        this.routerExtensions.navigate(['../ciphers'],
+            { queryParams: { folderId: folder.id || 'none' }, relativeTo: this.route });
+    }
+
+    async selectCollection(collection: CollectionView) {
+        super.selectCollection(collection);
+        this.routerExtensions.navigate(['../ciphers'],
+            { queryParams: { collectionId: collection.id }, relativeTo: this.route });
+    }
+
+    async selectCipher(cipher: CipherView) {
+        this.routerExtensions.navigate(['view-cipher'],
+            { queryParams: { cipherId: cipher.id }, relativeTo: this.route });
     }
 }

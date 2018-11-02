@@ -10,12 +10,12 @@ import { ActivatedRoute } from '@angular/router';
 
 export class TabsComponent {
     constructor(private router: RouterExtensions, private page: Page,
-        private activatedRoute: ActivatedRoute) {
+        private route: ActivatedRoute) {
         this.page.actionBarHidden = true;
     }
 
     ngOnInit(): void {
         this.router.navigate([{ outlets: { vaultTab: ['groupings'] } }],
-            { relativeTo: this.activatedRoute });
+            { relativeTo: this.route });
     }
 }

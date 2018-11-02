@@ -11,8 +11,10 @@ import { LockComponent } from './accounts/lock.component';
 import { LoginComponent } from './accounts/login.component';
 import { RegisterComponent } from './accounts/register.component';
 
+import { AddEditComponent } from './vault/add-edit.component';
 import { CiphersComponent } from './vault/ciphers.component';
 import { GroupingsComponent } from './vault/groupings.component';
+import { ViewComponent } from './vault/view.component';
 
 import { LaunchGuardService } from './services/launch-guard.service';
 
@@ -39,7 +41,15 @@ const routes: Routes = [
         component: TabsComponent,
         children: [
             { path: 'groupings', component: GroupingsComponent, outlet: 'vaultTab' },
-            { path: 'ciphers/:id', component: CiphersComponent, outlet: 'vaultTab' },
+            {
+                path: 'ciphers',
+                component: CiphersComponent,
+                outlet: 'vaultTab',
+                children: [
+                    { path: 'add-edit', component: AddEditComponent },
+                    { path: 'view-cipher', component: ViewComponent },
+                ],
+            },
         ],
     },
 ];

@@ -21,8 +21,10 @@ import { RegisterComponent } from './accounts/register.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ServicesModule } from './services/services.module';
 
+import { AddEditComponent } from './vault/add-edit.component';
 import { CiphersComponent } from './vault/ciphers.component';
 import { GroupingsComponent } from './vault/groupings.component';
+import { ViewComponent } from './vault/view.component';
 
 
 @NgModule({
@@ -36,6 +38,7 @@ import { GroupingsComponent } from './vault/groupings.component';
         ServicesModule
     ],
     declarations: [
+        AddEditComponent,
         AppComponent,
         ModalComponent,
         TabsComponent,
@@ -47,6 +50,7 @@ import { GroupingsComponent } from './vault/groupings.component';
         EnvironmentComponent,
         HintComponent,
         LockComponent,
+        ViewComponent,
     ],
     providers: [
         ModalDialogService,

@@ -4,7 +4,7 @@
 <StackLayout class="page">
     <ListView [items]="ciphers" class="list-group">
         <ng-template let-c="item">
-            <Label [nsRouterLink]="['/cipher-view', c.id]" [text]="c.name" class="list-group-item"></Label>
+            <Label [text]="c.name" class="list-group-item" (tap)="selectCipher(c)"></Label>
         </ng-template>
     </ListView>
 </StackLayout>
