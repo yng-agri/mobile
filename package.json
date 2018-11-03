@@ -17,11 +17,11 @@
     "sub:pull": "git submodule foreach git pull",
     "postinstall": "npm run sub:init",
     "clean": "rimraf ./platforms",
-    "android": "tns run android --bundle",
+    "android": "cross-env NODE_OPTIONS=--max-old-space-size=4096 tns run android --bundle",
     "ios": "tns run ios --bundle",
-    "android:sim": "tns run android --bundle --emulator",
+    "android:sim": "cross-env NODE_OPTIONS=--max-old-space-size=4096 tns run android --bundle --emulator",
     "ios:sim": "tns run ios --bundle --emulator",
-    "android:debug": "tns debug android --bundle",
+    "android:debug": "cross-env NODE_OPTIONS=--max-old-space-size=4096 tns debug android --bundle",
     "ios:debug": "tns debug ios --bundle"
   },
   "dependencies": {
@@ -53,6 +53,7 @@
     "@types/node": "8.0.19",
     "@types/papaparse": "^4.5.4",
     "@types/tldjs": "^2.3.0",
+    "cross-env": "^5.2.0",
     "nativescript-dev-typescript": "~0.7.0",
     "nativescript-dev-webpack": "^0.15.1",
     "tns-platform-declarations": "^4.2.0",
