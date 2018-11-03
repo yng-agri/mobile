@@ -46,6 +46,8 @@ export class CiphersComponent extends BaseCiphersComponent implements OnInit, On
     nestedFolders: Array<TreeNode<FolderView>>;
     nestedCollections: Array<TreeNode<CollectionView>>;
 
+    private inited = false;
+
     constructor(searchService: SearchService, private route: ActivatedRoute,
         private ngZone: NgZone, private broadcasterService: BroadcasterService,
         private changeDetectorRef: ChangeDetectorRef, private stateService: StateService,
@@ -58,6 +60,10 @@ export class CiphersComponent extends BaseCiphersComponent implements OnInit, On
 
     async ngOnInit() {
         this.route.queryParams.subscribe(async (params) => {
+            if (this.inited) {
+                return;
+            }
+            this.inited = true;
             if (params.type) {
                 this.searchPlaceholder = this.i18nService.t('searchType');
                 this.type = parseInt(params.type, null);

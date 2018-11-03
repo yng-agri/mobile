@@ -212,24 +212,44 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
 
     async selectType(type: CipherType) {
         super.selectType(type);
-        this.routerExtensions.navigate(['../ciphers'],
-            { queryParams: { type: type }, relativeTo: this.route });
+        this.routerExtensions.navigate(['../ciphers'], {
+            queryParams: { type: type },
+            relativeTo: this.route,
+            animated: true,
+            transition: {
+                name: 'slide',
+                duration: 400
+            }
+        });
     }
 
     async selectFolder(folder: FolderView) {
         super.selectFolder(folder);
-        this.routerExtensions.navigate(['../ciphers'],
-            { queryParams: { folderId: folder.id || 'none' }, relativeTo: this.route });
+        this.routerExtensions.navigate(['../ciphers'], {
+            queryParams: { folderId: folder.id || 'none' },
+            relativeTo: this.route,
+            animated: true,
+            transition: {
+                name: 'slide',
+                duration: 400
+            }
+        });
     }
 
     async selectCollection(collection: CollectionView) {
         super.selectCollection(collection);
-        this.routerExtensions.navigate(['../ciphers'],
-            { queryParams: { collectionId: collection.id }, relativeTo: this.route });
+        this.routerExtensions.navigate(['../ciphers'], {
+            queryParams: { collectionId: collection.id },
+            relativeTo: this.route,
+            animated: true,
+            transition: {
+                name: 'slide',
+                duration: 400
+            }
+        });
     }
 
     async selectCipher(cipher: CipherView) {
-        this.routerExtensions.navigate(['view-cipher'],
-            { queryParams: { cipherId: cipher.id }, relativeTo: this.route });
+
     }
 }

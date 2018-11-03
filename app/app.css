@@ -22,3 +22,8 @@ TabView {
     selected-tab-text-color: blue;
     android-selected-tab-highlight-color: blue;
 }
+
+ActionBar.action-bar {
+    background-color: blue;
+    color: white;
+}
