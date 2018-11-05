@@ -1,2 +1,10 @@
 @import 'app-common';
 
+.list-group {
+    separator-color: transparent;
+}
+
+.list-group-header {
+    border-bottom-width: 1;
+    border-color: $border-color;
+}

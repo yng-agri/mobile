@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterExtensions } from 'nativescript-angular/router';
+import { ItemEventData } from 'tns-core-modules/ui/list-view';
 
 import { CipherType } from 'jslib/enums/cipherType';
 
@@ -101,16 +102,16 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
             this.items = [...this.items, { isHeader: true, name: 'Favorites' }, ...this.favoriteCiphers];
         }
         this.items = [...this.items, { isHeader: true, name: 'Types' }, ...[
-            { isType: true, name: 'Logins', type: CipherType.Login },
-            { isType: true, name: 'Card', type: CipherType.Card },
-            { isType: true, name: 'Identity', type: CipherType.Identity },
-            { isType: true, name: 'Secure Note', type: CipherType.SecureNote },
+            { isType: true, name: 'Logins', type: CipherType.Login, icon: String.fromCharCode(0xf0ac) },
+            { isType: true, name: 'Card', type: CipherType.Card, icon: String.fromCharCode(0xf09d) },
+            { isType: true, name: 'Identity', type: CipherType.Identity, icon: String.fromCharCode(0xf2c3) },
+            { isType: true, name: 'Secure Note', type: CipherType.SecureNote, icon: String.fromCharCode(0xf24a) },
         ]];
-        if (this.folders != null && this.folders.length > 0) {
-            this.items = [...this.items, { isHeader: true, name: 'Folders' }, ...this.folders];
+        if (this.nestedFolders != null && this.nestedFolders.length > 0) {
+            this.items = [...this.items, { isHeader: true, name: 'Folders' }, ...this.nestedFolders];
         }
-        if (this.collections != null && this.collections.length > 0) {
-            this.items = [...this.items, { isHeader: true, name: 'Collections' }, ...this.collections];
+        if (this.nestedCollections != null && this.nestedCollections.length > 0) {
+            this.items = [...this.items, { isHeader: true, name: 'Collections' }, ...this.nestedCollections];
         }
         this.loaded = true;
     }
@@ -204,7 +205,7 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
         if (item.type != null) {
             return 'cipher';
         }
-        if (item.organizationId != null) {
+        if (item.node != null && item.node.organizationId != null) {
             return 'collection';
         }
         return 'folder';
@@ -251,5 +252,20 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
 
     async selectCipher(cipher: CipherView) {
 
+    }
+
+    onItemTap(args: ItemEventData) {
+        const item: any = this.items[args.index];
+        if (item.isHeader) {
+            return;
+        } else if (item.isType) {
+            this.selectType(item.type);
+        } else if (item.type != null) {
+            this.selectCipher(item);
+        } else if (item.organizationId != null) {
+            this.selectCollection(item);
+        } else {
+            this.selectFolder(item);
+        }
     }
 }
