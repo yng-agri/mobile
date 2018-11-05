@@ -7,27 +7,28 @@
             </StackLayout>
         </ng-template>
         <ng-template let-c="item" nsTemplateKey="cipher">
-            <GridLayout class="list-group-item" rows="auto, *" columns="80, *" (tap)="selectCipher(c)">
-                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
+            <GridLayout class="list-group-item" rows="auto, *" columns="50, *" (tap)="selectCipher(c)">
+                <Image row="0" col="0" src="https://placem.at/people?w=50&txt=0" class="thumb img-circle" rowSpan="2"></Image>
                 <Label row="0" col="1" [text]="c.name" class="list-group-item-heading"></Label>
                 <Label row="1" col="1" [text]="c.subTitle" class="list-group-item-text"></Label>
             </GridLayout>
         </ng-template>
         <ng-template let-t="item" nsTemplateKey="type">
             <GridLayout class="list-group-item" rows="auto, *" columns="80, *" (tap)="selectType(t.type)">
-                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
+                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle"></Image>
                 <Label row="0" col="1" [text]="t.name"></Label>
             </GridLayout>
         </ng-template>
         <ng-template let-f="item" nsTemplateKey="folder">
-            <GridLayout class="list-group-item" rows="auto, *" columns="80, *" (tap)="selectFolder(f)">
-                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
-                <Label row="0" col="1" [text]="f.name"></Label>
+            <GridLayout class="list-group-item" rows="auto, *" columns="30, *">
+                <Image row="0" col="0" src="https://placem.at/people?w=30&txt=0" class="thumb img-circle"
+                    (tap)="selectFolder(f)"></Image>
+                <Label row="0" col="1" [text]="f.name" (tap)="selectFolder(f)"></Label>
             </GridLayout>
         </ng-template>
         <ng-template let-c="item" nsTemplateKey="collection">
             <GridLayout class="list-group-item" rows="auto, *" columns="80, *" (tap)="selectCollection(c)">
-                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle" rowSpan="2"></Image>
+                <Image row="0" col="0" src="https://placem.at/people?w=80&txt=0" class="thumb img-circle"></Image>
                 <Label row="0" col="1" [text]="c.name"></Label>
             </GridLayout>
         </ng-template>
