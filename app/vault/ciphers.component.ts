@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { ModalDialogService } from 'nativescript-angular/directives/dialogs';
 import { RouterExtensions } from 'nativescript-angular/router';
+import { ItemEventData } from 'tns-core-modules/ui/list-view';
 
 import { ModalComponent } from '../modal.component';
 
@@ -191,5 +192,13 @@ export class CiphersComponent extends BaseCiphersComponent implements OnInit, On
 
     isSearching() {
         return !this.searchPending && this.searchService.isSearchable(this.searchText);
+    }
+
+    onItemTap(args: ItemEventData) {
+        this.selectCipher(this.ciphers[args.index]);
+    }
+
+    onItemLoading(args: ItemEventData) {
+        
     }
 }

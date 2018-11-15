@@ -7,11 +7,7 @@
             </StackLayout>
         </ng-template>
         <ng-template let-c="item" nsTemplateKey="cipher">
-            <GridLayout class="list-group-item" rows="auto, *" columns="50, *">
-                <Image row="0" col="0" src="https://placem.at/people?w=50&txt=0" class="thumb img-circle" rowSpan="2"></Image>
-                <Label row="0" col="1" [text]="c.name" class="list-group-item-heading"></Label>
-                <Label row="1" col="1" [text]="c.subTitle" class="list-group-item-text"></Label>
-            </GridLayout>
+            <app-cipher [cipher]="c"></app-cipher>
         </ng-template>
         <ng-template let-t="item" nsTemplateKey="type">
             <StackLayout class="list-group-item" orientation="horizontal">

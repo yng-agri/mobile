@@ -11,6 +11,9 @@ import { AppComponent } from './app.component';
 import { ModalComponent } from './modal.component';
 import { TabsComponent } from './tabs.component';
 
+import { CipherComponent } from './components/cipher.component';
+import { IconComponent } from './components/icon.component';
+
 import { EnvironmentComponent } from './accounts/environment.component';
 import { HintComponent } from './accounts/hint.component';
 import { HomeComponent } from './accounts/home.component';
@@ -51,6 +54,8 @@ import { ViewComponent } from './vault/view.component';
         HintComponent,
         LockComponent,
         ViewComponent,
+        CipherComponent,
+        IconComponent,
     ],
     providers: [
         ModalDialogService,

@@ -16,7 +16,9 @@ import { CipherService } from 'jslib/abstractions/cipher.service';
 import { CollectionService } from 'jslib/abstractions/collection.service';
 import { FolderService } from 'jslib/abstractions/folder.service';
 import { SearchService } from 'jslib/abstractions/search.service';
+import { StorageService } from 'jslib/abstractions/storage.service';
 import { SyncService } from 'jslib/abstractions/sync.service';
+import { UserService } from 'jslib/abstractions/user.service';
 
 import { BroadcasterService } from 'jslib/angular/services/broadcaster.service';
 
@@ -48,10 +50,11 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
     private allCiphers: CipherView[] = null;
 
     constructor(collectionService: CollectionService, folderService: FolderService,
+        storageService: StorageService, userService: UserService,
         private broadcasterService: BroadcasterService, private syncService: SyncService,
         private searchService: SearchService, private cipherService: CipherService,
         private routerExtensions: RouterExtensions, private route: ActivatedRoute) {
-        super(collectionService, folderService);
+        super(collectionService, folderService, storageService, userService);
     }
 
     get showNoFolderCiphers(): boolean {
