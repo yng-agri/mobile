@@ -70,11 +70,9 @@ export class GroupingsComponent extends BaseGroupingsComponent implements OnInit
         this.broadcasterService.subscribe(ComponentId, (message: any) => {
             switch (message.command) {
                 case 'syncCompleted':
-                    if (message.successfully) {
-                        setTimeout(() => {
-                            this.load();
-                        }, 500);
-                    }
+                    setTimeout(() => {
+                        this.load();
+                    }, 500);
                     break;
                 default:
                     break;
