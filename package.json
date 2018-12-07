@@ -43,6 +43,7 @@
     "@angular/platform-browser-dynamic": "~7.0.0",
     "@angular/router": "~7.0.0",
     "lowdb": "1.0.0",
+    "lunr": "2.3.3",
     "nativescript-angular": "^7.0.3",
     "nativescript-bw-crypto": "file:plugins/bw-crypto/publish/package/nativescript-bw-crypto-1.0.0.tgz",
     "nativescript-bw-secure-storage": "file:plugins/bw-secure-storage/publish/package/nativescript-bw-secure-storage-1.0.0.tgz",
