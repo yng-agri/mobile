@@ -4,7 +4,7 @@ import {
 } from 'ui/frame';
 
 @JavaProxy('com.tns.MainActivity')
-export class MainActivity extends android.app.Activity {
+export class MainActivity extends android.support.v7.app.AppCompatActivity {
     private _callbacks: AndroidActivityCallbacks;
 
     public onCreate(savedInstanceState: android.os.Bundle): void {
