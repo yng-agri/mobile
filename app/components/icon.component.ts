@@ -1,6 +1,6 @@
 import {
     Component,
-    OnInit,
+    ChangeDetectorRef,
 } from '@angular/core';
 import { Cache } from 'tns-core-modules/ui/image-cache';
 import { fromFile, fromNativeSource, fromResource, ImageSource } from 'tns-core-modules/image-source';
@@ -16,17 +16,14 @@ import { IconComponent as BaseIconComponent } from 'jslib/angular/components/ico
     selector: 'app-vault-icon',
     templateUrl: './icon.component.html',
 })
-export class IconComponent extends BaseIconComponent implements OnInit {
-    constructor(environmentService: EnvironmentService, stateService: StateService) {
+export class IconComponent extends BaseIconComponent {
+    constructor(environmentService: EnvironmentService, stateService: StateService,
+        private changeDetectorRef: ChangeDetectorRef) {
         super(environmentService, stateService);
     }
 
-    async ngOnInit() {
-        this.imageEnabled = !(await this.stateService.get<boolean>(ConstantsService.disableFaviconKey));
-    }
-
-    ngOnChanges() {
-        this.load();
-        return Promise.resolve();
+    async ngOnChanges() {
+        await super.ngOnChanges();
+        this.changeDetectorRef.detectChanges();
     }
 }
