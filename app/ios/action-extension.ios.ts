@@ -17,7 +17,6 @@ export class ActionExtensionViewController extends UIViewController {
                 if (itemProvider.hasItemConformingToTypeIdentifier('com.apple.property-list')) {
                     itemProvider.loadItemForTypeIdentifierOptionsCompletionHandler(
                         'com.apple.property-list', null, (list, error) => {
-                            
                             console.log('loaded item');
                             console.log(list);
                         });

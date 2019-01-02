@@ -4,7 +4,7 @@ import { ServiceContainer } from '../../services/serviceContainer';
 export class MainApplication extends android.app.Application {
     serviceContainer: ServiceContainer;
 
-    public onCreate(): void {
+    onCreate(): void {
         super.onCreate();
 
         // At this point modules have already been initialized
@@ -20,7 +20,7 @@ export class MainApplication extends android.app.Application {
         });
     }
 
-    public attachBaseContext(baseContext: android.content.Context) {
+    attachBaseContext(baseContext: android.content.Context) {
         super.attachBaseContext(baseContext);
 
         // This code enables MultiDex support for the application (if needed)

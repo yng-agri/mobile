@@ -1,31 +1,29 @@
 import {
-    ios,
     android,
-    AndroidApplication,
+    AndroidActivityBackPressedEventData,
     AndroidActivityBundleEventData,
-    displayedEvent,
-    exitEvent,
-    launchEvent,
-    lowMemoryEvent,
-    orientationChangedEvent,
-    resumeEvent,
-    suspendEvent,
-    uncaughtErrorEvent,
-    ApplicationEventData,
-    LaunchEventData,
-    OrientationChangedEventData,
-    UnhandledErrorEventData,
-    on as applicationOn,
-    run as applicationRun,
     AndroidActivityEventData,
     AndroidActivityResultEventData,
-    AndroidActivityBackPressedEventData,
+    AndroidApplication,
+    ApplicationEventData,
+    displayedEvent,
+    exitEvent,
+    ios,
+    launchEvent,
+    LaunchEventData,
+    lowMemoryEvent, on as applicationOn,
+    orientationChangedEvent,
+    OrientationChangedEventData,
+    resumeEvent, run as applicationRun,
     setResources,
+    suspendEvent,
+    uncaughtErrorEvent,
+    UnhandledErrorEventData,
 } from 'tns-core-modules/application';
 
 import { ServiceContainer } from '../services/serviceContainer';
 
-import { I18nService } from 'jslib/abstractions/i18n.service';
+import { MobileUtils } from './misc/mobileUtils';
 
 applicationOn(launchEvent, (args: LaunchEventData) => {
     if (args.android) {
@@ -63,7 +61,7 @@ applicationOn(displayedEvent, (args: ApplicationEventData) => {
 
 applicationOn(orientationChangedEvent, (args: OrientationChangedEventData) => {
     // 'portrait', 'landscape', 'unknown'
-    console.log(args.newValue)
+    console.log(args.newValue);
 });
 
 applicationOn(exitEvent, (args: ApplicationEventData) => {
@@ -86,14 +84,14 @@ applicationOn(lowMemoryEvent, (args: ApplicationEventData) => {
     }
 });
 
-applicationOn(uncaughtErrorEvent, function (args: UnhandledErrorEventData) {
+applicationOn(uncaughtErrorEvent, (args: UnhandledErrorEventData) => {
     console.log('Error: ' + args.error);
 });
 
 if (ios != null) {
     class BitwardenApplicationDelegate extends UIResponder implements UIApplicationDelegate {
-        public static ObjCProtocols = [UIApplicationDelegate];
-        public static serviceContainer: ServiceContainer = null
+        static ObjCProtocols = [UIApplicationDelegate];
+        static serviceContainer: ServiceContainer = null;
 
         applicationDidFinishLaunchingWithOptions(application: UIApplication,
             launchOptions: NSDictionary<any, any>): boolean {
@@ -110,69 +108,48 @@ if (ios != null) {
     }
     ios.delegate = BitwardenApplicationDelegate;
 } else if (android != null) {
-    android.on(AndroidApplication.activityCreatedEvent, function (args: AndroidActivityBundleEventData) {
+    android.on(AndroidApplication.activityCreatedEvent, (args: AndroidActivityBundleEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity + ', Bundle: ' + args.bundle);
     });
 
-    android.on(AndroidApplication.activityDestroyedEvent, function (args: AndroidActivityEventData) {
+    android.on(AndroidApplication.activityDestroyedEvent, (args: AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityStartedEvent, function (args: AndroidActivityEventData) {
+    android.on(AndroidApplication.activityStartedEvent, (args: AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityPausedEvent, function (args: AndroidActivityEventData) {
+    android.on(AndroidApplication.activityPausedEvent, (args: AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityResumedEvent, function (args: AndroidActivityEventData) {
+    android.on(AndroidApplication.activityResumedEvent, (args: AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityStoppedEvent, function (args: AndroidActivityEventData) {
+    android.on(AndroidApplication.activityStoppedEvent, (args: AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.saveActivityStateEvent, function (args: AndroidActivityBundleEventData) {
+    android.on(AndroidApplication.saveActivityStateEvent, (args: AndroidActivityBundleEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity + ', Bundle: ' + args.bundle);
     });
 
-    android.on(AndroidApplication.activityResultEvent, function (args: AndroidActivityResultEventData) {
+    android.on(AndroidApplication.activityResultEvent, (args: AndroidActivityResultEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity +
             ', requestCode: ' + args.requestCode + ', resultCode: ' + args.resultCode + ', Intent: ' + args.intent);
     });
 
-    android.on(AndroidApplication.activityBackPressedEvent, function (args: AndroidActivityBackPressedEventData) {
+    android.on(AndroidApplication.activityBackPressedEvent, (args: AndroidActivityBackPressedEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
         // Set args.cancel = true to cancel back navigation and do something custom.
     });
 }
 
-function getServiceContainer() {
-    let serviceContainer: ServiceContainer = null;
-    if (android != null) {
-        serviceContainer = android.context.serviceContainer;
-    } else if (ios != null) {
-        serviceContainer = ios.delegate.serviceContainer;
-    }
-    if (serviceContainer == null) {
-        throw new Error('Cannot resolve service container.');
-    }
-    return serviceContainer;
-}
-
-function resolveService<T>(service: string) {
-    return getServiceContainer().resolve<T>(service);
-}
-
-function i18n(id: string, p1?: string, p2?: string, p3?: string) {
-    return resolveService<I18nService>('i18nService').t(id, p1, p2, p3);
-}
-
 setResources({
-    resolveService: resolveService,
-    i18n: i18n,
+    resolveService: MobileUtils.resolveService,
+    i18n: MobileUtils.i18n,
 });
 
 applicationRun({ moduleName: 'app-root' });
