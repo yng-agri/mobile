@@ -1,9 +1,0 @@
-<ActionBar title="Password Hint" class="action-bar">
-    <NavigationButton text="Back" android.systemIcon="ic_menu_back"></NavigationButton>
-    <ActionItem text="Submit" (tap)="submit()"></ActionItem>
-</ActionBar>
-<StackLayout class="page">
-    <TextField hint="Email Address" [(ngModel)]="email" keyboardType="email" returnKeyType="go" (returnPress)="submit()"
-        class="input input-border">
-    </TextField>
-</StackLayout>

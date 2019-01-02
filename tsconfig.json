@@ -19,9 +19,6 @@
             "jslib/*": [
                 "jslib/src/*"
             ],
-            "@angular/*": [
-                "node_modules/@angular/*"
-            ],
             "node": [
                 "node_modules/@types/node"
             ],
@@ -45,7 +42,7 @@
         "jslib/dist",
         "jslib/src/electron",
         "jslib/src/importers",
-        "jslib/src/angular/components/export.component.ts",
+        "jslib/src/angular",
         "jslib/src/services/export.service.ts",
         "jslib/src/services/notifications.service.ts",
         "jslib/src/services/nodeApi.service.ts",

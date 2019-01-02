@@ -5,9 +5,14 @@ import {
 
 @JavaProxy('com.tns.MainActivity')
 export class MainActivity extends android.support.v7.app.AppCompatActivity {
+    isNativeScriptActivity: boolean;
+
     private _callbacks: AndroidActivityCallbacks;
 
     public onCreate(savedInstanceState: android.os.Bundle): void {
+        // Set the isNativeScriptActivity in onCreate (as done in the original NativeScript activity code)
+        // The JS constructor might not be called because the activity is created from Android.
+        this.isNativeScriptActivity = true;
         if (!this._callbacks) {
             setActivityCallbacks(this);
         }

@@ -1,7 +1,5 @@
 import { ServiceContainer } from '../../services/serviceContainer';
 
-require('../ts-helpers');
-
 @JavaProxy('com.tns.MainApplication')
 export class MainApplication extends android.app.Application {
     serviceContainer: ServiceContainer;

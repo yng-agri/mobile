@@ -1,9 +1,0 @@
-<ActionBar title="Verify Master Password" class="action-bar">
-    <ActionItem text="Submit" (tap)="submit()"></ActionItem>
-</ActionBar>
-<StackLayout class="page">
-    <TextField hint="Master Password" [(ngModel)]='masterPassword' secure="true" returnKeyType="go" (returnPress)="submit()"
-        autocorrect="false" class="input input-border">
-    </TextField>
-    <Button class="btn btn-primary btn-active" id="button" text="Log Out" (tap)="logOut()"></Button>
-</StackLayout>
