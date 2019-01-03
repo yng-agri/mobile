@@ -8,6 +8,7 @@ export class MainActivity extends android.support.v7.app.AppCompatActivity {
     isNativeScriptActivity: boolean;
 
     // callbacks must have underscore prefix for whatever reason
+    // tslint:disable-next-line
     private _callbacks: AndroidActivityCallbacks;
 
     onCreate(savedInstanceState: android.os.Bundle): void {
