@@ -1,13 +1,13 @@
 <TabView androidTabsPosition="bottom">
     <TabViewItem title="Home" iconSource="res://ic_heart">
-        <Frame defaultPage="home/home-page"></Frame>
+        <Frame defaultPage="pages/home/home-page"></Frame>
     </TabViewItem>
 
     <TabViewItem title="Home 2" iconSource="res://ic_heart">
-        <Frame defaultPage="home/home-page"></Frame>
+        <Frame defaultPage="pages/home/home-page"></Frame>
     </TabViewItem>
 
     <TabViewItem title="Home 3" iconSource="res://ic_heart">
-        <Frame defaultPage="home/home-page"></Frame>
+        <Frame defaultPage="pages/home/home-page"></Frame>
     </TabViewItem>
 </TabView>
