@@ -21,6 +21,8 @@ import {
     UnhandledErrorEventData,
 } from 'tns-core-modules/application';
 
+import { Frame } from 'tns-core-modules/ui/frame';
+
 import { ServiceContainer } from '../services/serviceContainer';
 
 import { MobileUtils } from './misc/mobileUtils';
@@ -146,6 +148,12 @@ if (ios != null) {
         // Set args.cancel = true to cancel back navigation and do something custom.
     });
 }
+
+Frame.defaultTransition = {
+    name: 'slide',
+    duration: 400,
+    curve: 'easeIn',
+};
 
 setResources({
     resolveService: MobileUtils.resolveService,

@@ -1,0 +1,10 @@
+<Page class="page" navigatingTo="onNavigatingTo" 
+    xmlns="http://schemas.nativescript.org/tns.xsd">
+    <ActionBar class="action-bar">
+        <Label class="action-bar-title" text="{{'hello' | i18n}}"></Label>
+    </ActionBar>
+    <StackLayout>
+        <Label class="fa" text="&#xf1ea;"></Label>
+        <Label text="Hi"></Label>
+    </StackLayout>
+</Page>
