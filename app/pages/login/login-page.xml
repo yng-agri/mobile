@@ -1,10 +1,12 @@
 <Page class="page" navigatingTo="onNavigatingTo" 
     xmlns="http://schemas.nativescript.org/tns.xsd">
-    <ActionBar class="action-bar">
-        <Label class="action-bar-title" text="{{'hello' | i18n}}"></Label>
+    <ActionBar class="action-bar" title="Bitwarden">
+        <ActionItem tap="{{submit}}" text="Log In"></ActionItem>
     </ActionBar>
     <StackLayout>
-        <Label class="fa" text="&#xf1ea;"></Label>
-        <Label text="Hi"></Label>
+        <Label text="Email"></Label>
+        <TextField text="{{email}}" keyboardType="email" />
+        <Label text="Master Password"></Label>
+        <TextField text="{{masterPassword}}" secure="true" />
     </StackLayout>
 </Page>

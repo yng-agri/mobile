@@ -1,7 +1,9 @@
 <Page class="page" navigatingTo="onNavigatingTo" 
-    xmlns="http://schemas.nativescript.org/tns.xsd">
+    xmlns="http://schemas.nativescript.org/tns.xsd" 
+    xmlns:test="components/test">
     <StackLayout>
-        <Button tap="onLoginButtonTap" text="Log In"></Button>
-        <Button tap="onRegisterButtonTap" text="Create Account"></Button>
+        <Button tap="{{login}}" text="Log In"></Button>
+        <Button tap="{{register}}" text="Create Account"></Button>
+        <test:test />
     </StackLayout>
 </Page>
