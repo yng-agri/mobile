@@ -1,5 +1,14 @@
 {
-    "hello": {
-      "message": "hello world"
-    }
+  "hello": {
+    "message": "hello world"
+  },
+  "errorOccurred": {
+    "message": "An error has occurred."
+  },
+  "unexpectedError": {
+    "message": "An unexpected error has occurred."
+  },
+  "ok": {
+    "message": "Ok"
+  }
 }

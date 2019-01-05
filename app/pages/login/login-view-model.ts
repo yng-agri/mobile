@@ -1,22 +1,65 @@
 import { Observable } from 'tns-core-modules/data/observable';
 
 import { AuthService } from 'jslib/abstractions/auth.service';
+
+import { DeviceActionUtils } from '~/misc/deviceActionUtils';
 import { MobileUtils } from '~/misc/mobileUtils';
 
 export class LoginViewModel extends Observable {
-    email: string;
-    masterPassword: string;
-
     protected authService: AuthService;
+
+    private _email = '';
+    private _masterPassword = '';
+    private _showPassword = false;
 
     constructor() {
         super();
         this.authService = MobileUtils.resolveService('authService');
     }
 
+    get email(): string {
+        return this._email;
+    }
+
+    set email(value: string) {
+        this._email = value;
+        this.notifyPropertyChange('email', this.email);
+    }
+
+    get masterPassword(): string {
+        return this._masterPassword;
+    }
+
+    set masterPassword(value: string) {
+        this._masterPassword = value;
+        this.notifyPropertyChange('masterPassword', this.masterPassword);
+    }
+
+    get showPassword(): boolean {
+        return this._showPassword;
+    }
+
+    set showPassword(value: boolean) {
+        this._showPassword = value;
+        this.notifyPropertyChange('showPassword', this.showPassword);
+        this.notifyPropertyChange('showPasswordIcon', this.showPasswordIcon);
+    }
+
+    get showPasswordIcon() {
+        return this.showPassword ? '' : '';
+    }
+
     async submit() {
-        MobileUtils.showLoading('Loading...');
-        const result = await this.authService.logIn(this.email, this.masterPassword);
-        MobileUtils.hideLoading();
+        await DeviceActionUtils.showLoading('Loading...');
+        try {
+            const result = await this.authService.logIn(this.email, this.masterPassword);
+        } catch (e) {
+            MobileUtils.alertApiError(e);
+        }
+        await DeviceActionUtils.hideLoading();
+    }
+
+    togglePassword() {
+        this.showPassword = !this.showPassword;
     }
 }

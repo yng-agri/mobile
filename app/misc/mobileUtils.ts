@@ -2,16 +2,18 @@ import {
     android as androidApp,
     ios as iosApp,
 } from 'tns-core-modules/application';
+import { AlertOptions } from 'tns-core-modules/ui/dialogs';
 
 import { I18nService } from 'jslib/abstractions/i18n.service';
 
 import { ServiceContainer } from '../../services/serviceContainer';
 
-export class MobileUtils {
+import { ErrorResponse } from 'jslib/models/response/errorResponse';
 
+export class MobileUtils {
     static getServiceContainer(): ServiceContainer {
         let serviceContainer: ServiceContainer = null;
-        if (android != null) {
+        if (androidApp != null) {
             serviceContainer = androidApp.context.serviceContainer;
         } else if (iosApp != null) {
             serviceContainer = iosApp.delegate.serviceContainer;
@@ -30,31 +32,34 @@ export class MobileUtils {
         return MobileUtils.resolveService<I18nService>('i18nService').t(id, p1, p2, p3);
     }
 
-    static showLoading(text: string) {
-        if (android != null) {
-            if (MobileUtils.androidProgressDialog != null) {
-                MobileUtils.hideLoading();
-            }
-            MobileUtils.androidProgressDialog = new android.app.ProgressDialog(androidApp.foregroundActivity);
-            MobileUtils.androidProgressDialog.setMessage(text);
-            MobileUtils.androidProgressDialog.setCancelable(false);
-            MobileUtils.androidProgressDialog.show();
-        } else if (iosApp != null) {
-
-        }
+    static isIos() {
+        return iosApp != null;
     }
 
-    static hideLoading() {
-        if (android != null) {
-            if (MobileUtils.androidProgressDialog != null) {
-                MobileUtils.androidProgressDialog.hide();
-                MobileUtils.androidProgressDialog.dismiss();
-                MobileUtils.androidProgressDialog = null;
-            }
-        } else if (iosApp != null) {
-
-        }
+    static isAndroid() {
+        return androidApp != null;
     }
 
-    private static androidProgressDialog: android.app.ProgressDialog;
+    static alertApiError(data: any) {
+        const defaultErrorMessage = MobileUtils.i18n('unexpectedError');
+        let message = '';
+
+        if (data != null && typeof data === 'string') {
+            message = data;
+        } else if (data == null || typeof data !== 'object') {
+            message = defaultErrorMessage;
+        } else if (data.validationErrors != null) {
+            message = (data as ErrorResponse).getSingleMessage();
+        } else {
+            message = data.message ? data.message : defaultErrorMessage;
+        }
+
+        const alertOptions: AlertOptions = {
+            title: MobileUtils.i18n('errorOccurred'),
+            message: message,
+            okButtonText: MobileUtils.i18n('ok'),
+        };
+
+        alert(alertOptions);
+    }
 }

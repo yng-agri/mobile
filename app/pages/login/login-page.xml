@@ -7,6 +7,9 @@
         <Label text="Email"></Label>
         <TextField text="{{email}}" keyboardType="email" />
         <Label text="Master Password"></Label>
-        <TextField text="{{masterPassword}}" secure="true" />
+        <GridLayout columns="*, auto" rows="auto">
+            <TextField text="{{masterPassword}}" col="0" secure="{{!showPassword}}" />
+            <Button tap="{{togglePassword}}" col="1" class="fa" text="{{showPasswordIcon}}"></Button>
+        </GridLayout>
     </StackLayout>
 </Page>
