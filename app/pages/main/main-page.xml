@@ -1,0 +1,4 @@
+<Page class="page" navigatingTo="onNavigatingTo" 
+    xmlns="http://schemas.nativescript.org/tns.xsd">
+    <ActivityIndicator busy="true" width="50" height="50"></ActivityIndicator>
+</Page>

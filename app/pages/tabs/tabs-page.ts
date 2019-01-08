@@ -8,6 +8,6 @@ import { TabsViewModel } from './tabs-view-model';
 
 export function onNavigatingTo(args: NavigatedData) {
     const page = args.object as Page;
-    page.bindingContext = new TabsViewModel(page.getViewById<Frame>('root'));
+    page.bindingContext = new TabsViewModel(page.getViewById<Frame>('tabs-frame'));
     page.actionBarHidden = true;
 }
