@@ -1,4 +1,5 @@
 import { Observable } from 'tns-core-modules/data/observable';
+import { Page } from 'tns-core-modules/ui/page/page';
 
 import { AuthService } from 'jslib/abstractions/auth.service';
 
@@ -12,7 +13,7 @@ export class LoginViewModel extends Observable {
     private _masterPassword = '';
     private _showPassword = false;
 
-    constructor() {
+    constructor(private page: Page) {
         super();
         this.authService = MobileUtils.resolveService('authService');
     }
@@ -53,6 +54,10 @@ export class LoginViewModel extends Observable {
         await DeviceActionUtils.showLoading('Loading...');
         try {
             const result = await this.authService.logIn(this.email, this.masterPassword);
+            this.page.frame.navigate({
+                moduleName: 'pages/tabs/tabs-page',
+                animated: true,
+            });
         } catch (e) {
             MobileUtils.alertApiError(e);
         }

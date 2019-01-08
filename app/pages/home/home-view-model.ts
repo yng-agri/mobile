@@ -2,22 +2,25 @@ import {
     EventData,
     Observable,
 } from 'tns-core-modules/data/observable';
-import { View } from 'tns-core-modules/ui/page/page';
+import {
+    Page,
+    View,
+} from 'tns-core-modules/ui/page/page';
 
 export class HomeViewModel extends Observable {
-    constructor() {
+    constructor(private page: Page) {
         super();
     }
 
     login(args: EventData) {
-        (args.object as View).page.frame.navigate({
+        this.page.frame.navigate({
             moduleName: 'pages/login/login-page',
             animated: true,
         });
     }
 
     register(args: EventData) {
-        (args.object as View).page.frame.navigate({
+        this.page.frame.navigate({
             moduleName: 'pages/login/login-page',
             animated: true,
         });

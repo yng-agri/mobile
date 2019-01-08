@@ -1,0 +1,9 @@
+<Page class="page" navigatingTo="onNavigatingTo" 
+    xmlns="http://schemas.nativescript.org/tns.xsd">
+    <ActionBar class="action-bar" title="Password Generator">
+        
+    </ActionBar>
+    <StackLayout>
+        
+    </StackLayout>
+</Page>

@@ -1,0 +1,6 @@
+<Page class="page" navigatingTo="onNavigatingTo" 
+    xmlns="http://schemas.nativescript.org/tns.xsd">
+    <StackLayout>
+        
+    </StackLayout>
+</Page>

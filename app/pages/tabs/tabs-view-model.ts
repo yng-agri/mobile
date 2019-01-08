@@ -25,16 +25,15 @@ export class TabsViewModel extends Observable {
         if (ev == null) {
             return;
         }
-        // TODO
         switch (ev.newIndex) {
             case 0:
-                this.navigateToRootPage('pages/home/home-page');
+                this.navigateToRootPage('pages/vault/groupings/groupings-page');
                 break;
             case 1:
-                this.navigateToRootPage('pages/login/login-page');
+                this.navigateToRootPage('pages/generator/generator-page');
                 break;
             case 2:
-                this.navigateToRootPage('pages/home/home-page');
+                this.navigateToRootPage('pages/settings/settings-page');
                 break;
             default:
                 break;
