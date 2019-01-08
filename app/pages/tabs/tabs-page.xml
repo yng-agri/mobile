@@ -1,0 +1,13 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" class="page" 
+    xmlns:ui="nativescript-bottombar" navigatingTo="onNavigatingTo">
+    <GridLayout rows="*, auto" class="page">
+        <StackLayout row="0" orientation="vertical">
+            <Frame id="root" defaultPage="pages/home/home-page"></Frame>
+        </StackLayout>
+        <ui:BottomBar row="1" automationText="bottomBar" loaded="{{barLoaded}}">
+            <ui:BottomBarItem icon="res://ic_heart" title="Page 1"></ui:BottomBarItem>
+            <ui:BottomBarItem icon="res://ic_heart" title="Page 2"></ui:BottomBarItem>
+            <ui:BottomBarItem icon="res://ic_heart" title="Page 3"></ui:BottomBarItem>
+        </ui:BottomBar>
+    </GridLayout>
+</Page>
