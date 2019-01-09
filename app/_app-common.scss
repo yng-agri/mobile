@@ -16,8 +16,15 @@ $brand-primary-accent: #286090;
 $background-color: #efeff4;
 $background-color-alt: #ecf0f5;
 
+$foreground-color: #ffffff;
+
+.page {
+    background-color: $background-color;
+}
+
 .list-group {
     separator-color: $border-color-dark;
+    background-color: $foreground-color;
 }
 
 .list-group-header {

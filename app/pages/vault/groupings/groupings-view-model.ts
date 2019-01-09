@@ -15,6 +15,7 @@ import { CipherType } from 'jslib/enums/cipherType';
 import { CipherService } from 'jslib/abstractions/cipher.service';
 import { CollectionService } from 'jslib/abstractions/collection.service';
 import { FolderService } from 'jslib/abstractions/folder.service';
+import { I18nService } from 'jslib/abstractions/i18n.service';
 
 export class GroupingsViewModel extends Observable {
     loaded = false;
@@ -34,7 +35,8 @@ export class GroupingsViewModel extends Observable {
     private nestedCollections: Array<TreeNode<CollectionView>>;
 
     constructor(private page: Page, private collectionService: CollectionService,
-        private folderService: FolderService, private cipherService: CipherService) {
+        private folderService: FolderService, private cipherService: CipherService,
+        private i18nService: I18nService) {
         super();
     }
 
@@ -50,19 +52,31 @@ export class GroupingsViewModel extends Observable {
 
         let items = [];
         if (this.favoriteCiphers != null && this.favoriteCiphers.length > 0) {
-            items = [...items, { isHeader: true, name: 'Favorites' }, ...this.favoriteCiphers];
+            items = [...items, { isHeader: true, name: this.i18nService.t('favorites') }, ...this.favoriteCiphers];
         }
-        items = [...items, { isHeader: true, name: 'Types' }, ...[
-            { isType: true, name: 'Logins', type: CipherType.Login, icon: String.fromCharCode(0xf0ac) },
-            { isType: true, name: 'Card', type: CipherType.Card, icon: String.fromCharCode(0xf09d) },
-            { isType: true, name: 'Identity', type: CipherType.Identity, icon: String.fromCharCode(0xf2c3) },
-            { isType: true, name: 'Secure Note', type: CipherType.SecureNote, icon: String.fromCharCode(0xf24a) },
+        items = [...items, { isHeader: true, name: this.i18nService.t('types') }, ...[
+            {
+                isType: true, name: this.i18nService.t('typeLogin'),
+                type: CipherType.Login, icon: String.fromCharCode(0xf0ac),
+            },
+            {
+                isType: true, name: this.i18nService.t('typeCard'),
+                type: CipherType.Card, icon: String.fromCharCode(0xf09d),
+            },
+            {
+                isType: true, name: this.i18nService.t('typeIdentity'),
+                type: CipherType.Identity, icon: String.fromCharCode(0xf2c3),
+            },
+            {
+                isType: true, name: this.i18nService.t('typeSecureNote'),
+                type: CipherType.SecureNote, icon: String.fromCharCode(0xf24a),
+            },
         ]];
         if (this.nestedFolders != null && this.nestedFolders.length > 0) {
-            items = [...items, { isHeader: true, name: 'Folders' }, ...this.nestedFolders];
+            items = [...items, { isHeader: true, name: this.i18nService.t('folders') }, ...this.nestedFolders];
         }
         if (this.nestedCollections != null && this.nestedCollections.length > 0) {
-            items = [...items, { isHeader: true, name: 'Collections' }, ...this.nestedCollections];
+            items = [...items, { isHeader: true, name: this.i18nService.t('collections') }, ...this.nestedCollections];
         }
 
         this.items.push(items);
@@ -135,16 +149,23 @@ export class GroupingsViewModel extends Observable {
 
     itemTapped(args: ItemEventData) {
         const item = this.items.getItem(args.index);
+        const context: any = {};
         if (item.isHeader) {
             return;
         } else if (item.isType) {
-
+            context.type = item.type;
         } else if (item.type != null) {
-
-        } else if (item.organizationId != null) {
-
+            // cipher view
+            return;
+        } else if (item.node.organizationId != null) {
+            context.collectionId = item.node.id;
         } else {
-
+            context.folderId = item.node.id == null ? 'none' : item.node.id;
         }
+        this.page.frame.navigate({
+            moduleName: 'pages/vault/ciphers/ciphers-page',
+            animated: true,
+            context: context,
+        });
     }
 }

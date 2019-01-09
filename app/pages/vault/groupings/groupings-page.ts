@@ -12,7 +12,8 @@ import { SyncService } from 'jslib/abstractions/sync.service';
 export async function onNavigatingTo(args: NavigatedData) {
     const page = args.object as Page;
     const model = new GroupingsViewModel(page, MobileUtils.resolveService('collectionService'),
-        MobileUtils.resolveService('folderService'), MobileUtils.resolveService('cipherService'));
+        MobileUtils.resolveService('folderService'), MobileUtils.resolveService('cipherService'),
+        MobileUtils.resolveService('i18nService'));
     page.bindingContext = model;
     // await MobileUtils.resolveService<SyncService>('syncService').fullSync(true);
     await model.load();

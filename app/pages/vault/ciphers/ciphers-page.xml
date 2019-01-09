@@ -1,6 +1,31 @@
 <Page class="page" navigatingTo="onNavigatingTo" 
     xmlns="http://schemas.nativescript.org/tns.xsd">
-    <StackLayout>
-        
-    </StackLayout>
+    <ActionBar class="action-bar" title="{{groupingTitle}}"></ActionBar>
+    <ListView id="list-view" items="{{items}}" class="list-group" itemTemplateSelector="templateSelector" itemTap="{{itemTapped}}">
+        <ListView.itemTemplates>
+            <template key="header">
+                <StackLayout class="list-group-header">
+                    <Label text="{{name}}"></Label>
+                </StackLayout>
+            </template>
+            <template key="cipher">
+                <StackLayout class="list-group-item" orientation="horizontal">
+                    <Label text="{{name}}" class="list-group-item-heading"></Label>
+                </StackLayout>
+            </template>
+            <template key="folder">
+                <StackLayout class="list-group-item" orientation="horizontal">
+                    <Label class="fa main-icon" text="" visibility="{{node.id ? 'visible' : 'collapse'}}"></Label>
+                    <Label class="fa main-icon" text="" visibility="{{!node.id ? 'visible' : 'collapse'}}"></Label>
+                    <Label text="{{node.name}}" class="list-group-item-heading"></Label>
+                </StackLayout>
+            </template>
+            <template key="collection">
+                <StackLayout class="list-group-item" orientation="horizontal">
+                    <Label class="fa main-icon" text=""></Label>
+                    <Label text="{{node.name}}" class="list-group-item-heading"></Label>
+                </StackLayout>
+            </template>
+        </ListView.itemTemplates>
+    </ListView>
 </Page>

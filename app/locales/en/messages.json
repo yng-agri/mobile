@@ -1,7 +1,4 @@
 {
-  "hello": {
-    "message": "hello world"
-  },
   "errorOccurred": {
     "message": "An error has occurred."
   },
@@ -10,5 +7,57 @@
   },
   "ok": {
     "message": "Ok"
+  },
+  "favorites": {
+    "message": "Favorites"
+  },
+  "types": {
+    "message": "Types"
+  },
+  "allItems": {
+    "message": "All Items"
+  },
+  "typeLogin": {
+    "message": "Login"
+  },
+  "typeCard": {
+    "message": "Card"
+  },
+  "typeIdentity": {
+    "message": "Identity"
+  },
+  "typeSecureNote": {
+    "message": "Secure Note"
+  },
+  "folders": {
+    "message": "Folders"
+  },
+  "collections": {
+    "message": "Collections"
+  },
+  "cards": {
+    "message": "Cards"
+  },
+  "identities": {
+    "message": "Identities"
+  },
+  "logins": {
+    "message": "Logins"
+  },
+  "secureNotes": {
+    "message": "Secure Notes"
+  },
+  "noneFolder": {
+    "message": "No Folder",
+    "description": "This is the folder for uncategorized items"
+  },
+  "searchFolder": {
+    "message": "Search folder"
+  },
+  "searchCollection": {
+    "message": "Search collection"
+  },
+  "searchType": {
+    "message": "Search type"
   }
 }
