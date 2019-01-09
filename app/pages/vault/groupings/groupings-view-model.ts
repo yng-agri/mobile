@@ -17,6 +17,8 @@ import { CollectionService } from 'jslib/abstractions/collection.service';
 import { FolderService } from 'jslib/abstractions/folder.service';
 import { I18nService } from 'jslib/abstractions/i18n.service';
 
+import { MobileUtils } from '~/misc/mobileUtils';
+
 export class GroupingsViewModel extends Observable {
     loaded = false;
     items = new ObservableArray([]);
@@ -155,7 +157,9 @@ export class GroupingsViewModel extends Observable {
         } else if (item.isType) {
             context.type = item.type;
         } else if (item.type != null) {
-            // cipher view
+            MobileUtils.showModal(this.page, 'pages/vault/view/view-page', { cipherId: item.id }, () => {
+                console.log('modal closed');
+            });
             return;
         } else if (item.node.organizationId != null) {
             context.collectionId = item.node.id;

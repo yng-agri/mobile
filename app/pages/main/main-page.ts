@@ -16,7 +16,7 @@ export async function onNavigatingTo(args: NavigatedData) {
     const userService = MobileUtils.resolveService<UserService>('userService');
     const cryptoService = MobileUtils.resolveService<CryptoService>('cryptoService');
 
-    const rootFrame = getFrameById('root-frame');
+    const rootFrame = getFrameById('app-root-frame');
     let moduleName = 'pages/home/home-page';
     if (await userService.isAuthenticated) {
         if (await cryptoService.hasKey) {

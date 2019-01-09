@@ -3,12 +3,18 @@ import {
     ios as iosApp,
 } from 'tns-core-modules/application';
 import { AlertOptions } from 'tns-core-modules/ui/dialogs';
+import {
+    Frame,
+    Page,
+    ShownModallyData,
+} from 'tns-core-modules/ui/frame/frame';
 
 import { I18nService } from 'jslib/abstractions/i18n.service';
 
 import { ServiceContainer } from '../../services/serviceContainer';
 
 import { ErrorResponse } from 'jslib/models/response/errorResponse';
+
 
 export class MobileUtils {
     static getServiceContainer(): ServiceContainer {
@@ -38,6 +44,18 @@ export class MobileUtils {
 
     static isAndroid() {
         return androidApp != null;
+    }
+
+    static showModal(page: Page, moduleName: string, context: any, callback: Function) {
+        const frame = new Frame();
+        frame.on('shownModally', (args: ShownModallyData) => {
+            frame.navigate({
+                moduleName: moduleName,
+                context: Object.assign({ closeCallback: args.closeCallback }, args.context == null ? {} : args.context),
+                animated: false,
+            });
+        });
+        page.showModal(frame, context, callback, true, true);
     }
 
     static alertApiError(data: any) {

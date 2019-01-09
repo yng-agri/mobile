@@ -1,1 +1,1 @@
-<Frame id="root-frame" defaultPage="pages/main/main-page"></Frame>
+<Frame id="app-root-frame" defaultPage="pages/main/main-page"></Frame>
