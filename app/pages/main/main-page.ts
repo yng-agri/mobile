@@ -18,7 +18,7 @@ export async function onNavigatingTo(args: NavigatedData) {
 
     const rootFrame = getFrameById('app-root-frame');
     let moduleName = 'pages/home/home-page';
-    if (await userService.isAuthenticated) {
+    if (await userService.isAuthenticated()) {
         if (await cryptoService.hasKey) {
             moduleName = 'pages/tabs/tabs-page';
         } else {
