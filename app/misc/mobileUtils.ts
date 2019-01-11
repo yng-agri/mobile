@@ -15,7 +15,6 @@ import { ServiceContainer } from '../../services/serviceContainer';
 
 import { ErrorResponse } from 'jslib/models/response/errorResponse';
 
-
 export class MobileUtils {
     static getServiceContainer(): ServiceContainer {
         let serviceContainer: ServiceContainer = null;
