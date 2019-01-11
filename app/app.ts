@@ -1,25 +1,4 @@
-import {
-    android,
-    AndroidActivityBackPressedEventData,
-    AndroidActivityBundleEventData,
-    AndroidActivityEventData,
-    AndroidActivityResultEventData,
-    AndroidApplication,
-    ApplicationEventData,
-    displayedEvent,
-    exitEvent,
-    ios,
-    launchEvent,
-    LaunchEventData,
-    lowMemoryEvent, on as applicationOn,
-    orientationChangedEvent,
-    OrientationChangedEventData,
-    resumeEvent, run as applicationRun,
-    setResources,
-    suspendEvent,
-    uncaughtErrorEvent,
-    UnhandledErrorEventData,
-} from 'tns-core-modules/application';
+import * as app from 'tns-core-modules/application';
 
 import { Frame } from 'tns-core-modules/ui/frame';
 
@@ -27,7 +6,7 @@ import { ServiceContainer } from '../services/serviceContainer';
 
 import { MobileUtils } from './misc/mobileUtils';
 
-applicationOn(launchEvent, (args: LaunchEventData) => {
+app.on(app.launchEvent, (args: app.LaunchEventData) => {
     if (args.android) {
         // For Android applications, args.android is an android.content.Intent class.
         console.log('Launched Android application with the following intent: ' + args.android + '.');
@@ -37,7 +16,7 @@ applicationOn(launchEvent, (args: LaunchEventData) => {
     }
 });
 
-applicationOn(suspendEvent, (args: ApplicationEventData) => {
+app.on(app.suspendEvent, (args: app.ApplicationEventData) => {
     if (args.android) {
         // For Android applications, args.android is an android activity class.
         console.log('Activity: ' + args.android);
@@ -47,7 +26,7 @@ applicationOn(suspendEvent, (args: ApplicationEventData) => {
     }
 });
 
-applicationOn(resumeEvent, (args: ApplicationEventData) => {
+app.on(app.resumeEvent, (args: app.ApplicationEventData) => {
     if (args.android) {
         // For Android applications, args.android is an android activity class.
         console.log('Activity: ' + args.android);
@@ -57,16 +36,16 @@ applicationOn(resumeEvent, (args: ApplicationEventData) => {
     }
 });
 
-applicationOn(displayedEvent, (args: ApplicationEventData) => {
+app.on(app.displayedEvent, (args: app.ApplicationEventData) => {
     console.log('displayedEvent');
 });
 
-applicationOn(orientationChangedEvent, (args: OrientationChangedEventData) => {
+app.on(app.orientationChangedEvent, (args: app.OrientationChangedEventData) => {
     // 'portrait', 'landscape', 'unknown'
     console.log(args.newValue);
 });
 
-applicationOn(exitEvent, (args: ApplicationEventData) => {
+app.on(app.exitEvent, (args: app.ApplicationEventData) => {
     if (args.android) {
         // For Android applications, args.android is an android activity class.
         console.log('Activity: ' + args.android);
@@ -76,7 +55,7 @@ applicationOn(exitEvent, (args: ApplicationEventData) => {
     }
 });
 
-applicationOn(lowMemoryEvent, (args: ApplicationEventData) => {
+app.on(app.lowMemoryEvent, (args: app.ApplicationEventData) => {
     if (args.android) {
         // For Android applications, args.android is an android activity class.
         console.log('Activity: ' + args.android);
@@ -86,11 +65,11 @@ applicationOn(lowMemoryEvent, (args: ApplicationEventData) => {
     }
 });
 
-applicationOn(uncaughtErrorEvent, (args: UnhandledErrorEventData) => {
+app.on(app.uncaughtErrorEvent, (args: app.UnhandledErrorEventData) => {
     console.log('Error: ' + args.error);
 });
 
-if (ios != null) {
+if (app.ios != null) {
     class BitwardenApplicationDelegate extends UIResponder implements UIApplicationDelegate {
         static ObjCProtocols = [UIApplicationDelegate];
         static serviceContainer: ServiceContainer = null;
@@ -108,42 +87,42 @@ if (ios != null) {
             console.log('applicationDidBecomeActive: ' + application);
         }
     }
-    ios.delegate = BitwardenApplicationDelegate;
-} else if (android != null) {
-    android.on(AndroidApplication.activityCreatedEvent, (args: AndroidActivityBundleEventData) => {
+    app.ios.delegate = BitwardenApplicationDelegate;
+} else if (app.android != null) {
+    app.android.on(app.AndroidApplication.activityCreatedEvent, (args: app.AndroidActivityBundleEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity + ', Bundle: ' + args.bundle);
     });
 
-    android.on(AndroidApplication.activityDestroyedEvent, (args: AndroidActivityEventData) => {
+    app.android.on(app.AndroidApplication.activityDestroyedEvent, (args: app.AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityStartedEvent, (args: AndroidActivityEventData) => {
+    app.android.on(app.AndroidApplication.activityStartedEvent, (args: app.AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityPausedEvent, (args: AndroidActivityEventData) => {
+    app.android.on(app.AndroidApplication.activityPausedEvent, (args: app.AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityResumedEvent, (args: AndroidActivityEventData) => {
+    app.android.on(app.AndroidApplication.activityResumedEvent, (args: app.AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.activityStoppedEvent, (args: AndroidActivityEventData) => {
+    app.android.on(app.AndroidApplication.activityStoppedEvent, (args: app.AndroidActivityEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
     });
 
-    android.on(AndroidApplication.saveActivityStateEvent, (args: AndroidActivityBundleEventData) => {
+    app.android.on(app.AndroidApplication.saveActivityStateEvent, (args: app.AndroidActivityBundleEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity + ', Bundle: ' + args.bundle);
     });
 
-    android.on(AndroidApplication.activityResultEvent, (args: AndroidActivityResultEventData) => {
+    app.android.on(app.AndroidApplication.activityResultEvent, (args: app.AndroidActivityResultEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity +
             ', requestCode: ' + args.requestCode + ', resultCode: ' + args.resultCode + ', Intent: ' + args.intent);
     });
 
-    android.on(AndroidApplication.activityBackPressedEvent, (args: AndroidActivityBackPressedEventData) => {
+    app.android.on(app.AndroidApplication.activityBackPressedEvent, (args: app.AndroidActivityBackPressedEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity);
         // Set args.cancel = true to cancel back navigation and do something custom.
     });
@@ -155,12 +134,12 @@ Frame.defaultTransition = {
     curve: 'easeIn',
 };
 
-setResources({
+app.setResources({
     resolveService: MobileUtils.resolveService,
     i18n: MobileUtils.i18n,
 });
 
-applicationRun({ moduleName: 'app-root' });
+app.run({ moduleName: 'app-root' });
 
 /*
 Do not place any code after the application has been started as it will not
