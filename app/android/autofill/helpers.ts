@@ -2,6 +2,8 @@ import { FieldCollection } from './fieldCollection';
 import { FilledItem } from './filledItem';
 import { Parser } from './parser';
 
+import { AndroidUtils } from '../androidUtils';
+
 import { CipherType } from 'jslib/enums/cipherType';
 
 import { CipherService } from 'jslib/abstractions/cipher.service';
@@ -56,7 +58,9 @@ export class Helpers {
             Helpers.buildVaultDataset(parser.applicationContext, parser.fieldCollection, parser.uri,
                 locked, i18nService));
         Helpers.addSaveInfo(parser, responseBuilder, parser.fieldCollection);
-        responseBuilder.setIgnoredIds(parser.fieldCollection.ignoreAutofillIds);
+        const nativeIgnoreAutofillIds = AndroidUtils.toNativeArr(
+            parser.fieldCollection.ignoreAutofillIds, android.view.autofill.AutofillId);
+        responseBuilder.setIgnoredIds(nativeIgnoreAutofillIds);
         return responseBuilder.build();
     }
 
@@ -86,7 +90,7 @@ export class Helpers {
         intent.putExtra('autofillFrameworkUri', uri);
         const pendingIntent = android.app.PendingIntent.getActivity(context, ++Helpers.pendingIntentId, intent,
             android.app.PendingIntent.FLAG_CANCEL_CURRENT);
-        const iconId = context.getResources().getIdentifier(name, 'icon', context.getPackageName());
+        const iconId = context.getResources().getIdentifier('icon', 'drawable', context.getPackageName());
         const subText = i18nService.t(locked ? 'vaultIsLocked' : 'goToMyVault');
         const view = Helpers.buildListView(i18nService.t('autofillWithBitwarden'), subText, iconId, context);
         const datasetBuilder = new android.service.autofill.Dataset.Builder(view);
@@ -102,11 +106,12 @@ export class Helpers {
 
     static buildListView(text: string, subtext: string, iconId: number,
         context: android.content.Context): android.widget.RemoteViews {
-        const view = new android.widget.RemoteViews(context.getPackageName(),
-            context.getResources().getIdentifier('autofill_listitem', 'layout', context.getPackageName()));
-        view.setTextViewText(android.R.id.text1, text);
-        view.setTextViewText(android.R.id.text2, subtext);
-        view.setImageViewResource(android.R.id.icon, iconId);
+        const packageName = context.getPackageName();
+        const layout = context.getResources().getIdentifier('autofill_listitem', 'layout', packageName);
+        const view = new android.widget.RemoteViews(packageName, layout);
+        view.setTextViewText(context.getResources().getIdentifier('text1', 'id', packageName), text);
+        view.setTextViewText(context.getResources().getIdentifier('text2', 'id', packageName), subtext);
+        view.setImageViewResource(context.getResources().getIdentifier('icon', 'id', packageName), iconId);
         return view;
     }
 

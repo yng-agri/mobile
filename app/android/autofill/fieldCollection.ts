@@ -1,14 +1,15 @@
 import { Field } from './field';
-
-import { CipherType } from 'jslib/enums/cipherType';
-
-import { Utils } from 'jslib/misc/utils';
-
 import {
     CardItem,
     LoginItem,
     SavedItem,
 } from './savedItem';
+
+import { AndroidUtils } from '../androidUtils';
+
+import { CipherType } from 'jslib/enums/cipherType';
+
+import { Utils } from 'jslib/misc/utils';
 
 export class FieldCollection {
     autofillIds: android.view.autofill.AutofillId[] = [];
@@ -112,7 +113,7 @@ export class FieldCollection {
         return this.fillableForLogin || this.fillableForCard || this.fillableForIdentity;
     }
 
-    add(field: Field) {
+    add(field: Field): void {
         if (field == null || this.fieldTrackingIds.has(field.trackingId)) {
             return;
         }
@@ -136,7 +137,7 @@ export class FieldCollection {
         }
     }
 
-    getSavedItem() {
+    getSavedItem(): SavedItem {
         if (this.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_PASSWORD) {
             const passwordField = this.passwordFields.find((f) => !Utils.isNullOrWhitespace(f.textValue));
             if (passwordField == null) {
@@ -172,9 +173,10 @@ export class FieldCollection {
         return null;
     }
 
-    getOptionalSaveIds(): android.view.autofill.AutofillId[] {
+    getOptionalSaveIds(): native.Array<android.view.autofill.AutofillId> {
+        let arr: android.view.autofill.AutofillId[] = [];
         if (this.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_PASSWORD) {
-            return this.usernameFields.map((f) => f.autofillId);
+            arr = this.usernameFields.map((f) => f.autofillId);
         } else if (this.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_CREDIT_CARD) {
             const fieldList: Field[] = [];
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_CREDIT_CARD_SECURITY_CODE)) {
@@ -190,19 +192,20 @@ export class FieldCollection {
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_NAME)) {
                 fieldList.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_NAME));
             }
-            return fieldList.map((f) => f.autofillId);
+            arr = fieldList.map((f) => f.autofillId);
         }
-        return [];
+        return AndroidUtils.toNativeArr(arr, android.view.autofill.AutofillId);
     }
 
-    getRequiredSaveFields(): android.view.autofill.AutofillId[] {
+    getRequiredSaveFields(): native.Array<android.view.autofill.AutofillId> {
+        let arr: android.view.autofill.AutofillId[] = [];
         if (this.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_PASSWORD) {
-            return this.passwordFields.map((f) => f.autofillId);
+            arr = this.passwordFields.map((f) => f.autofillId);
         } else if (this.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_CREDIT_CARD) {
-            return this.hintToFieldsMap.get(
+            arr = this.hintToFieldsMap.get(
                 android.view.View.AUTOFILL_HINT_CREDIT_CARD_NUMBER).map((f) => f.autofillId);
         }
-        return [];
+        return AndroidUtils.toNativeArr(arr, android.view.autofill.AutofillId);
     }
 
     private focusedHintsContain(hints: string[]): boolean {
@@ -252,7 +255,7 @@ export class FieldCollection {
             f.htmlInfo.getAttributes() != null && f.htmlInfo.getAttributes().size() > 0) {
             const attrs = f.htmlInfo.getAttributes();
             for (let i = 0; i < attrs.size(); i++) {
-                const attr: android.util.Pair<string, string> = attrs[i];
+                const attr: android.util.Pair<string, string> = attrs.get(i);
                 const key = attr.first;
                 const val = attr.second;
                 if (key != null && val != null && key === 'type' && val === 'password') {

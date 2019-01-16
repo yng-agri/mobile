@@ -13,7 +13,7 @@ import { CipherType } from 'jslib/enums';
 
 declare let com: any;
 
-// @JavaProxy('com.tns.AutofillService')
+@JavaProxy('com.tns.AutofillService')
 export class AutofillService extends android.service.autofill.AutofillService {
     private cipherService: CipherService;
     private lockService: LockService;
@@ -25,7 +25,7 @@ export class AutofillService extends android.service.autofill.AutofillService {
         if (fillContext == null) {
             return;
         }
-        const lastContext: android.service.autofill.FillContext = fillContext[fillContext.size() - 1];
+        const lastContext: android.service.autofill.FillContext = fillContext.get(fillContext.size() - 1);
         if (lastContext == null) {
             return;
         }
@@ -52,7 +52,7 @@ export class AutofillService extends android.service.autofill.AutofillService {
         }
 
         let items: FilledItem[] = null;
-        const locked = false; // TODO
+        const locked = true; // TODO
         if (!locked) {
             if (this.cipherService == null) {
                 this.cipherService = serviceContainer.resolve<CipherService>('cipherService');
@@ -70,7 +70,7 @@ export class AutofillService extends android.service.autofill.AutofillService {
         if (fillContext == null) {
             return;
         }
-        const lastContext: android.service.autofill.FillContext = fillContext[fillContext.size() - 1];
+        const lastContext: android.service.autofill.FillContext = fillContext.get(fillContext.size() - 1);
         if (lastContext == null) {
             return;
         }
