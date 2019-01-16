@@ -11,6 +11,8 @@ import { I18nService } from 'jslib/abstractions/i18n.service';
 import { LockService } from 'jslib/abstractions/lock.service';
 import { CipherType } from 'jslib/enums';
 
+declare let com: any;
+
 // @JavaProxy('com.tns.AutofillService')
 export class AutofillService extends android.service.autofill.AutofillService {
     private cipherService: CipherService;
@@ -45,6 +47,10 @@ export class AutofillService extends android.service.autofill.AutofillService {
             this.lockService = serviceContainer.resolve<LockService>('lockService');
         }
 
+        if (this.i18nService == null) {
+            this.i18nService = serviceContainer.resolve<I18nService>('i18nService');
+        }
+
         let items: FilledItem[] = null;
         const locked = false; // TODO
         if (!locked) {
@@ -55,7 +61,7 @@ export class AutofillService extends android.service.autofill.AutofillService {
         }
 
         // build response
-        const response = Helpers.buildFillResponse(parser, items, locked);
+        const response = Helpers.buildFillResponse(parser, items, locked, this.i18nService);
         callback.onSuccess(response);
     }
 
@@ -83,7 +89,7 @@ export class AutofillService extends android.service.autofill.AutofillService {
             return;
         }
 
-        const intent = new android.content.Intent(this.getApplicationContext(), null); // TODO
+        const intent = new android.content.Intent(this.getApplicationContext(), com.tns.MainActivity.class);
         intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra('autofillFramework', true);
         intent.putExtra('autofillFrameworkSave', true);

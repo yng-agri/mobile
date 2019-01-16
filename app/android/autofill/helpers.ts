@@ -1,10 +1,13 @@
+import { FieldCollection } from './fieldCollection';
 import { FilledItem } from './filledItem';
 import { Parser } from './parser';
 
 import { CipherType } from 'jslib/enums/cipherType';
 
 import { CipherService } from 'jslib/abstractions/cipher.service';
-import { FieldCollection } from './fieldCollection';
+import { I18nService } from 'jslib/abstractions/i18n.service';
+
+declare let com: any;
 
 export class Helpers {
     // These browser work natively with the autofill framework
@@ -39,7 +42,7 @@ export class Helpers {
     }
 
     static buildFillResponse(parser: Parser, items: FilledItem[],
-        locked: boolean): android.service.autofill.FillResponse {
+        locked: boolean, i18nService: I18nService): android.service.autofill.FillResponse {
         const responseBuilder = new android.service.autofill.FillResponse.Builder();
         if (items != null && items.length > 0) {
             items.forEach((item) => {
@@ -50,7 +53,8 @@ export class Helpers {
             });
         }
         responseBuilder.addDataset(
-            Helpers.buildVaultDataset(parser.applicationContext, parser.fieldCollection, parser.uri, locked));
+            Helpers.buildVaultDataset(parser.applicationContext, parser.fieldCollection, parser.uri,
+                locked, i18nService));
         Helpers.addSaveInfo(parser, responseBuilder, parser.fieldCollection);
         responseBuilder.setIgnoredIds(parser.fieldCollection.ignoreAutofillIds);
         return responseBuilder.build();
@@ -67,8 +71,8 @@ export class Helpers {
     }
 
     static buildVaultDataset(context: android.content.Context, fields: FieldCollection, uri: string,
-        locked: boolean): android.service.autofill.Dataset {
-        const intent = new android.content.Intent(context, null); // TODO
+        locked: boolean, i18nService: I18nService): android.service.autofill.Dataset {
+        const intent = new android.content.Intent(context, com.tns.MainActivity.class);
         intent.putExtra('autofillFramework', true);
         if (fields.fillableForLogin) {
             intent.putExtra('autofillFrameworkFillType', CipherType.Login);
@@ -82,8 +86,9 @@ export class Helpers {
         intent.putExtra('autofillFrameworkUri', uri);
         const pendingIntent = android.app.PendingIntent.getActivity(context, ++Helpers.pendingIntentId, intent,
             android.app.PendingIntent.FLAG_CANCEL_CURRENT);
-        const view = Helpers.buildListView('Autofill with Bitwarden',
-            locked ? 'Vault is locked' : 'Go to My Vault', null, context); // TODO i18n and icon
+        const iconId = context.getResources().getIdentifier(name, 'icon', context.getPackageName());
+        const subText = i18nService.t(locked ? 'vaultIsLocked' : 'goToMyVault');
+        const view = Helpers.buildListView(i18nService.t('autofillWithBitwarden'), subText, iconId, context);
         const datasetBuilder = new android.service.autofill.Dataset.Builder(view);
         datasetBuilder.setAuthentication(pendingIntent.getIntentSender());
 

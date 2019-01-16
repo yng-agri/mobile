@@ -57,7 +57,13 @@
   "searchCollection": {
     "message": "Search collection"
   },
-  "searchType": {
-    "message": "Search type"
+  "autofillWithBitwarden": {
+    "message": "Auto-fill with Bitwarden"
+  },
+  "vaultIsLocked": {
+    "message": "Vault is locked"
+  },
+  "goToMyVault": {
+    "message": "Go to my vault"
   }
 }
