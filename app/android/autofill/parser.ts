@@ -1,8 +1,8 @@
 import { Utils } from 'jslib/misc/utils';
 
+import { AutofillHelpers } from './autofillHelpers';
 import { Field } from './field';
 import { FieldCollection } from './fieldCollection';
-import { Helpers } from './helpers';
 
 export class Parser {
     fieldCollection = new FieldCollection();
@@ -64,7 +64,8 @@ export class Parser {
             const node = this.structure.getWindowNodeAt(i);
             this.parseNode(node.getRootViewNode());
         }
-        if (!Helpers.trustedBrowsers.has(this.packageName) && !Helpers.compatBrowsers.has(this.packageName)) {
+        if (!AutofillHelpers.trustedBrowsers.has(this.packageName) &&
+            !AutofillHelpers.compatBrowsers.has(this.packageName)) {
             this.webDomain = null;
         }
     }

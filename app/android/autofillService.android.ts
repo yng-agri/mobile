@@ -1,5 +1,5 @@
+import { AutofillHelpers } from './autofill/autofillHelpers';
 import { FilledItem } from './autofill/filledItem';
-import { Helpers } from './autofill/helpers';
 import { Parser } from './autofill/parser';
 
 import { Utils } from 'jslib/misc/utils';
@@ -57,11 +57,11 @@ export class AutofillService extends android.service.autofill.AutofillService {
             if (this.cipherService == null) {
                 this.cipherService = serviceContainer.resolve<CipherService>('cipherService');
             }
-            items = await Helpers.getFillItems(parser, this.cipherService);
+            items = await AutofillHelpers.getFillItems(parser, this.cipherService);
         }
 
         // build response
-        const response = Helpers.buildFillResponse(parser, items, locked, this.i18nService);
+        const response = AutofillHelpers.buildFillResponse(parser, items, locked, this.i18nService);
         callback.onSuccess(response);
     }
 

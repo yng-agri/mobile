@@ -11,7 +11,7 @@ import { I18nService } from 'jslib/abstractions/i18n.service';
 
 declare let com: any;
 
-export class Helpers {
+export class AutofillHelpers {
     // These browser work natively with the autofill framework
     static trustedBrowsers = new Set<string>([
         'org.mozilla.focus', 'org.mozilla.klar', 'com.duckduckgo.mobile.android',
@@ -48,16 +48,16 @@ export class Helpers {
         const responseBuilder = new android.service.autofill.FillResponse.Builder();
         if (items != null && items.length > 0) {
             items.forEach((item) => {
-                const dataset = Helpers.buildDataset(parser.applicationContext, parser.fieldCollection, item);
+                const dataset = AutofillHelpers.buildDataset(parser.applicationContext, parser.fieldCollection, item);
                 if (dataset != null) {
                     responseBuilder.addDataset(dataset);
                 }
             });
         }
         responseBuilder.addDataset(
-            Helpers.buildVaultDataset(parser.applicationContext, parser.fieldCollection, parser.uri,
+            AutofillHelpers.buildVaultDataset(parser.applicationContext, parser.fieldCollection, parser.uri,
                 locked, i18nService));
-        Helpers.addSaveInfo(parser, responseBuilder, parser.fieldCollection);
+        AutofillHelpers.addSaveInfo(parser, responseBuilder, parser.fieldCollection);
         const nativeIgnoreAutofillIds = AndroidUtils.toNativeArr(
             parser.fieldCollection.ignoreAutofillIds, android.view.autofill.AutofillId);
         responseBuilder.setIgnoredIds(nativeIgnoreAutofillIds);
@@ -88,11 +88,11 @@ export class Helpers {
             return null;
         }
         intent.putExtra('autofillFrameworkUri', uri);
-        const pendingIntent = android.app.PendingIntent.getActivity(context, ++Helpers.pendingIntentId, intent,
+        const pendingIntent = android.app.PendingIntent.getActivity(context, ++AutofillHelpers.pendingIntentId, intent,
             android.app.PendingIntent.FLAG_CANCEL_CURRENT);
         const iconId = context.getResources().getIdentifier('icon', 'drawable', context.getPackageName());
         const subText = i18nService.t(locked ? 'vaultIsLocked' : 'goToMyVault');
-        const view = Helpers.buildListView(i18nService.t('autofillWithBitwarden'), subText, iconId, context);
+        const view = AutofillHelpers.buildListView(i18nService.t('autofillWithBitwarden'), subText, iconId, context);
         const datasetBuilder = new android.service.autofill.Dataset.Builder(view);
         datasetBuilder.setAuthentication(pendingIntent.getIntentSender());
 
@@ -119,7 +119,7 @@ export class Helpers {
         fields: FieldCollection): void {
         // Docs state that password fields cannot be reliably saved in Compat mode since they will show as
         // masked values.
-        const compatBrowser = Helpers.compatBrowsers.has(parser.packageName);
+        const compatBrowser = AutofillHelpers.compatBrowsers.has(parser.packageName);
         if (compatBrowser && fields.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_PASSWORD) {
             return;
         }
