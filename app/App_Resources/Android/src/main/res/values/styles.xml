@@ -5,14 +5,15 @@
     <style name="LaunchScreenThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="toolbarStyle">@style/NativeScriptToolbarStyle</item>
 
-        <item name="colorPrimary">@color/ns_primary</item>
-        <item name="colorPrimaryDark">@color/ns_primaryDark</item>
-        <item name="colorAccent">@color/ns_accent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/accent</item>
+        <item name="colorAccent">@color/primary</item>
 
         <item name="android:windowBackground">@drawable/splash_screen</item>
         
-        <item name="android:windowActionBarOverlay">true</item>  
+        <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowNoTitle">true</item>
 
     </style>
 
@@ -23,9 +24,12 @@
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="toolbarStyle">@style/NativeScriptToolbarStyle</item>
 
-        <item name="colorPrimary">@color/ns_primary</item>
-        <item name="colorPrimaryDark">@color/ns_primaryDark</item>
-        <item name="colorAccent">@color/ns_accent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/accent</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:windowBackground">@color/lightgray</item>
+        <item name="android:navigationBarColor">@color/darkaccent</item>
+        <item name="android:actionModeBackground">@color/darkaccent</item>
 
     </style>
 
@@ -34,7 +38,7 @@
 
     <!-- theme for action-bar -->
     <style name="NativeScriptToolbarStyleBase" parent="Widget.AppCompat.Toolbar">
-        <item name="android:background">@color/ns_primary</item>
+        <item name="android:background">@color/primary</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
 
