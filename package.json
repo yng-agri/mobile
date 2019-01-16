@@ -31,7 +31,9 @@
     "android:sim": "cross-env NODE_OPTIONS=--max-old-space-size=4096 tns run android --bundle --emulator",
     "ios:sim": "tns run ios --bundle --emulator",
     "android:debug": "cross-env NODE_OPTIONS=--max-old-space-size=4096 tns debug android --bundle",
-    "ios:debug": "tns debug ios --bundle"
+    "ios:debug": "tns debug ios --bundle",
+    "android:debug:sim": "cross-env NODE_OPTIONS=--max-old-space-size=4096 tns debug android --bundle --emulator",
+    "ios:debug:sim": "tns debug ios --bundle --emulator"
   },
   "dependencies": {
     "lowdb": "1.0.0",
