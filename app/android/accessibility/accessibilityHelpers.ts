@@ -1,6 +1,8 @@
 import { Browser } from './browser';
+import { Credentials } from './credentials';
 
 export class AccessibilityHelpers {
+    static lastCredentials: Credentials;
     static systemUiPackage = 'com.android.systemui';
 
     static supportedBrowsers = new Map<string, Browser>([

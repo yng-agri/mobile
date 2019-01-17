@@ -17,6 +17,7 @@ module.exports = env => {
         resolve(__dirname, "app/android/accessibilityService.android.ts"),
         resolve(__dirname, "app/android/autofillService.android.ts"),
         resolve(__dirname, "app/android/mainActivity.android.ts"),
+        resolve(__dirname, "app/android/accessibilityActivity.android.ts"),
     ];
 
     const platform = env && (env.android && "android" || env.ios && "ios");

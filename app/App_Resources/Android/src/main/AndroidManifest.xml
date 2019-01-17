@@ -43,6 +43,10 @@
 			</intent-filter>
 		</activity>
 		<activity android:name="com.tns.ErrorReportActivity"/>
+		<activity
+			android:theme="@style/AppTheme"
+			android:windowSoftInputMode="stateHidden|adjustUnspecified"
+			android:name="com.tns.AccessibilityActivity" />
 		<service
 			android:name="com.tns.AccessibilityService" 
 			android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
