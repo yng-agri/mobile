@@ -88,7 +88,7 @@ export class FieldCollection {
             android.view.View.AUTOFILL_HINT_USERNAME,
             android.view.View.AUTOFILL_HINT_EMAIL_ADDRESS,
             android.view.View.AUTOFILL_HINT_PASSWORD,
-        ]) || this.usernameFields.find((f) => f.focused) != null || this.passwordFields.find((f) => f.focused) != null;
+        ]) || this.usernameFields.some((f) => f.focused) || this.passwordFields.some((f) => f.focused);
     }
 
     get fillableForCard(): boolean {
@@ -209,7 +209,7 @@ export class FieldCollection {
     }
 
     private focusedHintsContain(hints: string[]): boolean {
-        return hints.find((h) => this.focusedHints.has(h)) != null;
+        return hints.some((h) => this.focusedHints.has(h));
     }
 
     private getFieldValue(field: string | Field, monthValue = false): string {
@@ -278,6 +278,6 @@ export class FieldCollection {
             return false;
         }
         const lowerValue = value.toLowerCase();
-        return Array.from(terms).find((t) => lowerValue.indexOf(t) > -1) != null;
+        return Array.from(terms).some((t) => lowerValue.indexOf(t) > -1);
     }
 }
