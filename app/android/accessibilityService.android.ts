@@ -32,12 +32,10 @@ export class AccessibilityService extends android.accessibilityservice.Accessibi
     async onAccessibilityEvent(e: android.view.accessibility.AccessibilityEvent) {
         try {
             const powerManager: android.os.PowerManager = this.getSystemService(android.content.Context.POWER_SERVICE);
-            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.KITKAT_WATCH &&
-                !powerManager.isInteractive()) {
+            if (android.os.Build.VERSION.SDK_INT > 20 && !powerManager.isInteractive()) {
                 return;
             }
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP &&
-                !powerManager.isScreenOn()) {
+            if (android.os.Build.VERSION.SDK_INT < 21 && !powerManager.isScreenOn()) {
                 return;
             }
             if (e == null) {
@@ -132,8 +130,9 @@ export class AccessibilityService extends android.accessibilityservice.Accessibi
             notificationManager = null;
             root = null;
             e = null;
-        } catch {
+        } catch (e) {
             // Suppress exceptions so that service doesn't crash
+            // console.log(e);
         }
     }
 
@@ -190,8 +189,8 @@ export class AccessibilityService extends android.accessibilityservice.Accessibi
         const pendingIntent = android.app.PendingIntent.getActivity(context, 0, intent,
             android.app.PendingIntent.FLAG_UPDATE_CURRENT);
 
-        const newAndroid = android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.KITKAT_WATCH;
-        const oAndNewerAndroid = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O;
+        const newAndroid = android.os.Build.VERSION.SDK_INT > 20;
+        const oAndNewerAndroid = android.os.Build.VERSION.SDK_INT >= 26;
         const notificationContent = this.i18nService.t(
             newAndroid ? 'autofillNotificationContent' : 'autofillNotificationContentOld');
         const notificationIcon = context.getResources().getIdentifier('notification_sm',
@@ -213,14 +212,14 @@ export class AccessibilityService extends android.accessibilityservice.Accessibi
         if (oAndNewerAndroid) {
             if (this.notificationChannel == null) {
                 this.notificationChannel = new android.app.NotificationChannel('bitwarden_autofill_service',
-                    this.i18nService.t('autofillServiceTitle'), android.app.Notification.PRIORITY_LOW);
+                    this.i18nService.t('autofillServiceTitle'), android.app.NotificationManager.IMPORTANCE_LOW);
                 notificationManager.createNotificationChannel(this.notificationChannel);
             }
             builder.setChannelId(this.notificationChannel.getId());
         }
 
         if (this.settingAutofillPersistNotification) {
-            builder.setPriority(-2);
+            builder.setPriority(android.app.Notification.PRIORITY_MIN);
         }
 
         this.lastNotificationTime = now;

@@ -105,7 +105,7 @@ export class AccessibilityHelpers {
             uri = uri.trim();
             if (uri.indexOf('://') === -1 && uri.indexOf(' ') === -1) {
                 uri = ('http://' + uri);
-            } else if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
+            } else if (android.os.Build.VERSION.SDK_INT <= 20) {
                 const parts = uri.split('. ');
                 if (parts.length > 1) {
                     const urlPart = parts.find((p) => p.indexOf('http') === 0);
