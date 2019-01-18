@@ -65,5 +65,17 @@
   },
   "goToMyVault": {
     "message": "Go to my vault"
+  },
+  "autofillNotificationContent": {
+    "message": "Tap this notification to auto-fill an item from your vault."
+  },
+  "autofillNotificationContentOld": {
+    "message": "Tap this notification to view items from your vault."
+  },
+  "bitwardenAutofillServiceTitle": {
+    "message": "Bitwarden Auto-fill Service"
+  },
+  "autofillServiceTitle": {
+    "message": "Auto-fill Service"
   }
 }
