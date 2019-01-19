@@ -5,7 +5,6 @@ import { ObservableProperty } from '../../misc/observable-property.decorator';
 
 import { AuthService } from 'jslib/abstractions/auth.service';
 
-import { DeviceActionUtils } from '~/misc/deviceActionUtils';
 import { MobileUtils } from '~/misc/mobileUtils';
 
 export class LoginViewModel extends Observable {
@@ -23,17 +22,13 @@ export class LoginViewModel extends Observable {
     }
 
     async submit() {
-        await DeviceActionUtils.showLoading('Loading...');
-        try {
+        MobileUtils.doActionWithLoading(async () => {
             const result = await this.authService.logIn(this.email, this.masterPassword);
             this.page.frame.navigate({
                 moduleName: 'pages/tabs/tabs-page',
                 animated: true,
             });
-        } catch (e) {
-            MobileUtils.alertApiError(e);
-        }
-        await DeviceActionUtils.hideLoading();
+        });
     }
 
     togglePassword() {

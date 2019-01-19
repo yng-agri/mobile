@@ -77,5 +77,8 @@
   },
   "autofillServiceTitle": {
     "message": "Auto-fill Service"
+  },
+  "loading": {
+    "message": "Loading..."
   }
 }

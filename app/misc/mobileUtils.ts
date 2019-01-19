@@ -11,9 +11,11 @@ import {
 
 import { I18nService } from 'jslib/abstractions/i18n.service';
 
-import { ServiceContainer } from '../../services/serviceContainer';
-
 import { ErrorResponse } from 'jslib/models/response/errorResponse';
+
+import { DeviceActionUtils } from './deviceActionUtils';
+
+import { ServiceContainer } from '../../services/serviceContainer';
 
 export class MobileUtils {
     static getServiceContainer(): ServiceContainer {
@@ -57,7 +59,7 @@ export class MobileUtils {
         page.showModal(frame, context, callback, true, true);
     }
 
-    static alertApiError(data: any) {
+    static alertError(data: any) {
         const defaultErrorMessage = MobileUtils.i18n('unexpectedError');
         let message = '';
 
@@ -78,5 +80,25 @@ export class MobileUtils {
         };
 
         alert(alertOptions);
+    }
+
+    static async doActionWithLoading<T>(action: () => Promise<T>, errorAction: (e: any) => void = null,
+        message: string = null) {
+        if (message == null) {
+            message = MobileUtils.resolveService<I18nService>('i18nService').t('loading');
+        }
+        await DeviceActionUtils.showLoading(message);
+        try {
+            const result = await action();
+            await DeviceActionUtils.hideLoading();
+            return result;
+        } catch (e) {
+            await DeviceActionUtils.hideLoading();
+            if (errorAction != null) {
+                errorAction(e);
+            } else if (e != null) {
+                MobileUtils.alertError(e);
+            }
+        }
     }
 }
