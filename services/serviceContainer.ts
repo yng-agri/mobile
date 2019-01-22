@@ -2,15 +2,16 @@ import { StateService } from 'jslib/services/state.service';
 
 import { I18nService } from './i18n.service';
 import { LowdbStorageService } from './lowdbStorage.service';
-import { MobileSecureStorageService } from './mobileSecureStorage.service';
+import { MobileBroadcasterMessagingService } from './mobileBroadcasterMessaging.service';
 import { MobileCryptoFunctionService } from './mobileCryptoFunction.service';
 import { MobilePlatformUtilsService } from './mobilePlatformUtils.service';
-import { MobileMainMessagingService } from './mobileMainMessaging.service';
+import { MobileSecureStorageService } from './mobileSecureStorage.service';
 
-import { AppIdService } from 'jslib/services/appId.service';
 import { ApiService } from 'jslib/services/api.service';
+import { AppIdService } from 'jslib/services/appId.service';
 import { AuditService } from 'jslib/services/audit.service';
 import { AuthService } from 'jslib/services/auth.service';
+import { BroadcasterService } from 'jslib/services/broadcaster.service';
 import { CipherService } from 'jslib/services/cipher.service';
 import { CollectionService } from 'jslib/services/collection.service';
 import { ContainerService } from 'jslib/services/container.service';
@@ -20,10 +21,10 @@ import { ExportService } from 'jslib/services/export.service';
 import { FolderService } from 'jslib/services/folder.service';
 import { LockService } from 'jslib/services/lock.service';
 import { PasswordGenerationService } from 'jslib/services/passwordGeneration.service';
-import { TokenService } from 'jslib/services/token.service';
 import { SearchService } from 'jslib/services/search.service';
 import { SettingsService } from 'jslib/services/settings.service';
 import { SyncService } from 'jslib/services/sync.service';
+import { TokenService } from 'jslib/services/token.service';
 import { TotpService } from 'jslib/services/totp.service';
 import { UserService } from 'jslib/services/user.service';
 
@@ -34,7 +35,6 @@ export class ServiceContainer {
 
     private bootstrapPromise: Promise<void> = null;
     private options: any;
-    private messagingService: MobileMainMessagingService
 
     init(options: any = null) {
         if (this.inited) {
@@ -42,7 +42,8 @@ export class ServiceContainer {
         }
         this.inited = true;
 
-        this.messagingService = new MobileMainMessagingService();
+        const broadcasterService = new BroadcasterService();
+        const messagingService = new MobileBroadcasterMessagingService(broadcasterService);
         const stateService = new StateService();
         const i18nService = new I18nService('en');
         const platformUtilsService = new MobilePlatformUtilsService(i18nService);
@@ -64,15 +65,15 @@ export class ServiceContainer {
         const collectionService = new CollectionService(cryptoService, userService, storageService, i18nService);
         searchService = new SearchService(cipherService, platformUtilsService);
         const lockService = new LockService(cipherService, folderService, collectionService,
-            cryptoService, platformUtilsService, storageService, this.messagingService, searchService, null);
+            cryptoService, platformUtilsService, storageService, messagingService, searchService, null);
         const syncService = new SyncService(userService, apiService, settingsService,
-            folderService, cipherService, cryptoService, collectionService, storageService, this.messagingService,
-            async (expired: boolean) => this.messagingService.send('logout', { expired: expired }));
+            folderService, cipherService, cryptoService, collectionService, storageService, messagingService,
+            async (expired: boolean) => messagingService.send('logout', { expired: expired }));
         const passwordGenerationService = new PasswordGenerationService(cryptoService, storageService);
         const totpService = new TotpService(storageService, cryptoFunctionService);
         const containerService = new ContainerService(cryptoService);
         const authService = new AuthService(cryptoService, apiService, userService, tokenService,
-            appIdService, i18nService, platformUtilsService, this.messagingService);
+            appIdService, i18nService, platformUtilsService, messagingService);
         const exportService = new ExportService(folderService, cipherService, apiService);
         const auditService = new AuditService(cryptoFunctionService, apiService);
         /*
@@ -112,7 +113,8 @@ export class ServiceContainer {
         this.register('containerService', containerService);
         this.register('exportService', exportService);
         this.register('auditService', auditService);
-        this.register('messagingService', this.messagingService);
+        this.register('broadcasterService', broadcasterService);
+        this.register('messagingService', messagingService);
         this.register('authService', authService);
         this.register('lockService', lockService);
         this.register('syncService', syncService);
@@ -154,13 +156,5 @@ export class ServiceContainer {
             return null;
         }
         throw new Error('Service ' + serviceName + ' is not registered.');
-    }
-
-    registerMessageClient(client: string, callback: (message: any) => void) {
-        this.messagingService.registerClient(client, callback);
-    }
-
-    removeMessageClient(client: string) {
-        this.messagingService.removeClient(client);
     }
 }

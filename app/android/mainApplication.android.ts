@@ -1,3 +1,5 @@
+import { BroadcasterService } from 'jslib/abstractions/broadcaster.service';
+
 import { ServiceContainer } from '../../services/serviceContainer';
 
 @JavaProxy('com.tns.MainApplication')
@@ -14,7 +16,8 @@ export class MainApplication extends android.app.Application {
         this.serviceContainer.init({ androidAppContext: this.getApplicationContext() });
         this.serviceContainer.bootstrap();
 
-        this.serviceContainer.registerMessageClient('MainApplication', (message: any) => {
+        const broadcasterService = this.serviceContainer.resolve<BroadcasterService>('broadcasterService');
+        broadcasterService.subscribe('MainApplication', (message: any) => {
             console.log('Got message in MainApplication');
             console.log(message);
         });
