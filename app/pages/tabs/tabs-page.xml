@@ -5,9 +5,9 @@
             <Frame id="tabs-frame" defaultPage="pages/vault/groupings/groupings-page"></Frame>
         </StackLayout>
         <ui:BottomBar row="1" automationText="bottomBar" loaded="{{barLoaded}}">
-            <ui:BottomBarItem icon="res://ic_heart" title="Page 1"></ui:BottomBarItem>
-            <ui:BottomBarItem icon="res://ic_heart" title="Page 2"></ui:BottomBarItem>
-            <ui:BottomBarItem icon="res://ic_heart" title="Page 3"></ui:BottomBarItem>
+            <ui:BottomBarItem icon="res://ic_heart" title="My Vault"></ui:BottomBarItem>
+            <ui:BottomBarItem icon="res://ic_heart" title="Generator"></ui:BottomBarItem>
+            <ui:BottomBarItem icon="res://ic_heart" title="Settings"></ui:BottomBarItem>
         </ui:BottomBar>
     </GridLayout>
 </Page>
