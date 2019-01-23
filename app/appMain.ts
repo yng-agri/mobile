@@ -16,6 +16,10 @@ export class AppMain {
             return;
         }
         this.inited = true;
+        this.listen();
+    }
+
+    private listen(): void {
         const broadcasterService = MobileUtils.resolveService<BroadcasterService>('broadcasterService');
         broadcasterService.subscribe('AppMain', (message: any) => {
             console.log('Got message in AppMain');
@@ -23,7 +27,7 @@ export class AppMain {
         });
     }
 
-    private setup() {
+    private setup(): void {
         app.on(app.launchEvent, (args: app.LaunchEventData) => {
             if (args.android) {
                 // For Android applications, args.android is an android.content.Intent class.
