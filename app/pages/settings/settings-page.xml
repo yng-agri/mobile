@@ -3,7 +3,18 @@
     <ActionBar class="action-bar" title="Settings">
         
     </ActionBar>
-    <StackLayout>
-        
-    </StackLayout>
+    <ListView id="list-view" items="{{items}}" class="list-group" itemTemplateSelector="templateSelector" itemTap="{{itemTapped}}">
+        <ListView.itemTemplates>
+            <template key="header">
+                <StackLayout class="list-group-header">
+                    <Label text="{{name}}"></Label>
+                </StackLayout>
+            </template>
+            <template key="button">
+                <StackLayout class="list-group-item" orientation="horizontal">
+                    <Label text="{{name}}" class="list-group-item-heading"></Label>
+                </StackLayout>
+            </template>
+        </ListView.itemTemplates>
+    </ListView>
 </Page>
