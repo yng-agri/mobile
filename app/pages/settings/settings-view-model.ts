@@ -19,6 +19,7 @@ export class SettingsViewModel extends Observable {
         super();
         this.items = [
             { isHeader: true, name: 'Manage' },
+            { type: 'button', id: 'sync', name: this.i18nService.t('sync') },
             { isHeader: true, name: 'Security' },
             { isHeader: true, name: 'Account' },
             { type: 'button', id: 'logout', name: this.i18nService.t('logOut') },
@@ -34,6 +35,11 @@ export class SettingsViewModel extends Observable {
             return;
         } else if (item.id === 'logout') {
             this.messagingService.send('logout', { confirm: true });
+        } else if (item.id === 'sync') {
+            this.page.frame.navigate({
+                moduleName: 'pages/settings/sync/sync-page',
+                animated: true,
+            });
         }
     }
 }

@@ -98,5 +98,26 @@
   },
   "cancel": {
     "message": "Cancel"
+  },
+  "sync": {
+    "message": "Sync"
+  },
+  "syncVaultNow": {
+    "message": "Sync Vault Now"
+  },
+  "lastSync": {
+    "message": "Last Sync:"
+  },
+  "syncingComplete": {
+    "message": "Syncing complete"
+  },
+  "syncingFailed": {
+    "message": "Syncing failed"
+  },
+  "syncing": {
+    "message": "Syncing..."
+  },
+  "never": {
+    "message": "Never"
   }
 }

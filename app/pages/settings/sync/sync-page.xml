@@ -1,0 +1,11 @@
+<Page class="page" navigatingTo="onNavigatingTo" 
+    xmlns="http://schemas.nativescript.org/tns.xsd">
+    <ActionBar class="action-bar" title="{{'sync' | i18n}}"></ActionBar>
+    <StackLayout horizontalAlignment="center" verticalAlignment="center" width="100%">
+        <Button onTap="{{sync}}" text="{{'syncVaultNow' | i18n}}"></Button>
+        <WrapLayout horizontalAlignment="center">
+            <Label class="last-sync" text="{{'lastSync' | i18n}}"></Label>
+            <Label text="{{lastSync}}"></Label>
+        </WrapLayout>
+    </StackLayout>
+</Page>
