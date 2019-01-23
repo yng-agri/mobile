@@ -27,6 +27,7 @@ export class LoginViewModel extends Observable {
             this.page.frame.navigate({
                 moduleName: 'pages/tabs/tabs-page',
                 animated: true,
+                clearHistory: true,
             });
         });
     }
