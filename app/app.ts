@@ -4,7 +4,11 @@ import { Frame } from 'tns-core-modules/ui/frame';
 
 import { ServiceContainer } from '../services/serviceContainer';
 
+import { AppMain } from './appMain';
+
 import { MobileUtils } from './misc/mobileUtils';
+
+const appMain = new AppMain();
 
 app.on(app.launchEvent, (args: app.LaunchEventData) => {
     if (args.android) {
@@ -80,6 +84,7 @@ if (app.ios != null) {
             BitwardenApplicationDelegate.serviceContainer = new ServiceContainer();
             BitwardenApplicationDelegate.serviceContainer.init();
             BitwardenApplicationDelegate.serviceContainer.bootstrap();
+            appMain.init();
             return true;
         }
 
@@ -91,6 +96,7 @@ if (app.ios != null) {
 } else if (app.android != null) {
     app.android.on(app.AndroidApplication.activityCreatedEvent, (args: app.AndroidActivityBundleEventData) => {
         console.log('Event: ' + args.eventName + ', Activity: ' + args.activity + ', Bundle: ' + args.bundle);
+        appMain.init();
     });
 
     app.android.on(app.AndroidApplication.activityDestroyedEvent, (args: app.AndroidActivityEventData) => {
