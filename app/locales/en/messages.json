@@ -80,5 +80,23 @@
   },
   "loading": {
     "message": "Loading..."
+  },
+  "logOut": {
+    "message": "Log Out"
+  },
+  "loginExpired": {
+    "message": "Your login session has expired."
+  },
+  "logOutConfirmation": {
+    "message": "Are you sure you want to log out?"
+  },
+  "yes": {
+    "message": "Yes"
+  },
+  "no": {
+    "message": "No"
+  },
+  "cancel": {
+    "message": "Cancel"
   }
 }
