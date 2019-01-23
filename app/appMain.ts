@@ -7,21 +7,23 @@ import { MobileUtils } from './misc/mobileUtils';
 export class AppMain {
     inited = false;
 
+    private broadcasterService: BroadcasterService;
+
     constructor() {
         this.setup();
     }
 
-    init() {
+    init(): void {
         if (this.inited) {
             return;
         }
         this.inited = true;
+        this.broadcasterService = MobileUtils.resolveService<BroadcasterService>('broadcasterService');
         this.listen();
     }
 
     private listen(): void {
-        const broadcasterService = MobileUtils.resolveService<BroadcasterService>('broadcasterService');
-        broadcasterService.subscribe('AppMain', (message: any) => {
+        this.broadcasterService.subscribe('AppMain', (message: any) => {
             console.log('Got message in AppMain');
             console.log(message);
         });
