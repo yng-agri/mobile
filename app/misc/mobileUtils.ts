@@ -47,16 +47,25 @@ export class MobileUtils {
         return androidApp != null;
     }
 
-    static showModal(page: Page, moduleName: string, context: any, callback: Function) {
+    static showModal(page: Page, moduleName: string, context: any, closedCallback: Function) {
         const frame = new Frame();
+        const mergedArgs = { closeModal: null, modalClosed: null };
         frame.on('shownModally', (args: ShownModallyData) => {
+            mergedArgs.closeModal = args.closeCallback;
             frame.navigate({
                 moduleName: moduleName,
-                context: Object.assign({ closeCallback: args.closeCallback }, args.context == null ? {} : args.context),
+                context: Object.assign(mergedArgs, args.context == null ? {} : args.context),
                 animated: false,
             });
         });
-        page.showModal(frame, context, callback, true, true);
+        page.showModal(frame, context, () => {
+            if (closedCallback != null) {
+                closedCallback();
+            }
+            if (mergedArgs != null && mergedArgs.modalClosed != null) {
+                mergedArgs.modalClosed();
+            }
+        }, true, true);
     }
 
     static alertError(data: any) {

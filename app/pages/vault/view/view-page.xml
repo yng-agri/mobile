@@ -5,5 +5,8 @@
     </ActionBar>
     <StackLayout>
         <Label text="Info"></Label>
+        <Label text="{{totpSec}}"></Label>
+        <Label text="{{totpCodeFormatted}}"></Label>
+        <Label text="{{cipher.name}}"></Label>
     </StackLayout>
 </Page>
