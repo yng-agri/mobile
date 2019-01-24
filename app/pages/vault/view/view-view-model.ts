@@ -41,6 +41,7 @@ export class ViewViewModel extends Observable {
     @ObservableProperty() totpLow: boolean;
 
     fieldType = FieldType;
+    cipherType = CipherType;
     cipherId: string;
 
     private totpInterval: any;

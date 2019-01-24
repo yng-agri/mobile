@@ -1,5 +1,9 @@
 $text-color: #000000;
 
+$font-size-base: 16;
+$font-size-large: 18;
+$font-size-small: 14;
+
 $gray: #555;
 $gray-light: #777;
 $text-muted: $gray-light;
@@ -16,10 +20,53 @@ $brand-primary-accent: #286090;
 $background-color: #efeff4;
 $background-color-alt: #ecf0f5;
 
-$foreground-color: #ffffff;
+$foreground-color: white;
+
+$box-background-color: white;
+$box-border-color: $border-color;
+
+$heading-color: $gray-light;
 
 .page {
     background-color: $background-color;
+    font-size: $font-size-base;
+}
+
+.box {
+    margin: 10 0;
+
+    .box-header {
+        margin: 0 10 5 10;
+
+        Label {
+            color: $heading-color;
+            text-transform: uppercase;
+        }
+    }
+
+    .box-content {
+        background-color: $box-background-color;
+        border-top-width: 1;
+        border-bottom-width: 1;
+        border-color: $border-color-dark;
+        
+        .box-content-row {
+            padding: 10 15;
+            border-bottom-width: 1;
+            border-color: $box-border-color;
+
+            .box-content-row-label {
+                color: $text-muted;
+                margin-bottom: 5;
+                font-size: $font-size-small;
+            }
+
+            .box-content-row-value {
+                color: $text-color;
+                font-size: $font-size-base;
+            }
+        }
+    }
 }
 
 .list-group {
@@ -34,11 +81,10 @@ $foreground-color: #ffffff;
     border-top-width: 1;
     border-color: $border-color-dark;
     border-bottom-width: 1;
-    border-color: $border-color-dark;
 
     Label {
         text-transform: uppercase;
-        color: $text-muted;
+        color: $heading-color;
     }
 }
 

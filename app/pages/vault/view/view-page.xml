@@ -1,12 +1,60 @@
 <Page class="page" navigatingTo="onNavigatingTo" 
     xmlns="http://schemas.nativescript.org/tns.xsd">
-    <ActionBar class="action-bar" title="View Item">
-
-    </ActionBar>
-    <StackLayout>
-        <Label text="Info"></Label>
-        <Label text="{{totpSec}}"></Label>
-        <Label text="{{totpCodeFormatted}}"></Label>
-        <Label text="{{cipher.name}}"></Label>
-    </StackLayout>
+    <ActionBar class="action-bar" title="{{'viewItem' | i18n}}"></ActionBar>
+    <ScrollView>
+        <StackLayout>
+            <StackLayout class="box">
+                <FlexboxLayout class="box-header">
+                    <Label text="{{'itemInformation' | i18n}}"></Label>
+                </FlexboxLayout>
+                <StackLayout class="box-content">
+                    <StackLayout class="box-content-row">
+                        <Label class="box-content-row-label" text="{{'name' | i18n}}"></Label>
+                        <Label class="box-content-row-value" textWrap="true" text="{{cipher.name}}"></Label>
+                    </StackLayout>
+                    <StackLayout visibility="{{cipher.type === cipherType.Login ? 'visible' : 'collapse'}}">
+                        <StackLayout class="box-content-row">
+                            <Label class="box-content-row-label" text="{{'username' | i18n}}"></Label>
+                            <Label class="box-content-row-value" textWrap="true" text="{{cipher.login.username}}"></Label>
+                        </StackLayout>
+                        <StackLayout class="box-content-row">
+                            <Label class="box-content-row-label" text="{{'password' | i18n}}"></Label>
+                            <Label class="box-content-row-value" textWrap="true" text="{{cipher.login.password}}"></Label>
+                        </StackLayout>
+                        <StackLayout class="box-content-row" visibility="{{totpCodeFormatted ? 'visible' : 'collapse'}}">
+                            <Label class="box-content-row-label" text="{{'verificationCodeTotp' | i18n}}"></Label>
+                            <Label class="box-content-row-value" text="{{totpCodeFormatted}}"></Label>
+                        </StackLayout>
+                    </StackLayout>
+                </StackLayout>
+            </StackLayout>
+            <StackLayout class="box" visibility="{{cipher.login.uris && cipher.login.uris.length ? 'visible' : 'collapse'}}">
+                <StackLayout class="box-content">
+                    <Repeater items="{{cipher.login.uris}}">
+                        <Repeater.itemTemplate>
+                            <StackLayout class="box-content-row">
+                                <Label class="box-content-row-label" text="{{'uriPosition' | i18n($index + 1)}}"></Label>
+                                <Label class="box-content-row-value" text="{{uri}}"></Label>
+                            </StackLayout>
+                        </Repeater.itemTemplate>
+                    </Repeater>
+                </StackLayout>
+            </StackLayout>
+            <StackLayout class="box" visibility="{{cipher.fields && cipher.fields.length ? 'visible' : 'collapse'}}">
+                <FlexboxLayout class="box-header">
+                    <Label text="{{'customFields' | i18n}}"></Label>
+                </FlexboxLayout>
+                <StackLayout class="box-content">
+                    <Repeater items="{{cipher.fields}}">
+                        <Repeater.itemTemplate>
+                            <StackLayout class="box-content-row">
+                                <Label class="box-content-row-label" text="{{name}}"></Label>
+                                <Label class="box-content-row-value" text="{{value}}"></Label>
+                            </StackLayout>
+                        </Repeater.itemTemplate>
+                    </Repeater>
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
 </Page>

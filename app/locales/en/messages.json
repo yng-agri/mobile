@@ -119,5 +119,106 @@
   },
   "never": {
     "message": "Never"
+  },
+  "itemInformation": {
+    "message": "Item Information"
+  },
+  "viewItem": {
+    "message": "View Item"
+  },
+  "name": {
+    "message": "Name"
+  },
+  "uri": {
+    "message": "URI"
+  },
+  "uriPosition": {
+    "message": "URI $POSITION$",
+    "description": "A listing of URIs. Ex: URI 1, URI 2, URI 3, etc.",
+    "placeholders": {
+      "position": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "newUri": {
+    "message": "New URI"
+  },
+  "username": {
+    "message": "Username"
+  },
+  "password": {
+    "message": "Password"
+  },
+  "passphrase": {
+    "message": "Passphrase"
+  },
+  "editItem": {
+    "message": "Edit Item"
+  },
+  "emailAddress": {
+    "message": "Email Address"
+  },
+  "verificationCodeTotp": {
+    "message": "Verification Code (TOTP)"
+  },
+  "website": {
+    "message": "Website"
+  },
+  "notes": {
+    "message": "Notes"
+  },
+  "customFields": {
+    "message": "Custom Fields"
+  },
+  "launch": {
+    "message": "Launch"
+  },
+  "copyValue": {
+    "message": "Copy Value",
+    "description": "Copy value to clipboard"
+  },
+  "toggleVisibility": {
+    "message": "Toggle Visibility"
+  },
+  "cardholderName": {
+    "message": "Cardholder Name"
+  },
+  "number": {
+    "message": "Number"
+  },
+  "brand": {
+    "message": "Brand"
+  },
+  "expiration": {
+    "message": "Expiration"
+  },
+  "securityCode": {
+    "message": "Security Code"
+  },
+  "identityName": {
+    "message": "Identity Name"
+  },
+  "company": {
+    "message": "Company"
+  },
+  "ssn": {
+    "message": "Social Security Number"
+  },
+  "passportNumber": {
+    "message": "Passport Number"
+  },
+  "licenseNumber": {
+    "message": "License Number"
+  },
+  "email": {
+    "message": "Email"
+  },
+  "phone": {
+    "message": "Phone"
+  },
+  "address": {
+    "message": "Address"
   }
 }
