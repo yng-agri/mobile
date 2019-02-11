@@ -37,8 +37,7 @@ export class AutofillService extends android.service.autofill.AutofillService {
         const parser = new Parser(structure, this.getApplicationContext());
         parser.parse();
 
-        if (Utils.isNullOrWhitespace(parser.uri) || parser.uri === 'androidapp://com.x8bit.bitwarden' ||
-            parser.uri === 'androidapp://android' || !parser.fieldCollection.fillable) {
+        if (!parser.shouldAutofill) {
             return;
         }
 

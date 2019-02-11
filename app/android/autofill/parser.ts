@@ -59,6 +59,11 @@ export class Parser {
         this._webDomain = val;
     }
 
+    get shouldAutofill() {
+        return !Utils.isNullOrWhitespace(this.uri) && !AutofillHelpers.blacklistedUris.has(this.uri) &&
+            this.fieldCollection != null && this.fieldCollection.fillable;
+    }
+
     parse(): void {
         for (let i = 0; i < this.structure.getWindowNodeCount(); i++) {
             const node = this.structure.getWindowNodeAt(i);

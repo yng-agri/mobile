@@ -26,6 +26,10 @@ export class AutofillHelpers {
         'com.amazon.cloud9', 'mark.via.gp', 'org.bromite.bromite', 'org.chromium.chrome', 'com.kiwibrowser.browser',
         'com.ecosia.android', 'com.opera.mini.native.beta', 'org.mozilla.fennec_aurora', 'com.qwant.liberty',
     ]);
+    // The URLs are blacklisted from autofilling
+    static blacklistedUris = new Set<string>([
+        'androidapp://android', 'androidapp://com.x8bit.bitwarden', 'androidapp://com.oneplus.applocker',
+    ]);
 
     static async getFillItems(parser: Parser, cipherService: CipherService): Promise<FilledItem[]> {
         if (parser.fieldCollection.fillableForLogin) {
