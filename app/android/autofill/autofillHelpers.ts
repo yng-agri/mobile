@@ -19,7 +19,7 @@ export class AutofillHelpers {
     // These browsers work using the compatibility shim for the autofill framework
     static compatBrowsers = new Set<string>([
         'org.mozilla.firefox', 'org.mozilla.firefox_beta', 'com.microsoft.emmx', 'com.android.chrome',
-        'com.chrome.beta', 'com.android.browser', 'com.brave.browser', 'com.opera.browser',
+        'com.chrome.beta', 'com.android.browser', 'com.brave.browser', 'com.opera.browser', 'com.opera.touch',
         'com.opera.browser.beta', 'com.opera.mini.native', 'com.chrome.dev', 'com.chrome.canary',
         'com.google.android.apps.chrome', 'com.google.android.apps.chrome_dev', 'com.yandex.browser',
         'com.sec.android.app.sbrowser', 'com.sec.android.app.sbrowser.beta', 'org.codeaurora.swe.browser',
