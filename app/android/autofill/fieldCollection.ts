@@ -247,9 +247,15 @@ export class FieldCollection {
     }
 
     private fieldIsPassword(f: Field): boolean {
-        const inputTypePassword = !!(f.inputType & android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD) ||
+        let inputTypePassword = !!(f.inputType & android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD) ||
             !!(f.inputType & android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) ||
             !!(f.inputType & android.text.InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD);
+
+        // For whatever reason, multi-line input types are coming through with TextVariationPassword flags
+        if (inputTypePassword && !!(f.inputType & android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD) &&
+            !!(f.inputType & android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE)) {
+            inputTypePassword = false;
+        }
 
         if (!inputTypePassword && f.htmlInfo != null && f.htmlInfo.getTag() === 'input' &&
             f.htmlInfo.getAttributes() != null && f.htmlInfo.getAttributes().size() > 0) {
