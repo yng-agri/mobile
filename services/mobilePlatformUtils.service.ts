@@ -107,4 +107,8 @@ export class MobilePlatformUtilsService implements PlatformUtilsService {
     copyToClipboard(text: string, options?: any): void {
 
     }
+
+    readFromClipboard(options?: any): Promise<string> {
+        return Promise.resolve(null);
+    }
 }
