@@ -40,6 +40,7 @@
         "jslib/node_modules",
         "jslib/spec",
         "jslib/dist",
+        "jslib/src/cli",
         "jslib/src/electron",
         "jslib/src/importers",
         "jslib/src/angular",
