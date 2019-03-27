@@ -1,1 +1,3 @@
-<Label text="My Test"/>
+<StackLayout loaded="onLoaded">
+    <Label text="{{text}}"/>
+</StackLayout>

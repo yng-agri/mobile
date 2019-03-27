@@ -4,6 +4,6 @@
     <StackLayout>
         <Button tap="{{login}}" text="Log In"></Button>
         <Button tap="{{register}}" text="Create Account"></Button>
-        <test:test />
+        <test:test text="This is the text." />
     </StackLayout>
 </Page>
