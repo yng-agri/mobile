@@ -1,5 +1,6 @@
 <Page class="page" navigatingTo="onNavigatingTo" 
-    xmlns="http://schemas.nativescript.org/tns.xsd">
+    xmlns="http://schemas.nativescript.org/tns.xsd" 
+    xmlns:cipher="components/cipher">
     <ActionBar class="action-bar" title="My Vault"></ActionBar>
     <ListView id="list-view" items="{{items}}" class="list-group" itemTemplateSelector="templateSelector" itemTap="{{itemTapped}}">
         <ListView.itemTemplates>
@@ -15,9 +16,7 @@
                 </StackLayout>
             </template>
             <template key="cipher">
-                <StackLayout class="list-group-item" orientation="horizontal">
-                    <Label text="{{name}}" class="list-group-item-heading"></Label>
-                </StackLayout>
+                <cipher:cipher cipher="{{$value}}" />
             </template>
             <template key="folder">
                 <StackLayout class="list-group-item" orientation="horizontal">

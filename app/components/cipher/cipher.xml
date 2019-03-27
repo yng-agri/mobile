@@ -1,0 +1,3 @@
+<StackLayout class="list-group-item" orientation="horizontal" loaded="onLoaded">
+    <Label text="{{cipher.name}}" class="list-group-item-heading"/>
+</StackLayout>
