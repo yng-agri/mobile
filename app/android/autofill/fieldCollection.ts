@@ -43,7 +43,8 @@ export class FieldCollection {
         if (this.hints.size > 0) {
             this._passwordFields = [];
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_PASSWORD)) {
-                this._passwordFields.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_PASSWORD));
+                this._passwordFields = this._passwordFields.concat(
+                    this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_PASSWORD));
             }
         } else {
             this._passwordFields = this.fields.filter((f) => this.fieldIsPassword(f));
@@ -61,10 +62,12 @@ export class FieldCollection {
         this._usernameFields = [];
         if (this.hints.size > 0) {
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_EMAIL_ADDRESS)) {
-                this._usernameFields.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_EMAIL_ADDRESS));
+                this._usernameFields = this._usernameFields.concat(
+                    this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_EMAIL_ADDRESS));
             }
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_USERNAME)) {
-                this._usernameFields.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_USERNAME));
+                this._usernameFields = this._usernameFields.concat(
+                    this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_USERNAME));
             }
         } else {
             this.passwordFields.forEach((passwordField) => {
@@ -164,12 +167,12 @@ export class FieldCollection {
             savedItem.card = new CardItem();
             savedItem.card.number = this.getFieldValue(android.view.View.AUTOFILL_HINT_CREDIT_CARD_NUMBER);
             savedItem.card.name = this.getFieldValue(android.view.View.AUTOFILL_HINT_NAME);
-            savedItem.card.expMonth = this.getFieldValue(android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_MONTH);
+            savedItem.card.expMonth = this.getFieldValue(
+                android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_MONTH, true);
             savedItem.card.expYear = this.getFieldValue(android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_YEAR);
             savedItem.card.code = this.getFieldValue(android.view.View.AUTOFILL_HINT_CREDIT_CARD_SECURITY_CODE);
             return savedItem;
         }
-
         return null;
     }
 
@@ -178,19 +181,21 @@ export class FieldCollection {
         if (this.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_PASSWORD) {
             arr = this.usernameFields.map((f) => f.autofillId);
         } else if (this.saveType === android.service.autofill.SaveInfo.SAVE_DATA_TYPE_CREDIT_CARD) {
-            const fieldList: Field[] = [];
+            let fieldList: Field[] = [];
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_CREDIT_CARD_SECURITY_CODE)) {
-                fieldList.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_CREDIT_CARD_SECURITY_CODE));
+                fieldList = fieldList.concat(
+                    this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_CREDIT_CARD_SECURITY_CODE));
             }
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_YEAR)) {
-                fieldList.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_YEAR));
+                fieldList = fieldList.concat(
+                    this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_YEAR));
             }
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_MONTH)) {
-                fieldList.concat(this.hintToFieldsMap.get(
+                fieldList = fieldList.concat(this.hintToFieldsMap.get(
                     android.view.View.AUTOFILL_HINT_CREDIT_CARD_EXPIRATION_MONTH));
             }
             if (this.hintToFieldsMap.has(android.view.View.AUTOFILL_HINT_NAME)) {
-                fieldList.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_NAME));
+                fieldList = fieldList.concat(this.hintToFieldsMap.get(android.view.View.AUTOFILL_HINT_NAME));
             }
             arr = fieldList.map((f) => f.autofillId);
         }

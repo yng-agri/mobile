@@ -1,3 +1,5 @@
 <StackLayout class="list-group-item" orientation="horizontal" loaded="onLoaded">
-    <Label text="{{cipher.name}}" class="list-group-item-heading"/>
+    <Image src="{{image}}" class="main-icon-image" />
+    <Label text="{{icon}}" class="fa main-icon"></Label>
+    <Label text="{{cipher != null ? cipher.name : ''}}" class="list-group-item-heading"/>
 </StackLayout>

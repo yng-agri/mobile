@@ -43,7 +43,7 @@ export class Parser {
 
     set packageName(val: string) {
         if (Utils.isNullOrWhitespace(val)) {
-            this._uri = null;
+            this._packageName = this._uri = null;
         }
         this._packageName = val;
     }
@@ -54,7 +54,7 @@ export class Parser {
 
     set webDomain(val: string) {
         if (Utils.isNullOrWhitespace(val)) {
-            this._uri = null;
+            this._webDomain = this._uri = null;
         }
         this._webDomain = val;
     }

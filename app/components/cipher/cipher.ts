@@ -5,5 +5,7 @@ import { CipherViewModel } from './cipher-view-model';
 
 export function onLoaded(args: EventData) {
     const layout = args.object as StackLayout;
-    layout.bindingContext = new CipherViewModel(layout);
+    const model = new CipherViewModel(layout);
+    layout.bindingContext = model;
+    model.load();
 }
